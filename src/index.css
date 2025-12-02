@@ -1,0 +1,52 @@
+/*propdash-mvp\src\index.css*/
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Improve text rendering */
+html, body {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: #f8fafc; /* slate-50 */
+  color: #0f172a; /* slate-900 */
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Reusable UI helpers */
+.card {
+  @apply bg-white rounded-xl border border-slate-200 shadow-sm p-4;
+}
+
+.btn {
+  @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium transition;
+}
+.btn-primary {
+  @apply bg-blue-600 text-white hover:bg-blue-700;
+}
+.btn-outline {
+  @apply border border-slate-300 hover:bg-slate-100;
+}
+
+input, select, textarea {
+  @apply w-full border border-slate-300 rounded-lg px-3 py-2 bg-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+}
+
+.form-error {
+  @apply text-red-600 text-sm mt-1;
+}
