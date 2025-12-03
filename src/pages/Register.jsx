@@ -7,9 +7,12 @@ import {
   Shield, 
   CheckCircle2,
   ArrowRight,
-  Sparkles
+  Sparkles,
+  Clock,
+  BarChart3
 } from "lucide-react";
 import { supabase } from "../lib/supabaseClient";
+import { theme } from "../styles/theme";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -43,13 +46,14 @@ export default function Register() {
 
     setLoading(true);
 
-    // 1️⃣ Create Auth Account
+    // 1️⃣ Create Auth Account with user_type metadata
     const { data, error: signUpError } = await supabase.auth.signUp({
       email: formData.email,
       password: formData.password,
       options: {
         data: {
           name: formData.name,
+          user_type: "provider",
         },
       },
     });
@@ -101,7 +105,7 @@ export default function Register() {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Branding & Benefits */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700 p-12 flex-col justify-between relative overflow-hidden">
+      <div className={`hidden lg:flex lg:w-1/2 ${theme.gradient.providerLight} p-12 flex-col justify-between relative overflow-hidden`}>
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-20 right-20 w-72 h-72 bg-white rounded-full blur-3xl"></div>
@@ -112,26 +116,26 @@ export default function Register() {
         <div className="relative z-10">
           {/* Logo */}
           <div className="flex items-center gap-3 mb-12">
-            <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl">
+            <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl shadow-lg">
               <Wrench className="text-white" size={32} />
             </div>
             <div>
-              <h1 className="text-white text-3xl font-bold">PropDash</h1>
-              <p className="text-purple-100 text-sm">For Home Service Pros</p>
+              <h1 className="text-white text-3xl font-bold tracking-tight">PropDash</h1>
+              <p className="text-slate-100 text-sm font-medium">Business Management Platform</p>
             </div>
           </div>
 
           {/* Tagline */}
           <div className="mb-12">
             <h2 className="text-white text-4xl font-bold leading-tight mb-4">
-              Start Growing
+              Professional Tools
               <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-300">
-                Your Business Today
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-200 to-white">
+                Built for Your Success
               </span>
             </h2>
-            <p className="text-purple-100 text-lg">
-              Join thousands of pros who've simplified their business operations.
+            <p className="text-slate-100 text-lg leading-relaxed">
+              Join hundreds of service professionals who trust PropDash to manage their operations.
             </p>
           </div>
 
@@ -139,23 +143,23 @@ export default function Register() {
           <div className="space-y-6">
             <BenefitItem
               icon={<CheckCircle2 size={20} />}
-              title="Free to Start"
-              description="No credit card required. Set up your account in 2 minutes."
+              title="Free Trial Included"
+              description="Start with full access. No credit card required to begin."
             />
             <BenefitItem
               icon={<Sparkles size={20} />}
-              title="AI-Powered Quotes"
-              description="Generate professional estimates from photos automatically."
+              title="AI-Powered Estimates"
+              description="Generate professional quotes with intelligent pricing assistance."
             />
             <BenefitItem
-              icon={<Zap size={20} />}
-              title="Get Booked Faster"
-              description="Share your booking link and let clients schedule instantly."
+              icon={<Clock size={20} />}
+              title="Save 15+ Hours Weekly"
+              description="Automate scheduling, invoicing, and client communication."
             />
             <BenefitItem
-              icon={<Shield size={20} />}
-              title="Stay Compliant"
-              description="Built-in compliance tracking for licensing and insurance."
+              icon={<BarChart3 size={20} />}
+              title="Business Analytics"
+              description="Track revenue, completion rates, and growth metrics in real-time."
             />
           </div>
         </div>
@@ -163,9 +167,9 @@ export default function Register() {
         {/* Footer Stats */}
         <div className="relative z-10">
           <div className="grid grid-cols-3 gap-6">
-            <StatCard number="500+" label="Active Pros" />
-            <StatCard number="10k+" label="Jobs Completed" />
-            <StatCard number="4.9★" label="Avg Rating" />
+            <StatCard number="500+" label="Active Professionals" />
+            <StatCard number="10,000+" label="Jobs Completed" />
+            <StatCard number="4.9★" label="Average Rating" />
           </div>
         </div>
       </div>
@@ -175,32 +179,32 @@ export default function Register() {
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
           <div className="lg:hidden flex items-center justify-center gap-3 mb-8">
-            <div className="bg-gradient-to-br from-purple-600 to-blue-600 p-3 rounded-xl">
+            <div className={`${theme.gradient.provider} p-3 rounded-xl shadow-lg`}>
               <Wrench className="text-white" size={28} />
             </div>
             <div>
-              <h1 className="text-slate-900 text-2xl font-bold">PropDash</h1>
-              <p className="text-slate-600 text-xs">For Home Service Pros</p>
+              <h1 className={theme.text.h2}>PropDash</h1>
+              <p className={theme.text.caption}>Business Management</p>
             </div>
           </div>
 
-          {/* Get Started */}
+          {/* Header */}
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-slate-900 mb-2">
-              Create your account
+            <h2 className={`${theme.text.h1} mb-2`}>
+              Create Professional Account
             </h2>
-            <p className="text-slate-600">
-              Start managing your business like a pro
+            <p className={theme.text.body}>
+              Start managing your business operations efficiently
             </p>
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-800 rounded-xl text-sm flex items-start gap-3">
-              <div className="bg-red-200 rounded-full p-1 flex-shrink-0">
+            <div className={`${theme.alert.error} mb-6 flex items-start gap-3`}>
+              <div className="bg-red-200 rounded-full p-1 flex-shrink-0 mt-0.5">
                 <div className="w-1.5 h-1.5 bg-red-600 rounded-full"></div>
               </div>
-              <span>{error}</span>
+              <span className="text-sm">{error}</span>
             </div>
           )}
 
@@ -208,7 +212,7 @@ export default function Register() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Business Name */}
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
+              <label className={theme.text.label}>
                 Business Name
               </label>
               <input
@@ -217,14 +221,14 @@ export default function Register() {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none transition"
-                placeholder="John's Handyman Services"
+                className={`${theme.input.base} ${theme.input.provider} mt-2`}
+                placeholder="Professional Services LLC"
               />
             </div>
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
+              <label className={theme.text.label}>
                 Email Address
               </label>
               <input
@@ -233,14 +237,14 @@ export default function Register() {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none transition"
-                placeholder="you@example.com"
+                className={`${theme.input.base} ${theme.input.provider} mt-2`}
+                placeholder="you@company.com"
               />
             </div>
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
+              <label className={theme.text.label}>
                 Password
               </label>
               <input
@@ -250,18 +254,18 @@ export default function Register() {
                 onChange={handleChange}
                 required
                 minLength={6}
-                className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none transition"
+                className={`${theme.input.base} ${theme.input.provider} mt-2`}
                 placeholder="••••••••"
               />
               <p className="mt-2 text-xs text-slate-500 flex items-center gap-1.5">
                 <Shield size={12} />
-                Must be at least 6 characters
+                Minimum 6 characters required
               </p>
             </div>
 
             {/* Confirm Password */}
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
+              <label className={theme.text.label}>
                 Confirm Password
               </label>
               <input
@@ -270,7 +274,7 @@ export default function Register() {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
-                className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none transition"
+                className={`${theme.input.base} ${theme.input.provider} mt-2`}
                 placeholder="••••••••"
               />
             </div>
@@ -279,11 +283,11 @@ export default function Register() {
             <div className="pt-2">
               <p className="text-xs text-slate-600 leading-relaxed">
                 By creating an account, you agree to our{" "}
-                <a href="#" className="text-purple-600 hover:underline font-medium">
+                <a href="#" className="text-blue-700 hover:underline font-semibold">
                   Terms of Service
                 </a>{" "}
                 and{" "}
-                <a href="#" className="text-purple-600 hover:underline font-medium">
+                <a href="#" className="text-blue-700 hover:underline font-semibold">
                   Privacy Policy
                 </a>
               </p>
@@ -293,7 +297,7 @@ export default function Register() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3.5 rounded-xl font-semibold hover:from-purple-700 hover:to-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-purple-500/30"
+              className={`w-full ${theme.button.provider} disabled:opacity-50 disabled:cursor-not-allowed justify-center`}
             >
               {loading ? (
                 <>
@@ -302,7 +306,7 @@ export default function Register() {
                 </>
               ) : (
                 <>
-                  Create Account
+                  Create Professional Account
                   <ArrowRight size={18} />
                 </>
               )}
@@ -311,30 +315,38 @@ export default function Register() {
 
           {/* Divider */}
           <div className="flex items-center gap-4 my-6">
-            <div className="flex-1 border-t border-slate-200"></div>
-            <span className="text-xs text-slate-500 font-medium">
-              ALREADY HAVE AN ACCOUNT?
+            <div className="flex-1 border-t border-slate-300"></div>
+            <span className="text-xs text-slate-500 font-semibold">
+              ALREADY REGISTERED?
             </span>
-            <div className="flex-1 border-t border-slate-200"></div>
+            <div className="flex-1 border-t border-slate-300"></div>
           </div>
 
           {/* Login Link */}
           <Link
             to="/login"
-            className="block w-full text-center py-3.5 border-2 border-slate-200 text-slate-700 rounded-xl font-semibold hover:border-slate-300 hover:bg-slate-100 transition"
+            className={theme.button.secondary + " w-full text-center justify-center"}
           >
-            Log In
+            Sign In to Account
           </Link>
 
+          {/* Customer Registration Link */}
+          <p className="mt-6 text-center text-sm text-slate-600">
+            Looking to hire a professional?{" "}
+            <Link to="/customer-register" className="text-teal-700 hover:underline font-semibold">
+              Register as Property Owner
+            </Link>
+          </p>
+
           {/* Trust Badges */}
-          <div className="mt-8 flex items-center justify-center gap-6 text-xs text-slate-500">
-            <div className="flex items-center gap-1.5">
-              <Shield size={14} className="text-green-600" />
-              <span>Secure & Encrypted</span>
+          <div className="mt-8 pt-6 border-t border-slate-200 flex items-center justify-center gap-8 text-xs text-slate-600">
+            <div className="flex items-center gap-2">
+              <Shield size={16} className="text-emerald-600" />
+              <span className="font-medium">Bank-Level Security</span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <CheckCircle2 size={14} className="text-blue-600" />
-              <span>No Credit Card</span>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 size={16} className="text-blue-600" />
+              <span className="font-medium">No Credit Card</span>
             </div>
           </div>
         </div>
@@ -347,12 +359,12 @@ export default function Register() {
 function BenefitItem({ icon, title, description }) {
   return (
     <div className="flex items-start gap-4">
-      <div className="bg-white/20 backdrop-blur-sm p-2.5 rounded-lg flex-shrink-0">
+      <div className="bg-white/20 backdrop-blur-sm p-2.5 rounded-lg flex-shrink-0 shadow-sm">
         <div className="text-white">{icon}</div>
       </div>
       <div>
         <h3 className="text-white font-semibold mb-1">{title}</h3>
-        <p className="text-purple-100 text-sm leading-relaxed">{description}</p>
+        <p className="text-slate-100 text-sm leading-relaxed">{description}</p>
       </div>
     </div>
   );
@@ -361,9 +373,9 @@ function BenefitItem({ icon, title, description }) {
 // Stat Card Component
 function StatCard({ number, label }) {
   return (
-    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20 shadow-sm">
       <div className="text-2xl font-bold text-white mb-1">{number}</div>
-      <div className="text-xs text-purple-100">{label}</div>
+      <div className="text-xs text-slate-100 font-medium">{label}</div>
     </div>
   );
 }

@@ -6,12 +6,15 @@ import {
   Zap, 
   Shield, 
   Sparkles,
-  ArrowRight 
+  ArrowRight,
+  Briefcase,
+  Home
 } from "lucide-react";
 import { supabase } from "../lib/supabaseClient";
 
 export default function Login() {
   const navigate = useNavigate();
+  const [selectedType, setSelectedType] = useState("provider"); // 'provider' or 'customer'
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -45,9 +48,26 @@ export default function Login() {
       return;
     }
 
+    const userType = data.user.user_metadata?.user_type;
+    
+    // Validate that selected type matches account type
+    if (userType && userType !== selectedType) {
+      setError(
+        `This account is registered as a ${userType === "customer" ? "Customer" : "Service Pro"}. Please select the correct account type.`
+      );
+      setLoading(false);
+      return;
+    }
+
     console.log("Login successful:", data.user);
     setLoading(false);
-    navigate("/provider");
+
+    // Route based on account type
+    if (selectedType === "customer" || userType === "customer") {
+      navigate("/customer/dashboard");
+    } else {
+      navigate("/provider");
+    }
   };
 
   return (
@@ -69,41 +89,79 @@ export default function Login() {
             </div>
             <div>
               <h1 className="text-white text-3xl font-bold">PropDash</h1>
-              <p className="text-blue-100 text-sm">For Home Service Pros</p>
+              <p className="text-blue-100 text-sm">
+                {selectedType === "customer" ? "Find Trusted Pros" : "For Home Service Pros"}
+              </p>
             </div>
           </div>
 
           {/* Tagline */}
           <div className="mb-12">
             <h2 className="text-white text-4xl font-bold leading-tight mb-4">
-              Your Business
-              <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-300">
-                Operating System
-              </span>
+              {selectedType === "customer" ? (
+                <>
+                  Get Your Projects
+                  <br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-300">
+                    Done Right
+                  </span>
+                </>
+              ) : (
+                <>
+                  Your Business
+                  <br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-300">
+                    Operating System
+                  </span>
+                </>
+              )}
             </h2>
             <p className="text-blue-100 text-lg">
-              Manage clients, create quotes, and get booked—all in one place.
+              {selectedType === "customer"
+                ? "Connect with verified local pros for all your home service needs."
+                : "Manage clients, create quotes, and get booked—all in one place."}
             </p>
           </div>
 
           {/* Features */}
           <div className="space-y-6">
-            <FeatureItem
-              icon={<Sparkles size={20} />}
-              title="AI Quote Builder"
-              description="Turn photos into professional estimates in seconds"
-            />
-            <FeatureItem
-              icon={<Zap size={20} />}
-              title="Instant Booking Link"
-              description="Share your link, clients book directly"
-            />
-            <FeatureItem
-              icon={<Shield size={20} />}
-              title="Compliance Built-In"
-              description="Stay compliant with licensing laws automatically"
-            />
+            {selectedType === "customer" ? (
+              <>
+                <FeatureItem
+                  icon={<Shield size={20} />}
+                  title="Verified Pros"
+                  description="All service providers are vetted and verified"
+                />
+                <FeatureItem
+                  icon={<Zap size={20} />}
+                  title="Instant Booking"
+                  description="Book appointments in seconds, not hours"
+                />
+                <FeatureItem
+                  icon={<Sparkles size={20} />}
+                  title="Quality Guaranteed"
+                  description="Read reviews and ratings from real customers"
+                />
+              </>
+            ) : (
+              <>
+                <FeatureItem
+                  icon={<Sparkles size={20} />}
+                  title="AI Quote Builder"
+                  description="Turn photos into professional estimates in seconds"
+                />
+                <FeatureItem
+                  icon={<Zap size={20} />}
+                  title="Instant Booking Link"
+                  description="Share your link, clients book directly"
+                />
+                <FeatureItem
+                  icon={<Shield size={20} />}
+                  title="Compliance Built-In"
+                  description="Stay compliant with licensing laws automatically"
+                />
+              </>
+            )}
           </div>
         </div>
 
@@ -111,11 +169,14 @@ export default function Login() {
         <div className="relative z-10">
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
             <p className="text-white text-sm italic mb-2">
-              "PropDash changed how I run my business. My clients love the
-              booking link!"
+              {selectedType === "customer"
+                ? '"Found an amazing handyman through PropDash. Super easy!"'
+                : '"PropDash changed how I run my business. My clients love the booking link!"'}
             </p>
             <p className="text-blue-200 text-xs font-medium">
-              — Marcus R., Handyman in Oakland
+              {selectedType === "customer"
+                ? "— Sarah T., Homeowner in Berkeley"
+                : "— Marcus R., Handyman in Oakland"}
             </p>
           </div>
         </div>
@@ -131,7 +192,9 @@ export default function Login() {
             </div>
             <div>
               <h1 className="text-slate-900 text-2xl font-bold">PropDash</h1>
-              <p className="text-slate-600 text-xs">For Home Service Pros</p>
+              <p className="text-slate-600 text-xs">
+                {selectedType === "customer" ? "Find Trusted Pros" : "For Home Service Pros"}
+              </p>
             </div>
           </div>
 
@@ -140,9 +203,40 @@ export default function Login() {
             <h2 className="text-3xl font-bold text-slate-900 mb-2">
               Welcome back
             </h2>
-            <p className="text-slate-600">
-              Log in to access your dashboard
-            </p>
+            <p className="text-slate-600">Log in to access your dashboard</p>
+          </div>
+
+          {/* Account Type Selector */}
+          <div className="mb-6">
+            <label className="block text-sm font-semibold text-slate-700 mb-3">
+              I am a:
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setSelectedType("provider")}
+                className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition ${
+                  selectedType === "provider"
+                    ? "border-blue-600 bg-blue-50 text-blue-700"
+                    : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
+                }`}
+              >
+                <Briefcase size={24} />
+                <span className="font-semibold text-sm">Service Pro</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedType("customer")}
+                className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition ${
+                  selectedType === "customer"
+                    ? "border-green-600 bg-green-50 text-green-700"
+                    : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
+                }`}
+              >
+                <Home size={24} />
+                <span className="font-semibold text-sm">Customer</span>
+              </button>
+            </div>
           </div>
 
           {/* Error Message */}
@@ -201,7 +295,11 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3.5 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-blue-500/30"
+              className={`w-full py-3.5 rounded-xl font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg ${
+                selectedType === "customer"
+                  ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 shadow-green-500/30"
+                  : "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 shadow-blue-500/30"
+              }`}
             >
               {loading ? (
                 <>
@@ -210,7 +308,7 @@ export default function Login() {
                 </>
               ) : (
                 <>
-                  Log In
+                  Log In as {selectedType === "customer" ? "Customer" : "Pro"}
                   <ArrowRight size={18} />
                 </>
               )}
@@ -226,13 +324,26 @@ export default function Login() {
             <div className="flex-1 border-t border-slate-200"></div>
           </div>
 
-          {/* Register Link */}
-          <Link
-            to="/register"
-            className="block w-full text-center py-3.5 border-2 border-slate-200 text-slate-700 rounded-xl font-semibold hover:border-slate-300 hover:bg-slate-100 transition"
-          >
-            Create an Account
-          </Link>
+          {/* Registration Options */}
+          <div className="space-y-3">
+            <Link
+              to="/register"
+              className="block w-full text-center py-3.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition shadow-lg shadow-blue-500/30"
+            >
+              Register as a Service Pro
+            </Link>
+
+            <Link
+              to="/customer-register"
+              className="block w-full text-center py-3.5 border-2 border-slate-200 text-slate-700 rounded-xl font-semibold hover:border-slate-300 hover:bg-slate-100 transition"
+            >
+              Register as a Customer
+            </Link>
+          </div>
+
+          <p className="mt-4 text-center text-xs text-slate-500">
+            Not sure? Service pros offer services. Customers hire pros.
+          </p>
 
           {/* Trust Badges */}
           <div className="mt-8 flex items-center justify-center gap-6 text-xs text-slate-500">

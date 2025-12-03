@@ -1,5 +1,6 @@
 //propdash-mvp\src\components\ProviderDashboard\DashboardLayout.jsx
 import { NavLink, Outlet } from "react-router-dom";
+import Clients from "./Clients";
 import { 
   Home, 
   Calendar, 
@@ -24,6 +25,7 @@ export default function DashboardLayout() {
           <SidebarLink to="/provider/schedule" icon={Calendar} label="Schedule" />
           <SidebarLink to="/provider/quotes" icon={Wand2} label="Quotes" />
           <SidebarLink to="/provider/network" icon={Users} label="Network" />
+          <SidebarLink to="/provider/clients" icon={Users} label="Clients" />
           <SidebarLink to="/provider/settings" icon={Settings} label="Settings" />
         </nav>
       </aside>
