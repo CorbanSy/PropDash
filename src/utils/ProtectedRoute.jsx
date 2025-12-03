@@ -1,3 +1,4 @@
+//propdash-mvp\src\utils\ProtectedRoute.jsx
 import { Navigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 

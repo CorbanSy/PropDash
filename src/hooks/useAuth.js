@@ -1,5 +1,6 @@
+//propdash-mvp\src\hooks\useAuth.js
 import { useEffect, useState } from "react";
-import { supabase } from "../supabase/client";
+import { supabase } from "../lib/supabaseClient";
 
 export default function useAuth() {
   const [user, setUser] = useState(null);

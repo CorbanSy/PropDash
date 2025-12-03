@@ -1,3 +1,4 @@
+// src/App.jsx
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Landing from "./pages/Landing";
@@ -9,10 +10,9 @@ import BookingPage from "./components/PublicBookingPage/BookingPage";
 
 // Dashboard imports
 import DashboardLayout from "./components/ProviderDashboard/DashboardLayout";
-
 import Home from "./components/ProviderDashboard/Home";
 import Schedule from "./components/ProviderDashboard/Schedule";
-import Services from "./components/ProviderDashboard/Services";
+import QuoteBuilder from "./components/ProviderDashboard/QuoteBuilder"; // 👈 ADD THIS
 import Network from "./components/ProviderDashboard/Network";
 import Settings from "./components/ProviderDashboard/Settings";
 
@@ -39,7 +39,7 @@ export default function App() {
         >
           <Route index element={<Home />} />
           <Route path="schedule" element={<Schedule />} />
-          <Route path="services" element={<Services />} />
+          <Route path="quotes" element={<QuoteBuilder />} /> {/* 👈 CHANGED FROM services TO quotes */}
           <Route path="network" element={<Network />} />
           <Route path="settings" element={<Settings />} />
         </Route>
