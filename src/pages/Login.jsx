@@ -8,13 +8,16 @@ import {
   Sparkles,
   ArrowRight,
   Briefcase,
-  Home
+  Home,
+  Award,
+  BarChart3
 } from "lucide-react";
 import { supabase } from "../lib/supabaseClient";
+import { theme } from "../styles/theme";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [selectedType, setSelectedType] = useState("provider"); // 'provider' or 'customer'
+  const [selectedType, setSelectedType] = useState("provider");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -50,10 +53,9 @@ export default function Login() {
 
     const userType = data.user.user_metadata?.user_type;
     
-    // Validate that selected type matches account type
     if (userType && userType !== selectedType) {
       setError(
-        `This account is registered as a ${userType === "customer" ? "Customer" : "Service Pro"}. Please select the correct account type.`
+        `This account is registered as a ${userType === "customer" ? "Client" : "Service Professional"}. Please select the correct account type.`
       );
       setLoading(false);
       return;
@@ -70,113 +72,125 @@ export default function Login() {
     }
   };
 
+  // Configuration based on selected type
+  const config = {
+    provider: {
+      gradient: theme.gradient.providerLight,
+      button: theme.button.provider,
+      input: theme.input.provider,
+      icon: Wrench,
+      subtitle: "Business Management Platform",
+      tagline: "Enterprise Tools",
+      taglineHighlight: "Built for Growth",
+      description: "Manage clients, create quotes, and streamline operations—all in one platform.",
+      features: [
+        {
+          icon: <Sparkles size={20} />,
+          title: "AI-Powered Estimates",
+          description: "Generate professional quotes with intelligent pricing"
+        },
+        {
+          icon: <BarChart3 size={20} />,
+          title: "Business Analytics",
+          description: "Track revenue and performance in real-time"
+        },
+        {
+          icon: <Shield size={20} />,
+          title: "Compliance Management",
+          description: "Automated tracking of licensing requirements"
+        }
+      ],
+      testimonial: {
+        quote: "PropDash transformed our operations. The automated compliance tracking alone saves us countless hours each month.",
+        author: "Marcus Rodriguez, Licensed Contractor"
+      }
+    },
+    customer: {
+      gradient: theme.gradient.customerLight,
+      button: theme.button.customer,
+      input: theme.input.customer,
+      icon: Home,
+      subtitle: "Property Services Platform",
+      tagline: "Professional Services",
+      taglineHighlight: "For Your Property",
+      description: "Connect with licensed, verified professionals for all your property maintenance needs.",
+      features: [
+        {
+          icon: <Award size={20} />,
+          title: "Licensed Professionals",
+          description: "Access verified service providers with proven credentials"
+        },
+        {
+          icon: <Zap size={20} />,
+          title: "Efficient Booking",
+          description: "Schedule appointments with real-time availability"
+        },
+        {
+          icon: <Shield size={20} />,
+          title: "Secure Platform",
+          description: "Bank-level encryption protects all transactions"
+        }
+      ],
+      testimonial: {
+        quote: "PropDash connected me with a licensed contractor who delivered exceptional work. The platform made everything seamless.",
+        author: "Sarah Thompson, Property Manager"
+      }
+    }
+  };
+
+  const current = config[selectedType];
+  const CurrentIcon = current.icon;
+
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Branding & Features */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 p-12 flex-col justify-between relative overflow-hidden">
+      <div className={`hidden lg:flex lg:w-1/2 ${current.gradient} p-12 flex-col justify-between relative overflow-hidden`}>
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-20 left-20 w-72 h-72 bg-white rounded-full blur-3xl"></div>
           <div className="absolute bottom-20 right-20 w-96 h-96 bg-white rounded-full blur-3xl"></div>
         </div>
 
-        {/* Content */}
         <div className="relative z-10">
           {/* Logo */}
           <div className="flex items-center gap-3 mb-12">
-            <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl">
-              <Wrench className="text-white" size={32} />
+            <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl shadow-lg">
+              <CurrentIcon className="text-white" size={32} />
             </div>
             <div>
-              <h1 className="text-white text-3xl font-bold">PropDash</h1>
-              <p className="text-blue-100 text-sm">
-                {selectedType === "customer" ? "Find Trusted Pros" : "For Home Service Pros"}
-              </p>
+              <h1 className="text-white text-3xl font-bold tracking-tight">PropDash</h1>
+              <p className="text-slate-100 text-sm font-medium">{current.subtitle}</p>
             </div>
           </div>
 
           {/* Tagline */}
           <div className="mb-12">
             <h2 className="text-white text-4xl font-bold leading-tight mb-4">
-              {selectedType === "customer" ? (
-                <>
-                  Get Your Projects
-                  <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-300">
-                    Done Right
-                  </span>
-                </>
-              ) : (
-                <>
-                  Your Business
-                  <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-300">
-                    Operating System
-                  </span>
-                </>
-              )}
+              {current.tagline}
+              <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-200 to-white">
+                {current.taglineHighlight}
+              </span>
             </h2>
-            <p className="text-blue-100 text-lg">
-              {selectedType === "customer"
-                ? "Connect with verified local pros for all your home service needs."
-                : "Manage clients, create quotes, and get booked—all in one place."}
-            </p>
+            <p className="text-slate-100 text-lg leading-relaxed">{current.description}</p>
           </div>
 
           {/* Features */}
           <div className="space-y-6">
-            {selectedType === "customer" ? (
-              <>
-                <FeatureItem
-                  icon={<Shield size={20} />}
-                  title="Verified Pros"
-                  description="All service providers are vetted and verified"
-                />
-                <FeatureItem
-                  icon={<Zap size={20} />}
-                  title="Instant Booking"
-                  description="Book appointments in seconds, not hours"
-                />
-                <FeatureItem
-                  icon={<Sparkles size={20} />}
-                  title="Quality Guaranteed"
-                  description="Read reviews and ratings from real customers"
-                />
-              </>
-            ) : (
-              <>
-                <FeatureItem
-                  icon={<Sparkles size={20} />}
-                  title="AI Quote Builder"
-                  description="Turn photos into professional estimates in seconds"
-                />
-                <FeatureItem
-                  icon={<Zap size={20} />}
-                  title="Instant Booking Link"
-                  description="Share your link, clients book directly"
-                />
-                <FeatureItem
-                  icon={<Shield size={20} />}
-                  title="Compliance Built-In"
-                  description="Stay compliant with licensing laws automatically"
-                />
-              </>
-            )}
+            {current.features.map((feature, index) => (
+              <FeatureItem key={index} {...feature} />
+            ))}
           </div>
         </div>
 
-        {/* Footer Quote */}
+        {/* Testimonial */}
         <div className="relative z-10">
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
-            <p className="text-white text-sm italic mb-2">
-              {selectedType === "customer"
-                ? '"Found an amazing handyman through PropDash. Super easy!"'
-                : '"PropDash changed how I run my business. My clients love the booking link!"'}
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-sm">
+            <p className="text-white text-sm italic mb-2 leading-relaxed">
+              "{current.testimonial.quote}"
             </p>
-            <p className="text-blue-200 text-xs font-medium">
-              {selectedType === "customer"
-                ? "— Sarah T., Homeowner in Berkeley"
-                : "— Marcus R., Handyman in Oakland"}
+            <p className="text-slate-100 text-xs font-medium">
+              — {current.testimonial.author}
             </p>
           </div>
         </div>
@@ -187,95 +201,75 @@ export default function Login() {
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
           <div className="lg:hidden flex items-center justify-center gap-3 mb-8">
-            <div className="bg-gradient-to-br from-blue-600 to-purple-600 p-3 rounded-xl">
-              <Wrench className="text-white" size={28} />
+            <div className={`${selectedType === "customer" ? theme.gradient.customer : theme.gradient.provider} p-3 rounded-xl shadow-lg`}>
+              <CurrentIcon className="text-white" size={28} />
             </div>
             <div>
-              <h1 className="text-slate-900 text-2xl font-bold">PropDash</h1>
-              <p className="text-slate-600 text-xs">
-                {selectedType === "customer" ? "Find Trusted Pros" : "For Home Service Pros"}
+              <h1 className={theme.text.h2}>PropDash</h1>
+              <p className={theme.text.caption}>
+                {selectedType === "customer" ? "Property Services" : "Business Management"}
               </p>
             </div>
           </div>
 
-          {/* Welcome Back */}
+          {/* Header */}
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-slate-900 mb-2">
-              Welcome back
-            </h2>
-            <p className="text-slate-600">Log in to access your dashboard</p>
+            <h2 className={`${theme.text.h1} mb-2`}>Welcome Back</h2>
+            <p className={theme.text.body}>Sign in to access your account</p>
           </div>
 
           {/* Account Type Selector */}
           <div className="mb-6">
-            <label className="block text-sm font-semibold text-slate-700 mb-3">
-              I am a:
-            </label>
+            <label className={`${theme.text.label} mb-3 block`}>Account Type</label>
             <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
+              <AccountTypeButton
+                type="provider"
+                icon={<Briefcase size={24} />}
+                label="Professional"
+                isSelected={selectedType === "provider"}
                 onClick={() => setSelectedType("provider")}
-                className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition ${
-                  selectedType === "provider"
-                    ? "border-blue-600 bg-blue-50 text-blue-700"
-                    : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
-                }`}
-              >
-                <Briefcase size={24} />
-                <span className="font-semibold text-sm">Service Pro</span>
-              </button>
-              <button
-                type="button"
+              />
+              <AccountTypeButton
+                type="customer"
+                icon={<Home size={24} />}
+                label="Client"
+                isSelected={selectedType === "customer"}
                 onClick={() => setSelectedType("customer")}
-                className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition ${
-                  selectedType === "customer"
-                    ? "border-green-600 bg-green-50 text-green-700"
-                    : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
-                }`}
-              >
-                <Home size={24} />
-                <span className="font-semibold text-sm">Customer</span>
-              </button>
+              />
             </div>
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-800 rounded-xl text-sm flex items-start gap-3">
-              <div className="bg-red-200 rounded-full p-1 flex-shrink-0">
+            <div className={`${theme.alert.error} mb-6 flex items-start gap-3`}>
+              <div className="bg-red-200 rounded-full p-1 flex-shrink-0 mt-0.5">
                 <div className="w-1.5 h-1.5 bg-red-600 rounded-full"></div>
               </div>
-              <span>{error}</span>
+              <span className="text-sm">{error}</span>
             </div>
           )}
 
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Email */}
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
-                Email Address
-              </label>
+              <label className={theme.text.label}>Email Address</label>
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition"
-                placeholder="you@example.com"
+                className={`${theme.input.base} ${current.input} mt-2`}
+                placeholder="you@company.com"
               />
             </div>
 
-            {/* Password */}
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className="block text-sm font-semibold text-slate-700">
-                  Password
-                </label>
+                <label className={theme.text.label}>Password</label>
                 <button
                   type="button"
-                  className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                  className="text-xs text-slate-600 hover:text-slate-900 font-medium"
                 >
                   Forgot password?
                 </button>
@@ -286,29 +280,24 @@ export default function Login() {
                 value={formData.password}
                 onChange={handleChange}
                 required
-                className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition"
+                className={`${theme.input.base} ${current.input}`}
                 placeholder="••••••••"
               />
             </div>
 
-            {/* Login Button */}
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-3.5 rounded-xl font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg ${
-                selectedType === "customer"
-                  ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 shadow-green-500/30"
-                  : "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 shadow-blue-500/30"
-              }`}
+              className={`w-full ${current.button} disabled:opacity-50 disabled:cursor-not-allowed justify-center`}
             >
               {loading ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Logging in...
+                  Signing in...
                 </>
               ) : (
                 <>
-                  Log In as {selectedType === "customer" ? "Customer" : "Pro"}
+                  Sign In
                   <ArrowRight size={18} />
                 </>
               )}
@@ -317,43 +306,34 @@ export default function Login() {
 
           {/* Divider */}
           <div className="flex items-center gap-4 my-6">
-            <div className="flex-1 border-t border-slate-200"></div>
-            <span className="text-xs text-slate-500 font-medium">
-              NEW TO PROPDASH?
-            </span>
-            <div className="flex-1 border-t border-slate-200"></div>
+            <div className="flex-1 border-t border-slate-300"></div>
+            <span className="text-xs text-slate-500 font-semibold">NEW TO PROPDASH?</span>
+            <div className="flex-1 border-t border-slate-300"></div>
           </div>
 
           {/* Registration Options */}
           <div className="space-y-3">
-            <Link
-              to="/register"
-              className="block w-full text-center py-3.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition shadow-lg shadow-blue-500/30"
-            >
-              Register as a Service Pro
+            <Link to="/register" className={`${theme.button.provider} w-full text-center justify-center`}>
+              Register as Professional
             </Link>
-
-            <Link
-              to="/customer-register"
-              className="block w-full text-center py-3.5 border-2 border-slate-200 text-slate-700 rounded-xl font-semibold hover:border-slate-300 hover:bg-slate-100 transition"
-            >
-              Register as a Customer
+            <Link to="/customer-register" className={`${theme.button.secondary} w-full text-center justify-center`}>
+              Register as Client
             </Link>
           </div>
 
-          <p className="mt-4 text-center text-xs text-slate-500">
-            Not sure? Service pros offer services. Customers hire pros.
+          <p className="mt-4 text-center text-xs text-slate-500 leading-relaxed">
+            Professionals provide services. Clients hire professionals.
           </p>
 
           {/* Trust Badges */}
-          <div className="mt-8 flex items-center justify-center gap-6 text-xs text-slate-500">
-            <div className="flex items-center gap-1.5">
-              <Shield size={14} className="text-green-600" />
-              <span>Secure Login</span>
+          <div className="mt-8 pt-6 border-t border-slate-200 flex items-center justify-center gap-8 text-xs text-slate-600">
+            <div className="flex items-center gap-2">
+              <Shield size={16} className="text-emerald-600" />
+              <span className="font-medium">Bank-Level Security</span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <Zap size={14} className="text-blue-600" />
-              <span>Fast Setup</span>
+            <div className="flex items-center gap-2">
+              <Zap size={16} className="text-blue-600" />
+              <span className="font-medium">Instant Access</span>
             </div>
           </div>
         </div>
@@ -362,16 +342,38 @@ export default function Login() {
   );
 }
 
+// Account Type Button Component
+function AccountTypeButton({ type, icon, label, isSelected, onClick }) {
+  const selectedStyles = type === "provider"
+    ? "border-slate-700 bg-slate-50 text-slate-900 shadow-sm"
+    : "border-teal-700 bg-teal-50 text-teal-900 shadow-sm";
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition ${
+        isSelected 
+          ? selectedStyles
+          : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
+      }`}
+    >
+      {icon}
+      <span className="font-semibold text-sm">{label}</span>
+    </button>
+  );
+}
+
 // Feature Item Component
 function FeatureItem({ icon, title, description }) {
   return (
     <div className="flex items-start gap-4">
-      <div className="bg-white/20 backdrop-blur-sm p-2.5 rounded-lg flex-shrink-0">
+      <div className="bg-white/20 backdrop-blur-sm p-2.5 rounded-lg flex-shrink-0 shadow-sm">
         <div className="text-white">{icon}</div>
       </div>
       <div>
         <h3 className="text-white font-semibold mb-1">{title}</h3>
-        <p className="text-blue-100 text-sm leading-relaxed">{description}</p>
+        <p className="text-slate-100 text-sm leading-relaxed">{description}</p>
       </div>
     </div>
   );
