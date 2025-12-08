@@ -30,11 +30,12 @@ import BrowsePros from "./components/CustomerDashboard/BrowsePros";
 import Messages from "./components/CustomerDashboard/Messages";
 import CustomerSettings from "./components/CustomerDashboard/CustomerSettings";
 
+// QuoteBuilder Components
 import QuoteBuilder from "./components/ProviderDashboard/QuoteBuilder";
 import QuoteEditor from "./components/ProviderDashboard/QuoteBuilder/QuoteEditor";
 import QuotePricingLibrary from "./components/ProviderDashboard/QuoteBuilder/QuotePricingLibrary";
 import ClientQuoteView from "./components/ProviderDashboard/QuoteBuilder/components/ClientQuoteView";
-
+import Jobs from "./components/ProviderDashboard/Jobs";
 
 export default function App() {
   return (
@@ -64,6 +65,7 @@ export default function App() {
           <Route path="quotes/settings" element={<QuotePricingLibrary />} />
           <Route path="clients" element={<Clients />} />
           <Route path="network" element={<Network />} />
+          <Route path="jobs" element={<Jobs />} />
           <Route path="settings" element={<Settings />} />
         </Route>
 

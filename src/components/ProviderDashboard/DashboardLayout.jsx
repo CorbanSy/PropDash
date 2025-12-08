@@ -1,11 +1,12 @@
-//propdash-mvp\src\components\ProviderDashboard\DashboardLayout.jsx
+// src/components/ProviderDashboard/DashboardLayout.jsx
 import { NavLink, Outlet } from "react-router-dom";
-import Clients from "./Clients";
 import { 
   Home, 
   Calendar, 
-  Wand2, 
+  FileText, 
+  Briefcase,
   Users, 
+  Network as NetworkIcon,
   Settings 
 } from "lucide-react";
 
@@ -14,24 +15,25 @@ export default function DashboardLayout() {
     <div className="flex min-h-screen bg-slate-50">
 
       {/* SIDEBAR */}
-      <aside className="w-56 bg-white border-r border-slate-200 p-4 hidden sm:block">
-        <h1 className="text-lg font-bold mb-6 tracking-tight">
+      <aside className="w-64 bg-white border-r border-slate-200 p-4 hidden sm:block">
+        <h1 className="text-xl font-bold mb-6 tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
           PropDash
         </h1>
 
         {/* NAV LINKS */}
-        <nav className="space-y-2">
+        <nav className="space-y-1">
           <SidebarLink to="/provider" icon={Home} label="Home" end />
           <SidebarLink to="/provider/schedule" icon={Calendar} label="Schedule" />
-          <SidebarLink to="/provider/quotes" icon={Wand2} label="Quotes" />
-          <SidebarLink to="/provider/network" icon={Users} label="Network" />
+          <SidebarLink to="/provider/jobs" icon={Briefcase} label="Jobs" />
+          <SidebarLink to="/provider/quotes" icon={FileText} label="Quotes" />
           <SidebarLink to="/provider/clients" icon={Users} label="Clients" />
+          <SidebarLink to="/provider/network" icon={NetworkIcon} label="Network" />
           <SidebarLink to="/provider/settings" icon={Settings} label="Settings" />
         </nav>
       </aside>
 
       {/* MAIN CONTENT */}
-      <main className="flex-1 p-6">
+      <main className="flex-1 p-6 pb-20 sm:pb-6">
         <Outlet />
       </main>
 
@@ -51,15 +53,15 @@ function SidebarLink({ to, icon: Icon, label, end }) {
       to={to}
       end={end}
       className={({ isActive }) =>
-        `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition ${
+        `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${
           isActive
-            ? "bg-blue-100 text-blue-700"
-            : "text-slate-600 hover:bg-slate-100"
+            ? "bg-blue-50 text-blue-700 shadow-sm"
+            : "text-slate-600 hover:bg-slate-50"
         }`
       }
     >
-      <Icon size={18} />
-      {label}
+      <Icon size={20} />
+      <span>{label}</span>
     </NavLink>
   );
 }
@@ -71,26 +73,29 @@ function SidebarLink({ to, icon: Icon, label, end }) {
 function MobileNav() {
   const navItems = [
     { to: "/provider", icon: Home, label: "Home" },
-    { to: "/provider/schedule", icon: Calendar, label: "Schedule" },
-    { to: "/provider/quotes", icon: Wand2, label: "Quotes" },
-    { to: "/provider/network", icon: Users, label: "Network" },
-    { to: "/provider/settings", icon: Settings, label: "Settings" },
+    { to: "/provider/jobs", icon: Briefcase, label: "Jobs" },
+    { to: "/provider/quotes", icon: FileText, label: "Quotes" },
+    { to: "/provider/clients", icon: Users, label: "Clients" },
+    { to: "/provider/network", icon: NetworkIcon, label: "Network" },
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-2 flex justify-around sm:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-1 flex justify-around sm:hidden shadow-lg z-50">
       {navItems.map((item, i) => (
         <NavLink
           key={i}
           to={item.to}
+          end={item.to === "/provider"}
           className={({ isActive }) =>
-            `flex flex-col items-center p-2 text-xs ${
-              isActive ? "text-blue-600" : "text-slate-500"
+            `flex flex-col items-center px-3 py-2 text-[10px] rounded-lg transition min-w-0 ${
+              isActive 
+                ? "text-blue-600 bg-blue-50" 
+                : "text-slate-500"
             }`
           }
         >
-          <item.icon size={20} />
-          <span className="mt-1">{item.label}</span>
+          <item.icon size={20} className="mb-0.5" />
+          <span className="truncate w-full text-center">{item.label}</span>
         </NavLink>
       ))}
     </nav>

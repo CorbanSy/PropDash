@@ -1,8 +1,7 @@
 //propdash-mvp\src\components\ProviderDashboard\BookingList.jsx
 import { useEffect, useState } from "react";
-import { supabase } from "../../supabase/client";
+import { supabase } from "../../../lib/supabase/client";
 import { Calendar, Clock, User, Loader2, CircleCheck } from "lucide-react";
-
 export default function BookingList() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
