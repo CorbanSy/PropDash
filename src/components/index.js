@@ -3,13 +3,13 @@
 // Provider Dashboard Components
 export { default as DashboardLayout } from "./ProviderDashboard/DashboardLayout";
 export { default as Home } from "./ProviderDashboard/Home";
-export { default as Schedule } from "./ProviderDashboard/Schedule";
-export { default as QuoteBuilder } from "./ProviderDashboard/QuoteBuilder"; // Changed from Services
-export { default as Clients } from "./ProviderDashboard/Clients"; // Added
+export { default as Schedule } from "./ProviderDashboard/Schedule"; // Points to Schedule folder
+export { default as QuoteBuilder } from "./ProviderDashboard/QuoteBuilder";
+export { default as Clients } from "./ProviderDashboard/Clients";
 export { default as Network } from "./ProviderDashboard/Network";
 export { default as Settings } from "./ProviderDashboard/Settings";
 
-// Customer Dashboard Components (Optional - for consistency)
+// Customer Dashboard Components
 export { default as CustomerDashboardLayout } from "./CustomerDashboard/CustomerDashboardLayout";
 export { default as CustomerHome } from "./CustomerDashboard/Home";
 export { default as MyJobs } from "./CustomerDashboard/MyJobs";
