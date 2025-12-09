@@ -28,7 +28,7 @@ import CustomerHome from "./components/CustomerDashboard/Home";
 import MyJobs from "./components/CustomerDashboard/MyJobs";
 import BrowsePros from "./components/CustomerDashboard/BrowsePros";
 import Messages from "./components/CustomerDashboard/Messages";
-import CustomerSettings from "./components/CustomerDashboard/CustomerSettings";
+import CustomerSettings from "./components/CustomerDashboard/Settings";
 
 // QuoteBuilder Components
 import QuoteBuilder from "./components/ProviderDashboard/QuoteBuilder";

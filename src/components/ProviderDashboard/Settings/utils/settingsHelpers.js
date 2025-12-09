@@ -69,6 +69,26 @@ export const validateZipCode = (zip) => {
 };
 
 /**
+ * Log audit event
+ */
+export const logAuditEvent = async (providerId, eventType, description, metadata = null) => {
+  const { supabase } = await import("../../../../lib/supabaseClient");
+  
+  // Get IP and user agent (in a real app, get from request)
+  const ipAddress = null; // Would come from backend
+  const userAgent = navigator.userAgent;
+
+  await supabase.from("audit_logs").insert({
+    provider_id: providerId,
+    event_type: eventType,
+    description,
+    metadata,
+    ip_address: ipAddress,
+    user_agent: userAgent,
+  });
+};
+
+/**
  * Services list
  */
 export const servicesList = [

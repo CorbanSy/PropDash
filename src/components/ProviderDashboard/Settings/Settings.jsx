@@ -323,6 +323,12 @@ export default function Settings() {
           icon={<CreditCard size={18} />}
           label="Billing"
         />
+        <TabButton
+            active={activeTab === "audit"}
+            onClick={() => setActiveTab("audit")}
+            icon={<Shield size={18} />}
+            label="Activity Log"
+        />
       </div>
 
       {/* Tab Content */}
@@ -380,6 +386,9 @@ export default function Settings() {
         )}
         {activeTab === "billing" && (
           <BillingTab providerData={providerData} onUpdate={refreshProviderData} />
+        )}
+        {activeTab === "audit" && (
+          <AuditLog providerData={providerData} />
         )}
       </div>
     </div>
