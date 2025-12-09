@@ -1,5 +1,5 @@
 // src/components/CustomerDashboard/MyJobs/components/PostJobModal.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   X,
   Upload,
@@ -17,32 +17,51 @@ import {
 } from "lucide-react";
 import { supabase } from "../../../../lib/supabaseClient";
 
-export default function PostJobModal({ onClose, onSuccess, userId }) {
+export default function PostJobModal({ onClose, onSuccess, userId, editingJob }) {
+  const isEditing = !!editingJob; // ✅ Check if we're editing
+
+  // ✅ Initialize form data from editingJob if it exists
   const [formData, setFormData] = useState({
-    jobTitle: "",
-    category: "",
-    description: "",
-    photos: [],
-    useDefaultAddress: true,
+    jobTitle: editingJob?.service_name || "",
+    category: editingJob?.category || "",
+    description: editingJob?.notes || "",
+    photos: [], // Photos from existing job will be shown separately
+    useDefaultAddress: !editingJob?.client_address || editingJob?.client_address === null,
     address: "",
     unit: "",
     city: "",
     zipCode: "",
-    schedulingType: "flexible",
-    preferredDate: "",
-    backupDate: "",
-    allowMultiplePros: true,
-    needMaterials: false,
-    mustBeLicensed: false,
-    weekendAvailability: false,
-    sameDayAvailability: false,
-    petsInHome: false,
-    parkingInfo: "",
+    schedulingType: editingJob?.special_requirements?.schedulingType || "flexible",
+    preferredDate: editingJob?.scheduled_date ? editingJob.scheduled_date.split('T')[0] : "",
+    backupDate: editingJob?.special_requirements?.backupDate || "",
+    allowMultiplePros: editingJob?.allow_multiple_quotes ?? true,
+    needMaterials: editingJob?.special_requirements?.needMaterials || false,
+    mustBeLicensed: editingJob?.special_requirements?.mustBeLicensed || false,
+    weekendAvailability: editingJob?.special_requirements?.weekendAvailability || false,
+    sameDayAvailability: editingJob?.special_requirements?.sameDayAvailability || false,
+    petsInHome: editingJob?.special_requirements?.petsInHome || false,
+    parkingInfo: editingJob?.special_requirements?.parkingInfo || "",
     notifyViaSMS: true,
     notifyViaEmail: true,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [existingPhotos, setExistingPhotos] = useState(editingJob?.photos || []); // ✅ Track existing photos
+
+  // ✅ Parse address if editing
+  useEffect(() => {
+    if (editingJob?.client_address && !formData.useDefaultAddress) {
+      const addressParts = editingJob.client_address.split(", ");
+      if (addressParts.length >= 3) {
+        setFormData(prev => ({
+          ...prev,
+          address: addressParts[0] || "",
+          city: addressParts[1] || "",
+          zipCode: addressParts[2] || "",
+        }));
+      }
+    }
+  }, [editingJob]);
 
   const categories = [
     { id: "handyman", name: "Handyman", icon: Wrench },
@@ -57,7 +76,9 @@ export default function PostJobModal({ onClose, onSuccess, userId }) {
 
   const handlePhotoUpload = (e) => {
     const files = Array.from(e.target.files);
-    if (formData.photos.length + files.length > 5) {
+    const totalPhotos = formData.photos.length + existingPhotos.length;
+    
+    if (totalPhotos + files.length > 5) {
       setError("Maximum 5 photos allowed");
       setTimeout(() => setError(""), 3000);
       return;
@@ -77,6 +98,12 @@ export default function PostJobModal({ onClose, onSuccess, userId }) {
   const removePhoto = (index) => {
     const newPhotos = formData.photos.filter((_, i) => i !== index);
     setFormData({ ...formData, photos: newPhotos });
+  };
+
+  // ✅ Remove existing photo
+  const removeExistingPhoto = (index) => {
+    const newExistingPhotos = existingPhotos.filter((_, i) => i !== index);
+    setExistingPhotos(newExistingPhotos);
   };
 
   const handleSubmit = async (e) => {
@@ -116,8 +143,8 @@ export default function PostJobModal({ onClose, onSuccess, userId }) {
 
       if (customerError) throw customerError;
 
-      // Upload photos to Supabase Storage
-      const photoUrls = [];
+      // Upload new photos to Supabase Storage
+      const photoUrls = [...existingPhotos]; // ✅ Keep existing photos
       for (const photo of formData.photos) {
         const fileName = `${userId}/${Date.now()}-${photo.file.name}`;
         const { data, error: uploadError } = await supabase.storage
@@ -141,8 +168,7 @@ export default function PostJobModal({ onClose, onSuccess, userId }) {
         jobAddress = `${formData.address}${formData.unit ? `, ${formData.unit}` : ""}, ${formData.city}, ${formData.zipCode}`;
       }
 
-      // Create job in database
-      const { data, error: insertError } = await supabase.from("jobs").insert({
+      const jobData = {
         customer_id: userId,
         client_name: customerData?.full_name || "Customer",
         service_name: formData.jobTitle,
@@ -166,18 +192,36 @@ export default function PostJobModal({ onClose, onSuccess, userId }) {
         },
         allow_multiple_quotes: formData.allowMultiplePros,
         status: "pending",
-      });
+      };
 
-      if (insertError) {
-        console.error("Insert error details:", insertError);
-        throw insertError;
+      // ✅ Update or insert based on editing mode
+      if (isEditing) {
+        const { error: updateError } = await supabase
+          .from("jobs")
+          .update(jobData)
+          .eq("id", editingJob.id)
+          .eq("customer_id", userId); // Security: only update own jobs
+
+        if (updateError) {
+          console.error("Update error:", updateError);
+          throw updateError;
+        }
+      } else {
+        const { error: insertError } = await supabase
+          .from("jobs")
+          .insert(jobData);
+
+        if (insertError) {
+          console.error("Insert error:", insertError);
+          throw insertError;
+        }
       }
 
       onSuccess();
     } catch (err) {
       console.error("Full error:", err);
       setError(
-        err.message || "Failed to post job. Please check console for details."
+        err.message || `Failed to ${isEditing ? 'update' : 'post'} job. Please check console for details.`
       );
       setLoading(false);
     }
@@ -189,8 +233,12 @@ export default function PostJobModal({ onClose, onSuccess, userId }) {
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between z-10">
           <div>
-            <h2 className="text-2xl font-bold text-slate-900">Post a Job</h2>
-            <p className="text-sm text-slate-600">Fill out the details below</p>
+            <h2 className="text-2xl font-bold text-slate-900">
+              {isEditing ? "Edit Job" : "Post a Job"}
+            </h2>
+            <p className="text-sm text-slate-600">
+              {isEditing ? "Update job details below" : "Fill out the details below"}
+            </p>
           </div>
           <button
             onClick={onClose}
@@ -292,6 +340,32 @@ export default function PostJobModal({ onClose, onSuccess, userId }) {
               Photos (Optional)
             </h3>
 
+            {/* Show existing photos if editing */}
+            {existingPhotos.length > 0 && (
+              <div>
+                <p className="text-sm font-medium text-slate-700 mb-2">Current Photos:</p>
+                <div className="grid grid-cols-3 md:grid-cols-5 gap-3 mb-4">
+                  {existingPhotos.map((photoUrl, index) => (
+                    <div key={index} className="relative group">
+                      <img
+                        src={photoUrl}
+                        alt={`Existing ${index + 1}`}
+                        className="w-full h-24 object-cover rounded-lg"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeExistingPhoto(index)}
+                        className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Upload new photos */}
             <div className="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-teal-500 transition">
               <input
                 type="file"
@@ -309,7 +383,7 @@ export default function PostJobModal({ onClose, onSuccess, userId }) {
                   <Upload className="text-teal-600" size={24} />
                 </div>
                 <p className="font-semibold text-slate-900 mb-1">
-                  Click to upload photos (up to 5)
+                  Click to upload {isEditing ? "additional " : ""}photos (up to 5 total)
                 </p>
                 <p className="text-sm text-slate-500">
                   PNG, JPG, MP4 up to 10MB each
@@ -317,24 +391,28 @@ export default function PostJobModal({ onClose, onSuccess, userId }) {
               </label>
             </div>
 
+            {/* Show newly uploaded photos */}
             {formData.photos.length > 0 && (
-              <div className="grid grid-cols-3 md:grid-cols-5 gap-3">
-                {formData.photos.map((photo, index) => (
-                  <div key={index} className="relative group">
-                    <img
-                      src={photo.preview}
-                      alt={`Upload ${index + 1}`}
-                      className="w-full h-24 object-cover rounded-lg"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removePhoto(index)}
-                      className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition"
-                    >
-                      <X size={14} />
-                    </button>
-                  </div>
-                ))}
+              <div>
+                <p className="text-sm font-medium text-slate-700 mb-2">New Photos:</p>
+                <div className="grid grid-cols-3 md:grid-cols-5 gap-3">
+                  {formData.photos.map((photo, index) => (
+                    <div key={index} className="relative group">
+                      <img
+                        src={photo.preview}
+                        alt={`Upload ${index + 1}`}
+                        className="w-full h-24 object-cover rounded-lg"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removePhoto(index)}
+                        className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
@@ -726,12 +804,12 @@ export default function PostJobModal({ onClose, onSuccess, userId }) {
               {loading ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Posting Job...
+                  {isEditing ? "Updating Job..." : "Posting Job..."}
                 </>
               ) : (
                 <>
                   <CheckCircle2 size={20} />
-                  Post Job
+                  {isEditing ? "Update Job" : "Post Job"}
                 </>
               )}
             </button>

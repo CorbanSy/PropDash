@@ -15,6 +15,7 @@ export default function MyJobs() {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [showPostJobModal, setShowPostJobModal] = useState(false);
+  const [editingJob, setEditingJob] = useState(null); // ✅ Add edit state
 
   useEffect(() => {
     if (user) {
@@ -39,6 +40,32 @@ export default function MyJobs() {
     }
     setLoading(false);
   }
+
+  // ✅ Handle delete job
+  const handleDeleteJob = async (jobId) => {
+    try {
+      const { error } = await supabase
+        .from("jobs")
+        .delete()
+        .eq("id", jobId)
+        .eq("customer_id", user.id); // Security: only delete own jobs
+
+      if (error) throw error;
+
+      // Remove from local state
+      setJobs(jobs.filter((job) => job.id !== jobId));
+      setFilteredJobs(filteredJobs.filter((job) => job.id !== jobId));
+    } catch (error) {
+      console.error("Error deleting job:", error);
+      alert("Failed to delete job. Please try again.");
+    }
+  };
+
+  // ✅ Handle edit job
+  const handleEditJob = (job) => {
+    setEditingJob(job);
+    setShowPostJobModal(true);
+  };
 
   useEffect(() => {
     let filtered = jobs;
@@ -91,7 +118,10 @@ export default function MyJobs() {
           <p className="text-slate-600 mt-1">Track and manage your service requests</p>
         </div>
         <button
-          onClick={() => setShowPostJobModal(true)}
+          onClick={() => {
+            setEditingJob(null); // ✅ Clear editing state
+            setShowPostJobModal(true);
+          }}
           className="flex items-center gap-2 bg-gradient-to-r from-teal-600 to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-teal-700 hover:to-emerald-700 transition shadow-lg shadow-teal-500/30"
         >
           <Plus size={20} />
@@ -155,7 +185,10 @@ export default function MyJobs() {
           </p>
           {!searchQuery && statusFilter === "all" && (
             <button
-              onClick={() => setShowPostJobModal(true)}
+              onClick={() => {
+                setEditingJob(null);
+                setShowPostJobModal(true);
+              }}
               className="inline-flex items-center gap-2 bg-teal-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-teal-700 transition"
             >
               <Plus size={18} />
@@ -166,7 +199,12 @@ export default function MyJobs() {
       ) : (
         <div className="space-y-4">
           {filteredJobs.map((job) => (
-            <DetailedJobCard key={job.id} job={job} />
+            <DetailedJobCard
+              key={job.id}
+              job={job}
+              onEdit={handleEditJob} // ✅ Pass edit handler
+              onDelete={handleDeleteJob} // ✅ Pass delete handler
+            />
           ))}
         </div>
       )}
@@ -174,12 +212,17 @@ export default function MyJobs() {
       {/* Post Job Modal */}
       {showPostJobModal && (
         <PostJobModal
-          onClose={() => setShowPostJobModal(false)}
+          onClose={() => {
+            setShowPostJobModal(false);
+            setEditingJob(null); // ✅ Clear editing state on close
+          }}
           onSuccess={() => {
             setShowPostJobModal(false);
+            setEditingJob(null); // ✅ Clear editing state on success
             fetchJobs();
           }}
           userId={user.id}
+          editingJob={editingJob} // ✅ Pass job to edit
         />
       )}
     </div>
