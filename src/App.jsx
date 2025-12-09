@@ -3,9 +3,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 // Pages
 import Landing from "./pages/Landing";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import CustomerRegister from "./pages/CustomerRegister";
+import { ProfessionalLogin, ClientLogin } from "./pages/Login";
+import { ProfessionalRegister, ClientRegister } from "./pages/Register";
 import NotFound from "./pages/NotFound";
 
 // Utils
@@ -43,9 +42,10 @@ export default function App() {
       <Routes>
         {/* ========== PUBLIC ROUTES ========== */}
         <Route path="/" element={<Landing />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/customer-register" element={<CustomerRegister />} />
+        <Route path="/login/professional" element={<ProfessionalLogin />} />
+        <Route path="/login/client" element={<ClientLogin />} />
+        <Route path="/register/professional" element={<ProfessionalRegister />} />
+        <Route path="/register/client" element={<ClientRegister />} />
         <Route path="/book/:providerId" element={<BookingPage />} />
         <Route path="/quotes/:id/view" element={<ClientQuoteView />} />
         {/* ========== PROVIDER DASHBOARD ========== */}

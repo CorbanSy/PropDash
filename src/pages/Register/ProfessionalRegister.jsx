@@ -1,9 +1,8 @@
-// src/pages/Register.jsx
+// src/pages/Register/ProfessionalRegister.jsx
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { 
   Wrench, 
-  Zap, 
   Shield, 
   CheckCircle2,
   ArrowRight,
@@ -11,10 +10,12 @@ import {
   Clock,
   BarChart3
 } from "lucide-react";
-import { supabase } from "../lib/supabaseClient";
-import { theme } from "../styles/theme";
+import { supabase } from "../../lib/supabaseClient";
+import { theme } from "../../styles/theme";
+import BenefitItem from "./components/BenefitItem";
+import StatCard from "./components/StatCard";
 
-export default function Register() {
+export default function ProfessionalRegister() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
@@ -96,10 +97,8 @@ export default function Register() {
     }
 
     setLoading(false);
-
-    // 3️⃣ Show success message and redirect
     alert("Account created successfully! Please log in.");
-    navigate("/login");
+    navigate("/login/professional");
   };
 
   return (
@@ -114,16 +113,16 @@ export default function Register() {
 
         {/* Content */}
         <div className="relative z-10">
-          {/* Logo */}
-          <div className="flex items-center gap-3 mb-12">
-            <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl shadow-lg">
+          {/* Logo - Clickable */}
+          <Link to="/" className="flex items-center gap-3 mb-12 group cursor-pointer">
+            <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl shadow-lg group-hover:bg-white/30 transition">
               <Wrench className="text-white" size={32} />
             </div>
             <div>
-              <h1 className="text-white text-3xl font-bold tracking-tight">PropDash</h1>
+              <h1 className="text-white text-3xl font-bold tracking-tight group-hover:text-slate-100 transition">PropDash</h1>
               <p className="text-slate-100 text-sm font-medium">Business Management Platform</p>
             </div>
-          </div>
+          </Link>
 
           {/* Tagline */}
           <div className="mb-12">
@@ -177,16 +176,16 @@ export default function Register() {
       {/* Right Side - Registration Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-slate-50">
         <div className="w-full max-w-md">
-          {/* Mobile Logo */}
-          <div className="lg:hidden flex items-center justify-center gap-3 mb-8">
-            <div className={`${theme.gradient.provider} p-3 rounded-xl shadow-lg`}>
+          {/* Mobile Logo - Clickable */}
+          <Link to="/" className="lg:hidden flex items-center justify-center gap-3 mb-8 group cursor-pointer">
+            <div className={`${theme.gradient.provider} p-3 rounded-xl shadow-lg group-hover:shadow-xl transition`}>
               <Wrench className="text-white" size={28} />
             </div>
             <div>
-              <h1 className={theme.text.h2}>PropDash</h1>
+              <h1 className={`${theme.text.h2} group-hover:text-slate-700 transition`}>PropDash</h1>
               <p className={theme.text.caption}>Business Management</p>
             </div>
-          </div>
+          </Link>
 
           {/* Header */}
           <div className="mb-8">
@@ -324,7 +323,7 @@ export default function Register() {
 
           {/* Login Link */}
           <Link
-            to="/login"
+            to="/login/professional"
             className={theme.button.secondary + " w-full text-center justify-center"}
           >
             Sign In to Account
@@ -333,7 +332,7 @@ export default function Register() {
           {/* Customer Registration Link */}
           <p className="mt-6 text-center text-sm text-slate-600">
             Looking to hire a professional?{" "}
-            <Link to="/customer-register" className="text-teal-700 hover:underline font-semibold">
+            <Link to="/register/client" className="text-teal-700 hover:underline font-semibold">
               Register as Property Owner
             </Link>
           </p>
@@ -351,31 +350,6 @@ export default function Register() {
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-// Benefit Item Component
-function BenefitItem({ icon, title, description }) {
-  return (
-    <div className="flex items-start gap-4">
-      <div className="bg-white/20 backdrop-blur-sm p-2.5 rounded-lg flex-shrink-0 shadow-sm">
-        <div className="text-white">{icon}</div>
-      </div>
-      <div>
-        <h3 className="text-white font-semibold mb-1">{title}</h3>
-        <p className="text-slate-100 text-sm leading-relaxed">{description}</p>
-      </div>
-    </div>
-  );
-}
-
-// Stat Card Component
-function StatCard({ number, label }) {
-  return (
-    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20 shadow-sm">
-      <div className="text-2xl font-bold text-white mb-1">{number}</div>
-      <div className="text-xs text-slate-100 font-medium">{label}</div>
     </div>
   );
 }

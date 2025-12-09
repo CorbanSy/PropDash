@@ -1,21 +1,21 @@
-// src/pages/CustomerRegister.jsx
+// src/pages/Register/ClientRegister.jsx
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
-  Wrench,
   Home,
   CheckCircle2,
   ArrowRight,
   Shield,
-  Zap,
   Star,
   Clock,
   Award,
 } from "lucide-react";
-import { supabase } from "../lib/supabaseClient";
-import { theme } from "../styles/theme";
+import { supabase } from "../../lib/supabaseClient";
+import { theme } from "../../styles/theme";
+import BenefitItem from "./components/BenefitItem";
+import StatCard from "./components/StatCard";
 
-export default function CustomerRegister() {
+export default function ClientRegister() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
@@ -93,7 +93,7 @@ export default function CustomerRegister() {
 
     setLoading(false);
     alert("Account created successfully! Please log in.");
-    navigate("/login");
+    navigate("/login/client");
   };
 
   return (
@@ -106,15 +106,16 @@ export default function CustomerRegister() {
         </div>
 
         <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-12">
-            <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl shadow-lg">
+          {/* Logo - Clickable */}
+          <Link to="/" className="flex items-center gap-3 mb-12 group cursor-pointer">
+            <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl shadow-lg group-hover:bg-white/30 transition">
               <Home className="text-white" size={32} />
             </div>
             <div>
-              <h1 className="text-white text-3xl font-bold tracking-tight">PropDash</h1>
+              <h1 className="text-white text-3xl font-bold tracking-tight group-hover:text-slate-100 transition">PropDash</h1>
               <p className="text-slate-100 text-sm font-medium">Property Services Platform</p>
             </div>
-          </div>
+          </Link>
 
           <div className="mb-12">
             <h2 className="text-white text-4xl font-bold leading-tight mb-4">
@@ -165,15 +166,16 @@ export default function CustomerRegister() {
       {/* Right Side - Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-slate-50">
         <div className="w-full max-w-md">
-          <div className="lg:hidden flex items-center justify-center gap-3 mb-8">
-            <div className={`${theme.gradient.customer} p-3 rounded-xl shadow-lg`}>
+          {/* Mobile Logo - Clickable */}
+          <Link to="/" className="lg:hidden flex items-center justify-center gap-3 mb-8 group cursor-pointer">
+            <div className={`${theme.gradient.customer} p-3 rounded-xl shadow-lg group-hover:shadow-xl transition`}>
               <Home className="text-white" size={28} />
             </div>
             <div>
-              <h1 className={theme.text.h2}>PropDash</h1>
+              <h1 className={`${theme.text.h2} group-hover:text-slate-700 transition`}>PropDash</h1>
               <p className={theme.text.caption}>Property Services</p>
             </div>
-          </div>
+          </Link>
 
           <div className="mb-8">
             <h2 className={`${theme.text.h1} mb-2`}>
@@ -317,7 +319,7 @@ export default function CustomerRegister() {
           </div>
 
           <Link
-            to="/login"
+            to="/login/client"
             className={`${theme.button.secondary} w-full text-center justify-center`}
           >
             Sign In to Account
@@ -325,7 +327,7 @@ export default function CustomerRegister() {
 
           <p className="mt-6 text-center text-sm text-slate-600">
             Are you a service provider?{" "}
-            <Link to="/register" className="text-blue-700 hover:underline font-semibold">
+            <Link to="/register/professional" className="text-blue-700 hover:underline font-semibold">
               Register as Professional
             </Link>
           </p>
@@ -343,29 +345,6 @@ export default function CustomerRegister() {
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-function BenefitItem({ icon, title, description }) {
-  return (
-    <div className="flex items-start gap-4">
-      <div className="bg-white/20 backdrop-blur-sm p-2.5 rounded-lg flex-shrink-0 shadow-sm">
-        <div className="text-white">{icon}</div>
-      </div>
-      <div>
-        <h3 className="text-white font-semibold mb-1">{title}</h3>
-        <p className="text-slate-100 text-sm leading-relaxed">{description}</p>
-      </div>
-    </div>
-  );
-}
-
-function StatCard({ number, label }) {
-  return (
-    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20 shadow-sm">
-      <div className="text-2xl font-bold text-white mb-1">{number}</div>
-      <div className="text-xs text-slate-100 font-medium">{label}</div>
     </div>
   );
 }
