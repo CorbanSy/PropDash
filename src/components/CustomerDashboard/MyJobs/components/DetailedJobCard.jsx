@@ -12,26 +12,44 @@ import {
   MessageSquare,
   Edit2,
   Trash2,
+  Loader,
+  TrendingUp,
+  Image as ImageIcon,
+  X,
 } from "lucide-react";
 
 export default function DetailedJobCard({ job, onEdit, onDelete }) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [lightboxImage, setLightboxImage] = useState(null); // ✅ For photo lightbox
 
-  // ✅ CRITICAL: Add guard clause RIGHT HERE before any code that uses `job`
+  // ✅ Guard clause
   if (!job) {
     return null;
   }
 
   const getStatusColor = (status) => {
     switch (status) {
+      case "pending_dispatch":
+        return "bg-yellow-100 text-yellow-700 border-yellow-200";
+      case "dispatching":
+        return "bg-blue-100 text-blue-700 border-blue-200";
+      case "accepted":
+        return "bg-green-100 text-green-700 border-green-200";
+      case "en_route":
+        return "bg-purple-100 text-purple-700 border-purple-200";
+      case "in_progress":
+        return "bg-indigo-100 text-indigo-700 border-indigo-200";
+      case "completed":
+        return "bg-emerald-100 text-emerald-700 border-emerald-200";
+      case "cancelled":
+        return "bg-red-100 text-red-700 border-red-200";
+      case "unassigned":
+        return "bg-slate-100 text-slate-700 border-slate-200";
+      // Legacy statuses
       case "confirmed":
         return "bg-green-100 text-green-700 border-green-200";
       case "pending":
         return "bg-yellow-100 text-yellow-700 border-yellow-200";
-      case "completed":
-        return "bg-blue-100 text-blue-700 border-blue-200";
-      case "cancelled":
-        return "bg-red-100 text-red-700 border-red-200";
       default:
         return "bg-slate-100 text-slate-700 border-slate-200";
     }
@@ -39,17 +57,44 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
 
   const getStatusIcon = (status) => {
     switch (status) {
+      case "pending_dispatch":
+        return <Clock size={14} />;
+      case "dispatching":
+        return <Loader size={14} className="animate-spin" />;
+      case "accepted":
       case "confirmed":
         return <CheckCircle2 size={14} />;
-      case "pending":
-        return <Clock size={14} />;
+      case "en_route":
+        return <TrendingUp size={14} />;
+      case "in_progress":
+        return <Loader size={14} />;
       case "completed":
         return <CheckCircle2 size={14} />;
       case "cancelled":
         return <XCircle size={14} />;
+      case "unassigned":
+        return <AlertCircle size={14} />;
+      case "pending":
+        return <Clock size={14} />;
       default:
         return <AlertCircle size={14} />;
     }
+  };
+
+  const getStatusLabel = (status) => {
+    const labels = {
+      pending_dispatch: "Pending Dispatch",
+      dispatching: "Finding Provider",
+      accepted: "Accepted",
+      en_route: "En Route",
+      in_progress: "In Progress",
+      completed: "Completed",
+      cancelled: "Cancelled",
+      unassigned: "Unassigned",
+      confirmed: "Confirmed",
+      pending: "Pending",
+    };
+    return labels[status] || status.toUpperCase();
   };
 
   const formatDate = (dateString) => {
@@ -67,8 +112,10 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
     setShowDeleteConfirm(false);
   };
 
-  // Only allow editing/deleting pending jobs
-  const canEdit = job.status === "pending";
+  // ✅ Allow editing/deleting for pending_dispatch and unassigned jobs
+  const canEdit = job.status === "pending_dispatch" || 
+                  job.status === "unassigned" || 
+                  job.status === "pending";
 
   return (
     <>
@@ -112,7 +159,7 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
             )}`}
           >
             {getStatusIcon(job.status)}
-            {job.status.toUpperCase()}
+            {getStatusLabel(job.status)}
           </span>
         </div>
 
@@ -122,20 +169,59 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
           </div>
         )}
 
+        {/* ✅✅✅ PHOTO GALLERY ✅✅✅ */}
+        {job.photos && job.photos.length > 0 && (
+          <div className="mb-4">
+            <div className="flex items-center gap-2 mb-2">
+              <ImageIcon size={16} className="text-slate-600" />
+              <span className="text-sm font-medium text-slate-700">
+                Photos ({job.photos.length})
+              </span>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
+              {job.photos.map((photo, index) => (
+                <button
+                  key={index}
+                  onClick={() => setLightboxImage(photo)}
+                  className="relative aspect-square rounded-lg overflow-hidden border-2 border-slate-200 hover:border-teal-500 transition group"
+                >
+                  <img
+                    src={photo}
+                    alt={`Job photo ${index + 1}`}
+                    className="w-full h-full object-cover group-hover:scale-110 transition"
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition flex items-center justify-center">
+                    <ImageIcon className="text-white opacity-0 group-hover:opacity-100 transition" size={24} />
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Category Badge */}
+        {job.category && (
+          <div className="mb-4">
+            <span className="inline-block bg-teal-100 text-teal-700 px-3 py-1 rounded-full text-xs font-medium capitalize">
+              {job.category}
+            </span>
+          </div>
+        )}
+
         <div className="flex flex-wrap gap-2 pt-4 border-t border-slate-200">
           {/* Edit & Delete buttons (only for pending jobs) */}
           {canEdit && (
             <>
               <button
                 onClick={() => onEdit(job)}
-                className="flex items-center gap-2 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg font-medium hover:bg-slate-50 transition"
+                className="flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-300 text-blue-700 rounded-lg font-medium hover:bg-blue-100 transition"
               >
                 <Edit2 size={16} />
                 Edit
               </button>
               <button
                 onClick={() => setShowDeleteConfirm(true)}
-                className="flex items-center gap-2 px-4 py-2 border border-red-300 text-red-700 rounded-lg font-medium hover:bg-red-50 transition"
+                className="flex items-center gap-2 px-4 py-2 bg-red-50 border border-red-300 text-red-700 rounded-lg font-medium hover:bg-red-100 transition"
               >
                 <Trash2 size={16} />
                 Delete
@@ -160,6 +246,27 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
           )}
         </div>
       </div>
+
+      {/* ✅✅✅ PHOTO LIGHTBOX ✅✅✅ */}
+      {lightboxImage && (
+        <div 
+          className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4"
+          onClick={() => setLightboxImage(null)}
+        >
+          <button
+            onClick={() => setLightboxImage(null)}
+            className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition"
+          >
+            <X size={24} />
+          </button>
+          <img
+            src={lightboxImage}
+            alt="Job photo full size"
+            className="max-w-full max-h-full object-contain rounded-lg"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (

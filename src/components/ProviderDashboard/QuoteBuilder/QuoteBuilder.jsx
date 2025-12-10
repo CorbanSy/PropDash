@@ -29,18 +29,35 @@ export default function QuoteBuilder() {
   const [showNewQuoteModal, setShowNewQuoteModal] = useState(false);
 
   useEffect(() => {
-    fetchQuotes();
-  }, [user]);
+        if (user) {
+        fetchQuotes();
+      }
+    }, [user]);
 
   const fetchQuotes = async () => {
-    const { data } = await supabase
-      .from("quotes")
-      .select("*")
-      .eq("provider_id", user.id)
-      .order("created_at", { ascending: false });
+    // ✅ Guard clause - return early if no user
+    if (!user) {
+      setLoading(false);
+      return;
+    }
 
-    if (data) setQuotes(data);
-    setLoading(false);
+    try {
+      const { data, error } = await supabase
+        .from("quotes")
+        .select("*")
+        .eq("provider_id", user.id)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Error fetching quotes:", error);
+      } else if (data) {
+        setQuotes(data);
+      }
+    } catch (err) {
+      console.error("Exception fetching quotes:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Filter quotes

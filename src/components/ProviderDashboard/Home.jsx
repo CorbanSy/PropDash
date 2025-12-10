@@ -25,13 +25,21 @@ import { Link } from "react-router-dom";
 import { supabase } from "../../lib/supabaseClient";
 import useAuth from "../../hooks/useAuth";
 import { theme } from "../../styles/theme";
+import { useJobOfferListener } from "../../hooks/useJobOfferListener";
+import JobOfferModal from "./JobOfferModal";
 
 export default function Home() {
   const { user } = useAuth();
   const [jobs, setJobs] = useState([]);
   const [quotes, setQuotes] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const {
+      currentOffer,
+      isListening,
+      acceptOffer,
+      declineOffer,
+      handleTimeout,
+  } = useJobOfferListener(user?.id);
   useEffect(() => {
     async function fetchData() {
       // Fetch jobs
@@ -133,6 +141,20 @@ export default function Home() {
 
   return (
     <div className="space-y-6 pb-20 sm:pb-6">
+      {/* ✅ ADD THIS: Listening Indicator */}
+      {isListening && (
+        <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 flex items-center gap-3">
+          <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+          <div className="flex-1">
+            <p className="text-sm text-blue-900 font-semibold">
+              🔔 Online & Listening for Job Offers
+            </p>
+            <p className="text-xs text-blue-700">
+              You'll receive instant notifications when new jobs are available
+            </p>
+          </div>
+        </div>
+      )}
       {/* ==================== HERO: TODAY AT A GLANCE ==================== */}
       <div className={`${theme.gradient.providerLight} rounded-2xl p-8 text-white`}>
         <div className="flex items-start justify-between mb-6">
@@ -358,6 +380,14 @@ export default function Home() {
           </div>
         </div>
       </div>
+      {currentOffer && (
+        <JobOfferModal
+          jobOffer={currentOffer}
+          onAccept={acceptOffer}
+          onDecline={declineOffer}
+          onTimeout={handleTimeout}
+        />
+      )}
     </div>
   );
 }

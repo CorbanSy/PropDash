@@ -36,7 +36,7 @@ export default function CustomerDashboardLayout() {
         {/* Quick Action */}
         <div className="mt-8">
           <NavLink
-            to="/customer/post-job"
+            to="/customer/jobs"
             className="flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-4 py-3 rounded-lg font-semibold hover:from-green-700 hover:to-emerald-700 transition shadow-lg shadow-green-500/30"
           >
             <Plus size={18} />

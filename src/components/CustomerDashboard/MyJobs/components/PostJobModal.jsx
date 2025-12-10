@@ -191,7 +191,6 @@ export default function PostJobModal({ onClose, onSuccess, userId, editingJob })
           backupDate: formData.backupDate,
         },
         allow_multiple_quotes: formData.allowMultiplePros,
-        status: "pending",
       };
 
       // ✅ Update or insert based on editing mode
@@ -206,18 +205,58 @@ export default function PostJobModal({ onClose, onSuccess, userId, editingJob })
           console.error("Update error:", updateError);
           throw updateError;
         }
+
+        // Success message for edit
+        alert("Job updated successfully!");
+        onSuccess();
       } else {
-        const { error: insertError } = await supabase
+        // ✅ INSERT NEW JOB
+        const { data: insertedJob, error: insertError } = await supabase
           .from("jobs")
-          .insert(jobData);
+          .insert(jobData)
+          .select()
+          .single();
 
         if (insertError) {
           console.error("Insert error:", insertError);
           throw insertError;
         }
-      }
 
-      onSuccess();
+        // ✅✅✅ TRIGGER DISPATCH SYSTEM ✅✅✅
+        if (insertedJob) {
+          try {
+            console.log("🚀 Dispatching job to providers...", insertedJob.id);
+            
+            const { data: dispatchResult, error: dispatchError } = await supabase
+              .rpc('dispatch_job_to_providers', { p_job_id: insertedJob.id });
+            
+            if (dispatchError) {
+              console.error("⚠️ Dispatch error:", dispatchError);
+              // Don't fail the job creation, just log the error
+              alert("Job posted! However, there was an issue notifying providers. Our team will follow up.");
+            } else {
+              console.log("✅ Dispatch result:", dispatchResult);
+              
+              if (dispatchResult && dispatchResult.length > 0) {
+                const { total_providers_found, queue_created } = dispatchResult[0];
+                
+                if (total_providers_found === 0) {
+                  alert("Job posted successfully! However, no providers are currently available in your area. We'll notify you when providers become available.");
+                } else {
+                  alert(`🎉 Job posted successfully! We're notifying ${total_providers_found} qualified providers in your area.`);
+                }
+              } else {
+                alert("Job posted successfully!");
+              }
+            }
+          } catch (dispatchErr) {
+            console.error("⚠️ Dispatch exception:", dispatchErr);
+            alert("Job posted! However, there was an issue with the dispatch system. Our team will follow up.");
+          }
+        }
+
+        onSuccess();
+      }
     } catch (err) {
       console.error("Full error:", err);
       setError(

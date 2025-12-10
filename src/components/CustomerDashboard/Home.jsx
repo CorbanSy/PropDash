@@ -34,7 +34,7 @@ export default function CustomerHome() {
         .from("customers")
         .select("*")
         .eq("id", user.id)
-        .single();
+        .maybeSingle();
 
       if (customerData) setCustomer(customerData);
 

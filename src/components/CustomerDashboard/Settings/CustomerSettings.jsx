@@ -56,46 +56,127 @@ export default function CustomerSettings() {
   // Fetch customer data
   useEffect(() => {
     async function fetchCustomer() {
-      setLoading(true);
-      const { data } = await supabase
-        .from("customers")
-        .select("*")
-        .eq("id", user.id)
-        .single();
+      if (!user) return;
 
-      if (data) {
-        setCustomerData(data);
+      setLoading(true);
+      
+      try {
+        // ✅ Try to fetch existing customer
+        const { data, error: fetchError } = await supabase
+          .from("customers")
+          .select("*")
+          .eq("id", user.id)
+          .maybeSingle();
+
+        if (fetchError) {
+          console.error("Error fetching customer:", fetchError);
+        }
+
+        // ✅ If no customer record exists, try to create one
+        if (!data && user) {
+          console.log("No customer record found, attempting to create one...");
+          
+          const { data: newCustomer, error: insertError } = await supabase
+            .from("customers")
+            .upsert(
+              {
+                id: user.id,
+                full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Customer',
+                phone: user.user_metadata?.phone || "",
+                address: "",
+                city: "",
+                state: "",
+                zip_code: "",
+              },
+              { 
+                onConflict: 'id',
+                ignoreDuplicates: false 
+              }
+            )
+            .select()
+            .single();
+
+          if (insertError) {
+            console.error("Error upserting customer:", insertError);
+            
+            // ✅ If upsert failed, try one more fetch (record might exist but wasn't visible)
+            const { data: retryData, error: retryError } = await supabase
+              .from("customers")
+              .select("*")
+              .eq("id", user.id)
+              .single();
+            
+            if (retryError) {
+              console.error("Retry fetch error:", retryError);
+              setError("Failed to load customer data");
+            } else {
+              setCustomerData(retryData || {
+                full_name: "",
+                phone: "",
+                address: "",
+                city: "",
+                state: "",
+                zip_code: "",
+              });
+            }
+          } else {
+            setCustomerData(newCustomer);
+          }
+        } else if (data) {
+          setCustomerData(data);
+        } else {
+          // ✅ No data and no errors - use defaults
+          setCustomerData({
+            full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Customer',
+            phone: user.user_metadata?.phone || "",
+            address: "",
+            city: "",
+            state: "",
+            zip_code: "",
+          });
+        }
+      } catch (err) {
+        console.error("Exception fetching customer:", err);
+        setError("Failed to load customer data");
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
+    
     if (user) fetchCustomer();
   }, [user]);
-
   // Update customer data
   const handleSaveProfile = async () => {
     setSaving(true);
     setError("");
     setSuccess("");
 
-    const { error: updateError } = await supabase
-      .from("customers")
-      .update({
-        full_name: customerData.full_name,
-        phone: customerData.phone,
-        address: customerData.address,
-        city: customerData.city,
-        state: customerData.state,
-        zip_code: customerData.zip_code,
-      })
-      .eq("id", user.id);
+    try {
+      const { error: updateError } = await supabase
+        .from("customers")
+        .update({
+          full_name: customerData.full_name,
+          phone: customerData.phone,
+          address: customerData.address,
+          city: customerData.city,
+          state: customerData.state,
+          zip_code: customerData.zip_code,
+        })
+        .eq("id", user.id);
 
-    if (updateError) {
+      if (updateError) {
+        setError("Failed to update profile");
+        console.error("Update error:", updateError);
+      } else {
+        setSuccess("Profile updated successfully!");
+        setTimeout(() => setSuccess(""), 3000);
+      }
+    } catch (err) {
+      console.error("Exception updating profile:", err);
       setError("Failed to update profile");
-    } else {
-      setSuccess("Profile updated successfully!");
-      setTimeout(() => setSuccess(""), 3000);
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   };
 
   // Change password
@@ -114,16 +195,21 @@ export default function CustomerSettings() {
       return;
     }
 
-    const { error: updateError } = await supabase.auth.updateUser({
-      password: passwordData.newPassword,
-    });
+    try {
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: passwordData.newPassword,
+      });
 
-    if (updateError) {
-      setError(updateError.message);
-    } else {
-      setSuccess("Password changed successfully!");
-      setPasswordData({ newPassword: "", confirmPassword: "" });
-      setTimeout(() => setSuccess(""), 3000);
+      if (updateError) {
+        setError(updateError.message);
+      } else {
+        setSuccess("Password changed successfully!");
+        setPasswordData({ newPassword: "", confirmPassword: "" });
+        setTimeout(() => setSuccess(""), 3000);
+      }
+    } catch (err) {
+      console.error("Exception changing password:", err);
+      setError("Failed to change password");
     }
   };
 
@@ -132,7 +218,7 @@ export default function CustomerSettings() {
     const confirmed = window.confirm("Are you sure you want to log out?");
     if (confirmed) {
       await supabase.auth.signOut();
-      navigate("/login");
+      navigate("/"); // ✅ Navigate to landing page (or your actual login route)
     }
   };
 
@@ -140,6 +226,14 @@ export default function CustomerSettings() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-slate-600">Loading settings...</div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-slate-600">Please log in to view settings.</div>
       </div>
     );
   }
@@ -180,7 +274,7 @@ export default function CustomerSettings() {
           <div>
             <p className="text-green-100 text-sm font-medium mb-2">Account</p>
             <h2 className="text-2xl font-bold mb-1">
-              {customerData.full_name || "Customer"}
+              {customerData.full_name || user.email?.split('@')[0] || "Customer"}
             </h2>
             <p className="text-green-100 text-sm">{user.email}</p>
             <div className="flex items-center gap-4 mt-4">

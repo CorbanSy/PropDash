@@ -15,7 +15,7 @@ export default function MyJobs() {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [showPostJobModal, setShowPostJobModal] = useState(false);
-  const [editingJob, setEditingJob] = useState(null); // ✅ Add edit state
+  const [editingJob, setEditingJob] = useState(null);
 
   useEffect(() => {
     if (user) {
@@ -30,29 +30,36 @@ export default function MyJobs() {
 
     const { data, error } = await supabase
       .from("jobs")
-      .select("*, providers(business_name, base_rate)")
+      .select(`
+        *,
+        providers!jobs_provider_id_fkey(business_name, base_rate)
+      `)
       .eq("customer_id", user.id)
       .order("created_at", { ascending: false });
 
+    if (error) {
+      console.error("Error fetching jobs:", error);
+    }
+
     if (data) {
+      console.log("📋 Fetched jobs:", data); // ✅ Debug log
       setJobs(data);
       setFilteredJobs(data);
     }
     setLoading(false);
   }
 
-  // ✅ Handle delete job
+  // Handle delete job
   const handleDeleteJob = async (jobId) => {
     try {
       const { error } = await supabase
         .from("jobs")
         .delete()
         .eq("id", jobId)
-        .eq("customer_id", user.id); // Security: only delete own jobs
+        .eq("customer_id", user.id);
 
       if (error) throw error;
 
-      // Remove from local state
       setJobs(jobs.filter((job) => job.id !== jobId));
       setFilteredJobs(filteredJobs.filter((job) => job.id !== jobId));
     } catch (error) {
@@ -61,7 +68,7 @@ export default function MyJobs() {
     }
   };
 
-  // ✅ Handle edit job
+  // Handle edit job
   const handleEditJob = (job) => {
     setEditingJob(job);
     setShowPostJobModal(true);
@@ -87,11 +94,16 @@ export default function MyJobs() {
     setFilteredJobs(filtered);
   }, [statusFilter, searchQuery, jobs]);
 
+  // ✅✅✅ FIXED: Update status filters to match new dispatch system
   const activeJobs = filteredJobs.filter(
-    (j) => j.status === "pending" || j.status === "confirmed"
+    (j) => j.status === "pending_dispatch" || 
+          j.status === "dispatching" || 
+          j.status === "accepted" || 
+          j.status === "en_route" || 
+          j.status === "in_progress"
   );
   const completedJobs = filteredJobs.filter((j) => j.status === "completed");
-  const cancelledJobs = filteredJobs.filter((j) => j.status === "cancelled");
+  const cancelledJobs = filteredJobs.filter((j) => j.status === "cancelled" || j.status === "unassigned");
 
   if (loading) {
     return (
@@ -119,7 +131,7 @@ export default function MyJobs() {
         </div>
         <button
           onClick={() => {
-            setEditingJob(null); // ✅ Clear editing state
+            setEditingJob(null);
             setShowPostJobModal(true);
           }}
           className="flex items-center gap-2 bg-gradient-to-r from-teal-600 to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-teal-700 hover:to-emerald-700 transition shadow-lg shadow-teal-500/30"
@@ -162,9 +174,13 @@ export default function MyJobs() {
               className="border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
             >
               <option value="all">All Status</option>
-              <option value="pending">Pending</option>
-              <option value="confirmed">Confirmed</option>
+              <option value="pending_dispatch">Pending Dispatch</option>
+              <option value="dispatching">Dispatching</option>
+              <option value="accepted">Accepted</option>
+              <option value="en_route">En Route</option>
+              <option value="in_progress">In Progress</option>
               <option value="completed">Completed</option>
+              <option value="unassigned">Unassigned</option>
               <option value="cancelled">Cancelled</option>
             </select>
           </div>
@@ -202,8 +218,8 @@ export default function MyJobs() {
             <DetailedJobCard
               key={job.id}
               job={job}
-              onEdit={handleEditJob} // ✅ Pass edit handler
-              onDelete={handleDeleteJob} // ✅ Pass delete handler
+              onEdit={handleEditJob}
+              onDelete={handleDeleteJob}
             />
           ))}
         </div>
@@ -214,15 +230,15 @@ export default function MyJobs() {
         <PostJobModal
           onClose={() => {
             setShowPostJobModal(false);
-            setEditingJob(null); // ✅ Clear editing state on close
+            setEditingJob(null);
           }}
           onSuccess={() => {
             setShowPostJobModal(false);
-            setEditingJob(null); // ✅ Clear editing state on success
+            setEditingJob(null);
             fetchJobs();
           }}
           userId={user.id}
-          editingJob={editingJob} // ✅ Pass job to edit
+          editingJob={editingJob}
         />
       )}
     </div>
