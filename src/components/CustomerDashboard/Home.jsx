@@ -14,6 +14,8 @@ import {
   DollarSign,
   ArrowRight,
   MapPin,
+  MessageSquare,
+  FileText,
 } from "lucide-react";
 import { supabase } from "../../lib/supabaseClient";
 import useAuth from "../../hooks/useAuth";
@@ -23,6 +25,7 @@ export default function CustomerHome() {
   const navigate = useNavigate();
   const [customer, setCustomer] = useState(null);
   const [jobs, setJobs] = useState([]);
+  const [quotes, setQuotes] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -41,12 +44,40 @@ export default function CustomerHome() {
       // Get customer jobs
       const { data: jobsData } = await supabase
         .from("jobs")
-        .select("*, providers(business_name)")
+        .select("*")
         .eq("customer_id", user.id)
-        .order("created_at", { ascending: false })
-        .limit(5);
+        .order("created_at", { ascending: false });
 
-      if (jobsData) setJobs(jobsData);
+      // Get providers for jobs
+      if (jobsData && jobsData.length > 0) {
+        const providerIds = [...new Set(jobsData.map(j => j.provider_id).filter(Boolean))];
+        
+        if (providerIds.length > 0) {
+          const { data: providersData } = await supabase
+            .from("providers")
+            .select("id, business_name")
+            .in("id", providerIds);
+
+          // Map provider names to jobs
+          const jobsWithProviders = jobsData.map(job => ({
+            ...job,
+            provider_name: providersData?.find(p => p.id === job.provider_id)?.business_name || null
+          }));
+
+          setJobs(jobsWithProviders);
+        } else {
+          setJobs(jobsData);
+        }
+      }
+
+      // Get quotes for customer
+      const { data: quotesData } = await supabase
+        .from("quotes")
+        .select("*")
+        .eq("customer_id", user.id)
+        .order("created_at", { ascending: false });
+
+      if (quotesData) setQuotes(quotesData);
 
       setLoading(false);
     }
@@ -64,6 +95,7 @@ export default function CustomerHome() {
     (j) => j.status === "pending" || j.status === "confirmed"
   );
   const completedJobs = jobs.filter((j) => j.status === "completed");
+  const pendingQuotes = quotes.filter(q => q.status === "pending");
 
   if (loading) {
     return (
@@ -86,7 +118,7 @@ export default function CustomerHome() {
           </p>
         </div>
         <button
-          onClick={() => navigate("/customer/jobs")}
+          onClick={() => navigate("/customer/new-job")}
           className="hidden sm:flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-4 py-2.5 rounded-lg font-semibold hover:from-green-700 hover:to-emerald-700 transition shadow-lg shadow-green-500/30"
         >
           <Plus size={18} />
@@ -95,7 +127,7 @@ export default function CustomerHome() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <StatCard
           icon={<Clock className="text-orange-600" />}
           label="Active Jobs"
@@ -109,12 +141,43 @@ export default function CustomerHome() {
           color="green"
         />
         <StatCard
-          icon={<Star className="text-blue-600" />}
-          label="Saved Pros"
-          value={0}
+          icon={<FileText className="text-purple-600" />}
+          label="Pending Quotes"
+          value={pendingQuotes.length}
+          color="purple"
+        />
+        <StatCard
+          icon={<Calendar className="text-blue-600" />}
+          label="Total Jobs"
+          value={jobs.length}
           color="blue"
         />
       </div>
+
+      {/* Pending Quotes Alert */}
+      {pendingQuotes.length > 0 && (
+        <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-xl p-5">
+          <div className="flex items-start gap-3">
+            <div className="bg-amber-100 p-2 rounded-lg">
+              <AlertCircle className="text-amber-700" size={20} />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-amber-900 mb-1">
+                You have {pendingQuotes.length} quote{pendingQuotes.length !== 1 ? 's' : ''} waiting for your review
+              </h3>
+              <p className="text-sm text-amber-700 mb-3">
+                Review and accept quotes to schedule your services
+              </p>
+              <button
+                onClick={() => navigate("/customer/jobs")}
+                className="text-sm bg-amber-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-amber-700 transition"
+              >
+                Review Quotes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -132,7 +195,7 @@ export default function CustomerHome() {
               Post a job and get quotes from verified pros in your area
             </p>
             <button
-              onClick={() => navigate("/customer/jobs")}
+              onClick={() => navigate("/customer/new-job")}
               className="bg-white text-green-600 px-6 py-2.5 rounded-lg font-semibold hover:bg-green-50 transition flex items-center gap-2"
             >
               Post a Job
@@ -190,7 +253,7 @@ export default function CustomerHome() {
               Post your first job to get started
             </p>
             <button
-              onClick={() => navigate("/customer/jobs")}
+              onClick={() => navigate("/customer/new-job")}
               className="bg-green-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-green-700 transition inline-flex items-center gap-2"
             >
               <Plus size={18} />
@@ -199,8 +262,8 @@ export default function CustomerHome() {
           </div>
         ) : (
           <div className="space-y-3">
-            {jobs.map((job) => (
-              <JobCard key={job.id} job={job} />
+            {jobs.slice(0, 5).map((job) => (
+              <JobCard key={job.id} job={job} navigate={navigate} />
             ))}
           </div>
         )}
@@ -228,6 +291,7 @@ function StatCard({ icon, label, value, color }) {
     orange: "bg-orange-50 border-orange-200",
     green: "bg-green-50 border-green-200",
     blue: "bg-blue-50 border-blue-200",
+    purple: "bg-purple-50 border-purple-200",
   };
 
   return (
@@ -242,7 +306,7 @@ function StatCard({ icon, label, value, color }) {
 }
 
 // Job Card Component
-function JobCard({ job }) {
+function JobCard({ job, navigate }) {
   const getStatusColor = (status) => {
     switch (status) {
       case "confirmed":
@@ -264,22 +328,27 @@ function JobCard({ job }) {
       month: "short",
       day: "numeric",
       year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
     });
   };
 
   return (
-    <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition">
+    <div 
+      className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition cursor-pointer"
+      onClick={() => navigate("/customer/jobs")}
+    >
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <h3 className="font-semibold text-slate-900 text-lg mb-1">
             {job.service_name || "Service Request"}
           </h3>
-          {job.providers?.business_name && (
+          {job.provider_name && (
             <p className="text-sm text-slate-600 mb-2">
-              Provider: {job.providers.business_name}
+              Provider: {job.provider_name}
             </p>
           )}
-          <div className="flex items-center gap-4 text-sm text-slate-600">
+          <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600">
             {job.scheduled_date && (
               <span className="flex items-center gap-1.5">
                 <Calendar size={14} />
@@ -289,26 +358,53 @@ function JobCard({ job }) {
             {job.price && (
               <span className="flex items-center gap-1.5">
                 <DollarSign size={14} />
-                ${(job.price / 100).toFixed(0)}
+                ${(job.price / 100).toFixed(2)}
+              </span>
+            )}
+            {job.address && (
+              <span className="flex items-center gap-1.5">
+                <MapPin size={14} />
+                {job.address}
               </span>
             )}
           </div>
         </div>
         <span
-          className={`text-xs px-3 py-1 rounded-full font-semibold border ${getStatusColor(
+          className={`text-xs px-3 py-1 rounded-full font-semibold border whitespace-nowrap ${getStatusColor(
             job.status
           )}`}
         >
-          {job.status.toUpperCase()}
+          {job.status?.toUpperCase()}
         </span>
       </div>
       {job.notes && (
         <p className="text-sm text-slate-600 mb-3 line-clamp-2">{job.notes}</p>
       )}
-      <button className="text-sm text-green-600 hover:text-green-700 font-medium flex items-center gap-1">
-        View Details
-        <ArrowRight size={14} />
-      </button>
+      <div className="flex items-center gap-2">
+        <button 
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate("/customer/jobs");
+          }}
+          className="text-sm text-green-600 hover:text-green-700 font-medium flex items-center gap-1"
+        >
+          View Details
+          <ArrowRight size={14} />
+        </button>
+        {job.provider_id && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate("/customer/messages", { 
+                state: { providerId: job.provider_id, jobId: job.id } 
+              });
+            }}
+            className="ml-auto p-2 bg-slate-100 rounded-lg hover:bg-slate-200 transition"
+          >
+            <MessageSquare size={16} className="text-slate-600" />
+          </button>
+        )}
+      </div>
     </div>
   );
 }

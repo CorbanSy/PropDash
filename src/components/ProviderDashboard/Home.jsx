@@ -21,7 +21,7 @@ import {
   Zap,
   ArrowRight,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabaseClient";
 import useAuth from "../../hooks/useAuth";
 import { theme } from "../../styles/theme";
@@ -30,6 +30,7 @@ import JobOfferModal from "./JobOfferModal";
 
 export default function Home() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [jobs, setJobs] = useState([]);
   const [quotes, setQuotes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -229,13 +230,24 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <button className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition">
+                <button 
+                  onClick={() => window.location.href = `tel:${nextAppointment.client_phone}`}
+                  className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition"
+                >
                   <Phone size={18} />
                 </button>
-                <button className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition">
+                <button 
+                  onClick={() => navigate('/provider/messages', { 
+                    state: { customerId: nextAppointment.customer_id, jobId: nextAppointment.id } 
+                  })}
+                  className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition"
+                >
                   <MessageSquare size={18} />
                 </button>
-                <button className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition">
+                <button 
+                  onClick={() => window.open(`https://maps.google.com/?q=${encodeURIComponent(nextAppointment.address || nextAppointment.client_name)}`, '_blank')}
+                  className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition"
+                >
                   <MapPin size={18} />
                 </button>
               </div>
@@ -427,6 +439,8 @@ function QuickActionButton({ to, icon, label, color }) {
 }
 
 function UpcomingJobCard({ job }) {
+  const navigate = useNavigate();
+  
   const getStatusBadge = (status) => {
     switch (status) {
       case "confirmed":
@@ -438,6 +452,13 @@ function UpcomingJobCard({ job }) {
       default:
         return theme.badge.neutral;
     }
+  };
+
+  const handleMessageClick = () => {
+    // Navigate to messages and pass the customer_id to open that conversation
+    navigate('/provider/messages', { 
+      state: { customerId: job.customer_id, jobId: job.id } 
+    });
   };
 
   return (
@@ -479,13 +500,31 @@ function UpcomingJobCard({ job }) {
         <div className="text-right">
           <p className="text-lg font-bold text-slate-900">${(job.price / 100).toFixed(0)}</p>
           <div className="flex gap-1 mt-2">
-            <button className="p-1.5 bg-slate-100 rounded hover:bg-slate-200 transition">
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                window.location.href = `tel:${job.client_phone}`;
+              }}
+              className="p-1.5 bg-slate-100 rounded hover:bg-slate-200 transition"
+            >
               <Phone size={14} className="text-slate-600" />
             </button>
-            <button className="p-1.5 bg-slate-100 rounded hover:bg-slate-200 transition">
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                handleMessageClick();
+              }}
+              className="p-1.5 bg-slate-100 rounded hover:bg-slate-200 transition"
+            >
               <MessageSquare size={14} className="text-slate-600" />
             </button>
-            <button className="p-1.5 bg-slate-100 rounded hover:bg-slate-200 transition">
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(`https://maps.google.com/?q=${encodeURIComponent(job.address || job.client_name)}`, '_blank');
+              }}
+              className="p-1.5 bg-slate-100 rounded hover:bg-slate-200 transition"
+            >
               <MapPin size={14} className="text-slate-600" />
             </button>
           </div>

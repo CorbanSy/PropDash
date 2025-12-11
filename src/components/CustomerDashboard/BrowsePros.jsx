@@ -16,6 +16,7 @@ import {
   Users,
   ChevronDown,
   X,
+  AlertTriangle,
 } from "lucide-react";
 import { supabase } from "../../lib/supabaseClient";
 
@@ -26,6 +27,7 @@ export default function BrowsePros() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedLicense, setSelectedLicense] = useState("all");
+  const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -35,7 +37,7 @@ export default function BrowsePros() {
       const { data, error } = await supabase
         .from("providers")
         .select("*")
-        .eq("verification_status", "verified") // Only show verified providers
+        .order("verification_status", { ascending: false }) // Verified first
         .order("created_at", { ascending: false });
 
       if (data) {
@@ -56,7 +58,17 @@ export default function BrowsePros() {
       filtered = filtered.filter((provider) =>
         provider.business_name
           ?.toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        provider.service_area
+          ?.toLowerCase()
           .includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // Verified only filter
+    if (verifiedOnly) {
+      filtered = filtered.filter(
+        (provider) => provider.verification_status === "verified"
       );
     }
 
@@ -68,17 +80,20 @@ export default function BrowsePros() {
     }
 
     setFilteredProviders(filtered);
-  }, [searchQuery, selectedLicense, providers]);
+  }, [searchQuery, selectedLicense, verifiedOnly, providers]);
 
   const categories = [
     { id: "all", name: "All Services", icon: "🏠", count: providers.length },
-    { id: "handyman", name: "Handyman", icon: "🔧", count: 45 },
-    { id: "plumbing", name: "Plumbing", icon: "🚰", count: 32 },
-    { id: "electrical", name: "Electrical", icon: "⚡", count: 28 },
-    { id: "landscaping", name: "Landscaping", icon: "🌳", count: 38 },
-    { id: "painting", name: "Painting", icon: "🎨", count: 22 },
-    { id: "carpentry", name: "Carpentry", icon: "🪚", count: 19 },
+    { id: "handyman", name: "Handyman", icon: "🔧", count: providers.filter(p => p.service_type?.includes('handyman')).length },
+    { id: "plumbing", name: "Plumbing", icon: "🚰", count: providers.filter(p => p.service_type?.includes('plumbing')).length },
+    { id: "electrical", name: "Electrical", icon: "⚡", count: providers.filter(p => p.service_type?.includes('electrical')).length },
+    { id: "landscaping", name: "Landscaping", icon: "🌳", count: providers.filter(p => p.service_type?.includes('landscaping')).length },
+    { id: "painting", name: "Painting", icon: "🎨", count: providers.filter(p => p.service_type?.includes('painting')).length },
+    { id: "carpentry", name: "Carpentry", icon: "🪚", count: providers.filter(p => p.service_type?.includes('carpentry')).length },
   ];
+
+  const verifiedCount = providers.filter(p => p.verification_status === "verified").length;
+  const totalCount = providers.length;
 
   if (loading) {
     return (
@@ -103,17 +118,17 @@ export default function BrowsePros() {
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 right-10 w-40 h-40 bg-white rounded-full blur-3xl"></div>
         </div>
-        <div className="relative z-10 grid grid-cols-1 md:grid-cols-4 gap-6">
-          <StatBadge icon={<Users size={20} />} value="500+" label="Active Pros" />
+        <div className="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-6">
+          <StatBadge icon={<Users size={20} />} value={totalCount} label="Total Pros" />
+          <StatBadge
+            icon={<CheckCircle2 size={20} />}
+            value={verifiedCount}
+            label="Verified Pros"
+          />
           <StatBadge
             icon={<Star size={20} />}
             value="4.9★"
             label="Avg Rating"
-          />
-          <StatBadge
-            icon={<CheckCircle2 size={20} />}
-            value="95%"
-            label="Completion Rate"
           />
           <StatBadge
             icon={<TrendingUp size={20} />}
@@ -134,7 +149,7 @@ export default function BrowsePros() {
             />
             <input
               type="text"
-              placeholder="Search by business name..."
+              placeholder="Search by business name or location..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
@@ -148,10 +163,26 @@ export default function BrowsePros() {
           >
             <Filter size={18} />
             Filters
+            {(verifiedOnly || selectedLicense !== "all") && (
+              <span className="bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full">
+                {(verifiedOnly ? 1 : 0) + (selectedLicense !== "all" ? 1 : 0)}
+              </span>
+            )}
           </button>
 
           {/* Desktop Filters */}
           <div className="hidden md:flex items-center gap-3">
+            <label className="flex items-center gap-2 px-3 py-2 border border-slate-300 rounded-lg cursor-pointer hover:bg-slate-50 transition">
+              <input
+                type="checkbox"
+                checked={verifiedOnly}
+                onChange={(e) => setVerifiedOnly(e.target.checked)}
+                className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+              />
+              <CheckCircle2 size={16} className="text-green-600" />
+              <span className="text-sm font-medium text-slate-700">Verified Only</span>
+            </label>
+            
             <div className="flex items-center gap-2">
               <Shield size={18} className="text-slate-600" />
               <select
@@ -172,6 +203,16 @@ export default function BrowsePros() {
         {/* Mobile Filters Dropdown */}
         {showFilters && (
           <div className="mt-4 pt-4 border-t border-slate-200 space-y-3 md:hidden">
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={verifiedOnly}
+                onChange={(e) => setVerifiedOnly(e.target.checked)}
+                className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+              />
+              <span className="text-sm font-medium text-slate-700">Show Verified Only</span>
+            </label>
+            
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">
                 License Type
@@ -225,12 +266,18 @@ export default function BrowsePros() {
             {filteredProviders.length}
           </span>{" "}
           professionals found
+          {verifiedOnly && (
+            <span className="ml-2 text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+              Verified Only
+            </span>
+          )}
         </p>
-        {(searchQuery || selectedLicense !== "all") && (
+        {(searchQuery || selectedLicense !== "all" || verifiedOnly) && (
           <button
             onClick={() => {
               setSearchQuery("");
               setSelectedLicense("all");
+              setVerifiedOnly(false);
             }}
             className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
           >
@@ -293,6 +340,7 @@ function ProviderCard({ provider }) {
   };
 
   const license = getLicenseBadge(provider.license_type);
+  const isVerified = provider.verification_status === "verified";
 
   // Mock data for demo (replace with real data from database)
   const mockRating = 4.8;
@@ -300,14 +348,16 @@ function ProviderCard({ provider }) {
   const mockResponseTime = "< 2 hours";
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-lg transition group">
+    <div className={`bg-white rounded-xl border-2 p-6 hover:shadow-lg transition group ${
+      isVerified ? "border-green-200" : "border-slate-200"
+    }`}>
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <h3 className="font-bold text-slate-900 text-lg mb-1 group-hover:text-blue-600 transition">
             {provider.business_name}
           </h3>
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center gap-2 mb-2 flex-wrap">
             <span className={`text-xs px-2 py-1 rounded-full font-medium ${license.color}`}>
               {license.text}
             </span>
@@ -317,14 +367,28 @@ function ProviderCard({ provider }) {
                 Insured
               </span>
             )}
+            {!isVerified && (
+              <span className="text-xs px-2 py-1 rounded-full font-medium bg-amber-100 text-amber-700 flex items-center gap-1">
+                <AlertTriangle size={10} />
+                Unverified
+              </span>
+            )}
           </div>
         </div>
-        {provider.verification_status === "verified" && (
-          <div className="bg-blue-100 p-2 rounded-lg">
-            <CheckCircle2 size={18} className="text-blue-600" />
+        {isVerified && (
+          <div className="bg-green-100 p-2 rounded-lg">
+            <CheckCircle2 size={18} className="text-green-600" />
           </div>
         )}
       </div>
+
+      {/* Service Area */}
+      {provider.service_area && (
+        <div className="flex items-center gap-2 text-sm text-slate-600 mb-3">
+          <MapPin size={14} />
+          <span>{provider.service_area}</span>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4 mb-4 pb-4 border-b border-slate-200">
@@ -356,8 +420,8 @@ function ProviderCard({ provider }) {
           <span className="text-sm">Base Rate</span>
         </div>
         <div className="text-2xl font-bold text-slate-900">
-          ${provider.base_rate}
-          <span className="text-sm font-normal text-slate-600">/hr</span>
+          ${provider.base_rate || "N/A"}
+          {provider.base_rate && <span className="text-sm font-normal text-slate-600">/hr</span>}
         </div>
       </div>
 
@@ -370,20 +434,28 @@ function ProviderCard({ provider }) {
           <ExternalLink size={16} />
           Book Now
         </button>
-        <button className="px-4 py-2.5 border-2 border-slate-300 text-slate-700 rounded-lg font-semibold hover:bg-slate-50 transition">
+        <button 
+          onClick={() => navigate(`/customer/provider/${provider.id}`)}
+          className="px-4 py-2.5 border-2 border-slate-300 text-slate-700 rounded-lg font-semibold hover:bg-slate-50 transition"
+        >
           View
         </button>
       </div>
 
-      {/* Verification Badge */}
-      {provider.verification_status === "verified" && (
-        <div className="mt-4 pt-4 border-t border-slate-200">
+      {/* Verification Status */}
+      <div className="mt-4 pt-4 border-t border-slate-200">
+        {isVerified ? (
           <div className="flex items-center gap-2 text-xs text-green-600">
             <CheckCircle2 size={14} />
             <span className="font-medium">Verified Professional</span>
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="flex items-center gap-2 text-xs text-amber-600">
+            <AlertTriangle size={14} />
+            <span className="font-medium">Verification Pending</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

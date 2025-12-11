@@ -14,6 +14,7 @@ import {
 import { supabase } from "../../lib/supabaseClient";
 import useAuth from "../../hooks/useAuth";
 import { theme } from "../../styles/theme";
+import { useLocation } from 'react-router-dom';
 
 export default function Messages() {
   const { user } = useAuth();
@@ -24,8 +25,21 @@ export default function Messages() {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
+  const location = useLocation();
+  const customerId = location.state?.customerId;
+  const jobId = location.state?.jobId;
   const messagesEndRef = useRef(null);
 
+  useEffect(() => {
+    // If customerId is provided, find and open that conversation
+    if (customerId && conversations.length > 0) {
+      const conversation = conversations.find(c => c.customer_id === customerId);
+      if (conversation) {
+        setSelectedConversation(conversation);
+      }
+    }
+  }, [customerId, conversations]);
+  
   // Fetch conversations
   useEffect(() => {
     async function fetchConversations() {
