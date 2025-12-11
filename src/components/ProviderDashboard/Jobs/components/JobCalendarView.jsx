@@ -5,7 +5,7 @@ import { theme } from "../../../../styles/theme";
 import { getStatusBadge } from "../utils/jobHelpers";
 import { formatCurrency } from "../utils/jobCalculations";
 
-export default function JobCalendarView({ jobs, onJobClick }) {
+export default function JobCalendarView({ jobs, onJobClick, customers }) {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const year = currentDate.getFullYear();
@@ -28,21 +28,24 @@ export default function JobCalendarView({ jobs, onJobClick }) {
     setCurrentDate(new Date());
   };
 
-  // Get jobs for a specific date
   const getJobsForDate = (day) => {
-    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    return jobs.filter(job => job.scheduled_date === dateStr);
+    return jobs.filter(job => {
+      if (!job.scheduled_date) return false;
+      
+      const jobDate = new Date(job.scheduled_date);
+      
+      return jobDate.getDate() === day &&
+             jobDate.getMonth() === month &&
+             jobDate.getFullYear() === year;
+    });
   };
 
-  // Generate calendar days
   const calendarDays = [];
   
-  // Empty cells for days before month starts
   for (let i = 0; i < startingDayOfWeek; i++) {
     calendarDays.push(null);
   }
   
-  // Days of the month
   for (let day = 1; day <= daysInMonth; day++) {
     calendarDays.push(day);
   }
@@ -107,6 +110,8 @@ export default function JobCalendarView({ jobs, onJobClick }) {
               className={`aspect-square border-2 rounded-lg p-2 ${
                 isTodayDay
                   ? "border-blue-400 bg-blue-50"
+                  : dayJobs.length > 0
+                  ? "border-slate-300 bg-white hover:border-slate-400"
                   : "border-slate-200 hover:border-slate-300"
               } transition`}
             >
@@ -116,7 +121,6 @@ export default function JobCalendarView({ jobs, onJobClick }) {
                 {day}
               </div>
 
-              {/* Jobs for this day */}
               <div className="space-y-1">
                 {dayJobs.slice(0, 2).map((job) => {
                   const status = getStatusBadge(job.status);
@@ -125,6 +129,7 @@ export default function JobCalendarView({ jobs, onJobClick }) {
                       key={job.id}
                       onClick={() => onJobClick(job)}
                       className={`w-full text-left px-2 py-1 rounded text-xs font-medium truncate ${status.color}`}
+                      title={job.service_name}
                     >
                       {job.service_name}
                     </button>
@@ -142,11 +147,49 @@ export default function JobCalendarView({ jobs, onJobClick }) {
         })}
       </div>
 
-      {/* Legend */}
+      {/* ✅✅✅ Unscheduled Jobs Section ✅✅✅ */}
+      {jobs.filter(j => !j.scheduled_date).length > 0 && (
+        <div className="mt-6 pt-6 border-t border-slate-200">
+          <h4 className="text-lg font-semibold text-slate-900 mb-3">
+            📋 Unscheduled Jobs ({jobs.filter(j => !j.scheduled_date).length})
+          </h4>
+          <p className="text-sm text-slate-600 mb-3">
+            These jobs don't have a scheduled date yet. Click to view details and set a date.
+          </p>
+          <div className="grid gap-2">
+            {jobs.filter(j => !j.scheduled_date).map((job) => {
+              const status = getStatusBadge(job.status);
+              const customer = customers?.find(c => c.id === job.customer_id);
+              return (
+                <button
+                  key={job.id}
+                  onClick={() => onJobClick(job)}
+                  className="text-left p-3 border-2 border-slate-200 rounded-lg hover:border-blue-400 transition"
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-semibold text-slate-900">{job.service_name}</span>
+                    <span className={`text-xs px-2 py-1 rounded-full font-semibold ${status.color}`}>
+                      {status.label}
+                    </span>
+                  </div>
+                  <div className="text-sm text-slate-600">
+                    {customer?.full_name || job.client_name || "Customer"}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Scheduled Jobs Count & Legend */}
       <div className="mt-6 pt-6 border-t border-slate-200">
+        <p className="text-sm text-slate-600 mb-3">
+          Showing {jobs.filter(j => j.scheduled_date).length} scheduled jobs
+        </p>
         <p className="text-sm font-semibold text-slate-900 mb-3">Status Legend:</p>
         <div className="flex flex-wrap gap-3">
-          {["scheduled", "in_progress", "completed", "paid"].map((status) => {
+          {["accepted", "en_route", "in_progress", "completed"].map((status) => {
             const badge = getStatusBadge(status);
             return (
               <div key={status} className="flex items-center gap-2">

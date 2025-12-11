@@ -80,21 +80,70 @@ export default function Settings() {
     sms_reminders: false,
   });
 
-  // Fetch provider data
+  // ✅✅✅ UPDATED: Fetch provider data with RLS fix
   useEffect(() => {
     async function fetchProvider() {
-      setLoading(true);
-      const { data } = await supabase
-        .from("providers")
-        .select("*")
-        .eq("id", user.id)
-        .single();
+      if (!user) return;
 
-      if (data) {
-        setProviderData(data);
+      setLoading(true);
+      
+      try {
+        // ✅ Use maybeSingle() instead of single()
+        const { data, error: fetchError } = await supabase
+          .from("providers")
+          .select("*")
+          .eq("id", user.id)
+          .maybeSingle();
+
+        if (fetchError) {
+          console.error("Error fetching provider:", fetchError);
+        }
+
+        // ✅ If no provider record exists, create one with upsert
+        if (!data && user) {
+          console.log("No provider record found, creating one...");
+          
+          const { data: newProvider, error: insertError } = await supabase
+            .from("providers")
+            .upsert(
+              {
+                id: user.id,
+                business_name: user.user_metadata?.business_name || user.email?.split('@')[0] || 'Provider',
+                phone: user.user_metadata?.phone || "",
+                base_rate: 8500, // Default $85.00
+                verification_status: 'pending',
+                insurance_status: 'none',
+                license_type: 'none',
+                services_offered: [],
+                service_categories: [],
+                is_online: false,
+                is_available: false,
+              },
+              { 
+                onConflict: 'id',
+                ignoreDuplicates: false 
+              }
+            )
+            .select()
+            .single();
+
+          if (insertError) {
+            console.error("Error upserting provider:", insertError);
+            setError("Failed to load provider data");
+          } else {
+            setProviderData(newProvider);
+          }
+        } else if (data) {
+          setProviderData(data);
+        }
+      } catch (err) {
+        console.error("Exception fetching provider:", err);
+        setError("Failed to load provider data");
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
+    
     if (user) fetchProvider();
   }, [user]);
 
@@ -104,24 +153,31 @@ export default function Settings() {
     setError("");
     setSuccess("");
 
-    const { error: updateError } = await supabase
-      .from("providers")
-      .update({
-        business_name: providerData.business_name,
-        phone: providerData.phone,
-        base_rate: providerData.base_rate,
-        license_type: providerData.license_type,
-        insurance_status: providerData.insurance_status,
-      })
-      .eq("id", user.id);
+    try {
+      const { error: updateError } = await supabase
+        .from("providers")
+        .update({
+          business_name: providerData.business_name,
+          phone: providerData.phone,
+          base_rate: providerData.base_rate,
+          license_type: providerData.license_type,
+          insurance_status: providerData.insurance_status,
+        })
+        .eq("id", user.id);
 
-    if (updateError) {
+      if (updateError) {
+        setError("Failed to update profile");
+        console.error("Update error:", updateError);
+      } else {
+        setSuccess("Profile updated successfully!");
+        setTimeout(() => setSuccess(""), 3000);
+      }
+    } catch (err) {
+      console.error("Exception updating profile:", err);
       setError("Failed to update profile");
-    } else {
-      setSuccess("Profile updated successfully!");
-      setTimeout(() => setSuccess(""), 3000);
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   };
 
   // Change password
@@ -140,25 +196,30 @@ export default function Settings() {
       return;
     }
 
-    const { error: updateError } = await supabase.auth.updateUser({
-      password: passwordData.newPassword,
-    });
+    try {
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: passwordData.newPassword,
+      });
 
-    if (updateError) {
-      setError(updateError.message);
-    } else {
-      setSuccess("Password changed successfully!");
-      setPasswordData({ newPassword: "", confirmPassword: "" });
-      setTimeout(() => setSuccess(""), 3000);
+      if (updateError) {
+        setError(updateError.message);
+      } else {
+        setSuccess("Password changed successfully!");
+        setPasswordData({ newPassword: "", confirmPassword: "" });
+        setTimeout(() => setSuccess(""), 3000);
+      }
+    } catch (err) {
+      console.error("Exception changing password:", err);
+      setError("Failed to change password");
     }
   };
 
-  // Logout
+  // ✅ FIXED: Logout with correct route
   const handleLogout = async () => {
     const confirmed = window.confirm("Are you sure you want to log out?");
     if (confirmed) {
       await supabase.auth.signOut();
-      navigate("/login");
+      navigate("/login/professional"); // ✅ Fixed route
     }
   };
 
@@ -171,13 +232,12 @@ export default function Settings() {
   };
 
   const refreshProviderData = () => {
-    // Refetch provider data
     if (user) {
       supabase
         .from("providers")
         .select("*")
         .eq("id", user.id)
-        .single()
+        .maybeSingle() // ✅ Changed to maybeSingle
         .then(({ data }) => {
           if (data) setProviderData(data);
         });
@@ -188,6 +248,14 @@ export default function Settings() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-slate-600">Loading settings...</div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-slate-600">Please log in to view settings.</div>
       </div>
     );
   }
@@ -244,7 +312,7 @@ export default function Settings() {
             <div>
               <p className="text-blue-100 text-sm font-medium mb-2">Account</p>
               <h2 className="text-2xl font-bold mb-1">
-                {providerData.business_name}
+                {providerData.business_name || user.email?.split('@')[0] || "Provider"}
               </h2>
               <p className="text-blue-100 text-sm mb-2">{user.email}</p>
               
@@ -267,7 +335,7 @@ export default function Settings() {
           <div className="flex gap-3">
             <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/30">
               <p className="text-xs font-medium mb-1">Base Rate</p>
-              <p className="text-lg font-bold">${providerData.base_rate}/hr</p>
+              <p className="text-lg font-bold">${(providerData.base_rate / 100).toFixed(0)}/hr</p>
             </div>
           </div>
         </div>
@@ -324,10 +392,10 @@ export default function Settings() {
           label="Billing"
         />
         <TabButton
-            active={activeTab === "audit"}
-            onClick={() => setActiveTab("audit")}
-            icon={<Shield size={18} />}
-            label="Activity Log"
+          active={activeTab === "audit"}
+          onClick={() => setActiveTab("audit")}
+          icon={<Shield size={18} />}
+          label="Activity Log"
         />
       </div>
 
@@ -395,7 +463,7 @@ export default function Settings() {
   );
 }
 
-// Tab Button Component (same as before)
+// Tab Button Component
 function TabButton({ active, onClick, icon, label }) {
   return (
     <button
@@ -442,7 +510,7 @@ function ProfileTab({
         onVerificationSuccess={refreshProviderData}
       />
 
-      {/* Business Information (same as before) */}
+      {/* Business Information */}
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
         <div className="flex items-center gap-3 mb-6">
           <div className="bg-blue-100 p-2.5 rounded-lg">
@@ -474,7 +542,7 @@ function ProfileTab({
 
           <div>
             <label className="block text-sm font-semibold text-slate-700 mb-2">
-              Base Hourly Rate
+              Base Hourly Rate (in cents)
             </label>
             <div className="relative">
               <DollarSign
@@ -492,13 +560,43 @@ function ProfileTab({
                   })
                 }
                 className="w-full border-2 border-slate-300 rounded-xl pl-11 pr-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+                placeholder="8500 (= $85.00/hr)"
               />
             </div>
+            <p className="text-xs text-slate-500 mt-1">
+              Enter rate in cents (e.g., 8500 = $85.00/hr)
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Rest of Profile Tab content... (compliance, insurance, booking link) */}
+      {/* Booking Link */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="bg-green-100 p-2.5 rounded-lg">
+            <ExternalLink className="text-green-600" size={20} />
+          </div>
+          <h3 className="text-lg font-semibold text-slate-900">
+            Your Booking Link
+          </h3>
+        </div>
+
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={`${window.location.origin}/book/${user.id}`}
+            readOnly
+            className="flex-1 border-2 border-slate-300 rounded-xl px-4 py-3 bg-slate-50 text-slate-600"
+          />
+          <button
+            onClick={copyBookingLink}
+            className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition flex items-center gap-2"
+          >
+            <Copy size={18} />
+            Copy
+          </button>
+        </div>
+      </div>
       
       {/* Save Button */}
       <button
@@ -522,7 +620,7 @@ function ProfileTab({
   );
 }
 
-// Security Tab (same as before)
+// Security Tab
 function SecurityTab({
   passwordData,
   setPasswordData,
@@ -531,7 +629,100 @@ function SecurityTab({
   handleChangePassword,
   handleLogout,
 }) {
-  // ... (keep existing SecurityTab code)
+  return (
+    <div className="space-y-6">
+      {/* Change Password */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="bg-red-100 p-2.5 rounded-lg">
+            <Lock className="text-red-600" size={20} />
+          </div>
+          <h3 className="text-lg font-semibold text-slate-900">
+            Change Password
+          </h3>
+        </div>
+
+        <form onSubmit={handleChangePassword} className="space-y-5">
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-2">
+              New Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={passwordData.newPassword}
+                onChange={(e) =>
+                  setPasswordData({
+                    ...passwordData,
+                    newPassword: e.target.value,
+                  })
+                }
+                className="w-full border-2 border-slate-300 rounded-xl px-4 py-3 pr-12 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+                placeholder="••••••••"
+                minLength={6}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-2">
+              Confirm New Password
+            </label>
+            <input
+              type={showPassword ? "text" : "password"}
+              value={passwordData.confirmPassword}
+              onChange={(e) =>
+                setPasswordData({
+                  ...passwordData,
+                  confirmPassword: e.target.value,
+                })
+              }
+              className="w-full border-2 border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+              placeholder="••••••••"
+              minLength={6}
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-slate-900 text-white py-3 rounded-xl font-semibold hover:bg-slate-800 transition"
+          >
+            Update Password
+          </button>
+        </form>
+      </div>
+
+      {/* Logout */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="bg-red-100 p-2.5 rounded-lg">
+            <LogOut className="text-red-600" size={20} />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-slate-900">Log Out</h3>
+            <p className="text-sm text-slate-600">
+              Sign out of your account on this device
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={handleLogout}
+          className="w-full border-2 border-red-300 text-red-600 py-3 rounded-xl font-semibold hover:bg-red-50 transition flex items-center justify-center gap-2"
+        >
+          <LogOut size={20} />
+          Log Out
+        </button>
+      </div>
+    </div>
+  );
 }
 
 // Enhanced Billing Tab
@@ -542,8 +733,6 @@ function BillingTab({ providerData, onUpdate }) {
         providerData={providerData}
         onUpdate={onUpdate}
       />
-
-      {/* Subscription info (keep existing) */}
     </div>
   );
 }

@@ -114,9 +114,10 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
 
   // ✅ Allow editing/deleting for pending_dispatch and unassigned jobs
   const canEdit = job.status === "pending_dispatch" || 
-                  job.status === "unassigned" || 
+                  job.status === "unassigned" ||
                   job.status === "pending";
 
+  const canDelete = canEdit && !job.provider_id;
   return (
     <>
       <div className="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-md transition">
@@ -210,24 +211,31 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
 
         <div className="flex flex-wrap gap-2 pt-4 border-t border-slate-200">
           {/* Edit & Delete buttons (only for pending jobs) */}
-          {canEdit && (
-            <>
-              <button
-                onClick={() => onEdit(job)}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-300 text-blue-700 rounded-lg font-medium hover:bg-blue-100 transition"
-              >
-                <Edit2 size={16} />
-                Edit
-              </button>
-              <button
-                onClick={() => setShowDeleteConfirm(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-red-50 border border-red-300 text-red-700 rounded-lg font-medium hover:bg-red-100 transition"
-              >
-                <Trash2 size={16} />
-                Delete
-              </button>
-            </>
-          )}
+            {canEdit && (
+              <>
+                <button
+                  onClick={() => onEdit(job)}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-300 text-blue-700 rounded-lg font-medium hover:bg-blue-100 transition"
+                >
+                  <Edit2 size={16} />
+                  Edit
+                </button>
+
+                {canDelete ? (
+                  <button
+                    onClick={() => setShowDeleteConfirm(true)}
+                    className="flex items-center gap-2 px-4 py-2 bg-red-50 border border-red-300 text-red-700 rounded-lg font-medium hover:bg-red-100 transition"
+                  >
+                    <Trash2 size={16} />
+                    Delete
+                  </button>
+                ) : job.provider_id && (
+                  <div className="text-xs text-slate-500 italic">
+                    Can't delete – job assigned to provider
+                  </div>
+                )}
+              </>
+            )}
 
           {/* Message button */}
           {job.providers?.business_name && (

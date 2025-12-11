@@ -16,9 +16,10 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { supabase } from "../../../../lib/supabaseClient";
-
+import { SERVICE_CATEGORIES } from "../../../../constants/serviceCategories";
 export default function PostJobModal({ onClose, onSuccess, userId, editingJob }) {
   const isEditing = !!editingJob; // ✅ Check if we're editing
+  const categories = SERVICE_CATEGORIES;
 
   // ✅ Initialize form data from editingJob if it exists
   const [formData, setFormData] = useState({
@@ -62,17 +63,6 @@ export default function PostJobModal({ onClose, onSuccess, userId, editingJob })
       }
     }
   }, [editingJob]);
-
-  const categories = [
-    { id: "handyman", name: "Handyman", icon: Wrench },
-    { id: "plumbing", name: "Plumbing", icon: Droplet },
-    { id: "electrical", name: "Electrical", icon: Zap },
-    { id: "cleaning", name: "Cleaning", icon: Sparkles },
-    { id: "painting", name: "Painting", icon: Paintbrush },
-    { id: "assembly", name: "Assembly", icon: Package },
-    { id: "landscaping", name: "Landscaping", icon: TreePine },
-    { id: "hvac", name: "HVAC", icon: Home },
-  ];
 
   const handlePhotoUpload = (e) => {
     const files = Array.from(e.target.files);

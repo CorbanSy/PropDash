@@ -2,14 +2,12 @@
 import { useState, useEffect } from "react";
 import { Briefcase, Save, CheckCircle2 } from "lucide-react";
 import { supabase } from "../../../../lib/supabaseClient";
-import { groupServicesByCategory } from "../utils/settingsHelpers";
+import { SERVICES_BY_CATEGORY } from "../../../../constants/serviceCategories";
 
 export default function ServicesOffered({ providerData, onUpdate }) {
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState("");
   const [selectedServices, setSelectedServices] = useState([]);
-
-  const servicesByCategory = groupServicesByCategory();
 
   useEffect(() => {
     if (providerData.services_offered) {
@@ -21,12 +19,26 @@ export default function ServicesOffered({ providerData, onUpdate }) {
     setSaving(true);
     setSuccess("");
 
+    // ✅ Extract categories from selected services
+    const selectedCategories = [
+      ...new Set(
+        selectedServices.map((serviceId) => {
+          // Extract category from service ID (e.g., "handyman-general" → "handyman")
+          return serviceId.split('-')[0];
+        })
+      ),
+    ];
+
     const { error } = await supabase
       .from("providers")
-      .update({ services_offered: selectedServices })
+      .update({ 
+        services_offered: selectedServices,
+        service_categories: selectedCategories // ✅ Save categories too
+      })
       .eq("id", providerData.id);
 
     if (error) {
+      console.error("Save error:", error);
       alert("Failed to save services");
     } else {
       setSuccess("Services saved successfully!");
@@ -46,18 +58,16 @@ export default function ServicesOffered({ providerData, onUpdate }) {
   };
 
   const selectAllInCategory = (category) => {
-    const categoryServices = servicesByCategory[category].map((s) => s.id);
+    const categoryServices = SERVICES_BY_CATEGORY[category].map((s) => s.id);
     const allSelected = categoryServices.every((id) =>
       selectedServices.includes(id)
     );
 
     if (allSelected) {
-      // Deselect all in category
       setSelectedServices(
         selectedServices.filter((s) => !categoryServices.includes(s))
       );
     } else {
-      // Select all in category
       const newServices = [
         ...new Set([...selectedServices, ...categoryServices]),
       ];
@@ -86,21 +96,21 @@ export default function ServicesOffered({ providerData, onUpdate }) {
               Services You Offer
             </h3>
             <p className="text-sm text-slate-600">
-              Select all services you provide to help clients find you
+              Select all services you provide to receive relevant job offers
             </p>
           </div>
         </div>
 
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <p className="text-sm text-blue-900">
-            <strong>💡 Why this matters:</strong> These services will be used in AI quote generation and help match you with relevant jobs in the Network.
+            <strong>💡 Important:</strong> Only jobs matching your selected services will be dispatched to you.
           </p>
         </div>
       </div>
 
       {/* Services by Category */}
       <div className="space-y-4">
-        {Object.entries(servicesByCategory).map(([category, services]) => {
+        {Object.entries(SERVICES_BY_CATEGORY).map(([category, services]) => {
           const allSelected = services.every((s) =>
             selectedServices.includes(s.id)
           );
@@ -112,7 +122,7 @@ export default function ServicesOffered({ providerData, onUpdate }) {
             >
               {/* Category Header */}
               <div className="flex items-center justify-between mb-4">
-                <h4 className="font-semibold text-slate-900 text-lg">
+                <h4 className="font-semibold text-slate-900 text-lg capitalize">
                   {category}
                 </h4>
                 <button
@@ -151,7 +161,7 @@ export default function ServicesOffered({ providerData, onUpdate }) {
                           )}
                         </div>
                         <span
-                          className={`font-medium ${
+                          className={`font-medium text-sm ${
                             isSelected ? "text-blue-900" : "text-slate-900"
                           }`}
                         >

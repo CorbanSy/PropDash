@@ -52,18 +52,35 @@ export default function MyJobs() {
   // Handle delete job
   const handleDeleteJob = async (jobId) => {
     try {
-      const { error } = await supabase
+      console.log("🗑️ Attempting to delete job:", jobId);
+      
+      const { data, error } = await supabase
         .from("jobs")
         .delete()
         .eq("id", jobId)
-        .eq("customer_id", user.id);
+        .eq("customer_id", user.id)
+        .select(); // ✅ Add select to see what was deleted
 
-      if (error) throw error;
+      console.log("Delete response:", { data, error });
 
+      if (error) {
+        console.error("Delete error:", error);
+        alert(`Failed to delete job: ${error.message}`);
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        alert("Job could not be deleted. It may have already been accepted by a provider.");
+        return;
+      }
+
+      // ✅ Remove from local state
       setJobs(jobs.filter((job) => job.id !== jobId));
       setFilteredJobs(filteredJobs.filter((job) => job.id !== jobId));
+      
+      console.log("✅ Job deleted successfully");
     } catch (error) {
-      console.error("Error deleting job:", error);
+      console.error("Exception deleting job:", error);
       alert("Failed to delete job. Please try again.");
     }
   };

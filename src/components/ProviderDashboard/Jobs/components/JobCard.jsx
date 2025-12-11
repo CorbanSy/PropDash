@@ -1,5 +1,5 @@
 // src/components/ProviderDashboard/Jobs/components/JobCard.jsx
-import { Calendar, Clock, DollarSign, User, MapPin, AlertCircle } from "lucide-react";
+import { Calendar, Clock, DollarSign, User, MapPin, AlertCircle, Image as ImageIcon } from "lucide-react";
 import { theme } from "../../../../styles/theme";
 import { getStatusBadge, isJobOverdue, getTimeUntilJob } from "../utils/jobHelpers";
 import { formatCurrency, formatDate, formatTime } from "../utils/jobCalculations";
@@ -12,6 +12,9 @@ export default function JobCard({ job, customers, onClick }) {
   // Get customer name
   const customer = customers.find(c => c.id === job.customer_id);
   const clientName = customer?.full_name || job.client_name || "Unknown Client";
+
+  // ✅ Check if job has photos
+  const hasPhotos = job.photos && job.photos.length > 0;
 
   return (
     <button
@@ -42,6 +45,29 @@ export default function JobCard({ job, customers, onClick }) {
         </span>
       </div>
 
+      {/* ✅✅✅ PHOTOS SECTION ✅✅✅ */}
+      {hasPhotos && (
+        <div className="mb-3">
+          <div className="flex gap-2 overflow-x-auto">
+            {job.photos.slice(0, 3).map((photo, index) => (
+              <img
+                key={index}
+                src={photo}
+                alt={`Job photo ${index + 1}`}
+                className="w-16 h-16 object-cover rounded-lg border border-slate-200"
+              />
+            ))}
+            {job.photos.length > 3 && (
+              <div className="w-16 h-16 bg-slate-100 rounded-lg border border-slate-200 flex items-center justify-center">
+                <span className="text-xs font-medium text-slate-600">
+                  +{job.photos.length - 3}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Date & Time */}
       <div className="space-y-1 mb-3">
         <div className="flex items-center gap-2 text-sm text-slate-600">
@@ -63,18 +89,18 @@ export default function JobCard({ job, customers, onClick }) {
           </div>
         )}
 
-        {job.address && (
+        {(job.address || job.client_address) && (
           <div className="flex items-center gap-2 text-sm text-slate-600">
             <MapPin size={14} />
-            <span className="truncate">{job.address}</span>
+            <span className="truncate">{job.address || job.client_address}</span>
           </div>
         )}
       </div>
 
       {/* Description */}
-      {job.description && (
+      {(job.description || job.notes) && (
         <p className="text-sm text-slate-600 line-clamp-2 mb-3">
-          {job.description}
+          {job.description || job.notes}
         </p>
       )}
 
@@ -83,7 +109,7 @@ export default function JobCard({ job, customers, onClick }) {
         <div className="flex items-center gap-2">
           <DollarSign size={16} className="text-slate-600" />
           <span className="text-lg font-bold text-slate-900">
-            {formatCurrency(job.total || 0)}
+            {formatCurrency(job.price || job.total || 0)}
           </span>
         </div>
 
