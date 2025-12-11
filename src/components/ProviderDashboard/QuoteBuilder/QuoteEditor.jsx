@@ -1,6 +1,6 @@
 // src/components/ProviderDashboard/QuoteBuilder/QuoteEditor.jsx
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
   Save,
   Send,
@@ -30,25 +30,33 @@ import {
   validateQuote,
   formatCurrency,
 } from "./utils/quoteCalculations";
+import { generateQuoteFromDescription } from '../../../lib/ai';
 
 export default function QuoteEditor() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
-  const isNewQuote = id === "new";
+  const isNewQuote = !id || id === "new";
 
-  // Quote State
+  // ✅ Get job data from navigation state (if coming from JobCard)
+  const jobData = location.state?.jobData;
+  const jobId = location.state?.jobId;
+
+  // Quote State - Pre-fill from job data if available
   const [quote, setQuote] = useState({
-    client_name: "",
-    client_email: "",
-    client_phone: "",
-    service_name: "",
-    description: "",
+    client_name: jobData?.clientName || "",
+    client_email: jobData?.clientEmail || "",
+    client_phone: jobData?.clientPhone || "",
+    service_name: jobData?.serviceName || "",
+    description: jobData?.description || "",
     lineItems: [],
-    attachments: [],
+    attachments: jobData?.photos || [],
     terms: "",
-    notes: "",
+    notes: jobData ? `Related to Job ID: ${jobId}` : "",
     status: "draft",
+    job_id: jobId || null, // ✅ Link quote to job
+    customer_id: jobData?.customerId || null,
   });
 
   // Settings State
@@ -70,7 +78,7 @@ export default function QuoteEditor() {
   const [aiSuggestions, setAiSuggestions] = useState([]);
 
   useEffect(() => {
-    if (!isNewQuote) {
+    if (!isNewQuote && id) {
       fetchQuote();
     }
     fetchSettings();
@@ -115,15 +123,24 @@ export default function QuoteEditor() {
       total: Math.round(totals.total * 100),
       status: isDraft ? "draft" : "sent",
       settings: settings,
+      job_id: quote.job_id, // ✅ Link to job
+      customer_id: quote.customer_id, // ✅ Link to customer
     };
 
     if (isNewQuote) {
       const { data, error } = await supabase.from("quotes").insert([quoteData]).select().single();
-      if (data) {
+      if (data && !error) {
         navigate(`/provider/quotes/${data.id}`);
+      } else {
+        console.error("Error creating quote:", error);
+        alert("Failed to create quote. Please try again.");
       }
     } else {
-      await supabase.from("quotes").update(quoteData).eq("id", id);
+      const { error } = await supabase.from("quotes").update(quoteData).eq("id", id);
+      if (error) {
+        console.error("Error updating quote:", error);
+        alert("Failed to update quote. Please try again.");
+      }
     }
 
     setSaving(false);
@@ -143,9 +160,79 @@ export default function QuoteEditor() {
       if (!proceed) return;
     }
 
-    await handleSave(false);
-    // TODO: Send email to client
-    alert("Quote sent to client!");
+    setSaving(true);
+
+    try {
+      // Save the quote first
+      await handleSave(false);
+
+      // ✅ Create or update conversation for this job
+      if (quote.job_id && quote.customer_id) {
+        await createConversation();
+      }
+
+      alert("Quote sent to client! A conversation has been started.");
+    } catch (error) {
+      console.error("Error sending quote:", error);
+      alert("Quote sent, but there was an issue creating the conversation.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const createConversation = async () => {
+    try {
+      // Check if conversation already exists for this job
+      const { data: existing, error: fetchError } = await supabase
+        .from("conversations")
+        .select("id")
+        .eq("job_id", quote.job_id)
+        .eq("customer_id", quote.customer_id)
+        .eq("provider_id", user.id);
+
+      if (fetchError) {
+        console.error("Error checking conversation:", fetchError);
+        return;
+      }
+
+      if (existing && existing.length > 0) {
+        // Update existing conversation with quote_id
+        const { error: updateError } = await supabase
+          .from("conversations")
+          .update({ 
+            quote_id: id || quote.id,
+            last_message_at: new Date().toISOString() 
+          })
+          .eq("id", existing[0].id);
+
+        if (updateError) {
+          console.error("Error updating conversation:", updateError);
+        } else {
+          console.log("Conversation updated with quote");
+        }
+      } else {
+        // Create new conversation
+        const { data, error: insertError } = await supabase
+          .from("conversations")
+          .insert({
+            customer_id: quote.customer_id,
+            provider_id: user.id,
+            job_id: quote.job_id,
+            quote_id: id || quote.id,
+            last_message_at: new Date().toISOString(),
+          })
+          .select()
+          .single();
+
+        if (insertError) {
+          console.error("Error creating conversation:", insertError);
+        } else {
+          console.log("Conversation created:", data);
+        }
+      }
+    } catch (error) {
+      console.error("Error in createConversation:", error);
+    }
   };
 
   const addLineItem = (item) => {
@@ -198,6 +285,32 @@ export default function QuoteEditor() {
     setShowAIAnalysis(false);
   };
 
+  const handleAIGenerate = async () => {
+    setLoading(true);
+    try {
+      const result = await generateQuoteFromDescription(quote.description);
+      
+      const newLineItems = result.cost_breakdown.map((item, i) => ({
+        id: Date.now() + i,
+        name: item.item,
+        description: '',
+        quantity: item.quantity,
+        rate: item.unit_cost,
+        total: item.total_cost,
+        type: 'service'
+      }));
+
+      setQuote({
+        ...quote,
+        lineItems: [...quote.lineItems, ...newLineItems],
+      });
+    } catch (error) {
+      alert('Failed to generate quote: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const totals = calculateQuoteTotal(quote.lineItems, settings);
   const profitAnalysis = calculateProfitMargin(quote.lineItems, settings);
   const validation = validateQuote(quote, settings);
@@ -223,10 +336,14 @@ export default function QuoteEditor() {
           </button>
           <div>
             <h1 className={theme.text.h1}>
-              {isNewQuote ? "New Quote" : `Edit Quote #${id.slice(0, 8)}`}
+              {isNewQuote ? "New Quote" : `Edit Quote`}
             </h1>
             <p className={`${theme.text.body} mt-1`}>
-              {isNewQuote ? "Create a new quote for a client" : "Edit and update quote details"}
+              {jobData 
+                ? `Creating quote for ${jobData.clientName}` 
+                : isNewQuote 
+                ? "Create a new quote for a client" 
+                : "Edit and update quote details"}
             </p>
           </div>
         </div>
@@ -251,6 +368,26 @@ export default function QuoteEditor() {
           </button>
         </div>
       </div>
+
+      {/* Job Context Banner */}
+      {jobData && (
+        <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <FileText className="text-blue-600 flex-shrink-0 mt-0.5" size={20} />
+            <div>
+              <p className="font-semibold text-blue-900 mb-1">Quote from Job</p>
+              <p className="text-sm text-blue-700">
+                Service: <span className="font-medium">{jobData.serviceName}</span>
+              </p>
+              {jobData.address && (
+                <p className="text-sm text-blue-700">
+                  Location: <span className="font-medium">{jobData.address}</span>
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Validation Warnings */}
       {validation.warnings.length > 0 && (
@@ -357,13 +494,15 @@ export default function QuoteEditor() {
           <div className={`${theme.card.base} ${theme.card.padding}`}>
             <div className="flex items-center justify-between mb-4">
               <h3 className={`${theme.text.h3}`}>Photos & AI Analysis</h3>
-              <button
-                onClick={() => setShowAIAnalysis(true)}
-                className={`${theme.button.provider} text-sm flex items-center gap-2`}
-              >
-                <Sparkles size={16} />
-                Analyze Photos
-              </button>
+              {quote.attachments.length > 0 && (
+                <button
+                  onClick={() => setShowAIAnalysis(true)}
+                  className={`${theme.button.provider} text-sm flex items-center gap-2`}
+                >
+                  <Sparkles size={16} />
+                  Analyze Photos
+                </button>
+              )}
             </div>
             <AttachmentUploader
               attachments={quote.attachments}

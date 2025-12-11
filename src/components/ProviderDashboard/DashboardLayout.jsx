@@ -8,6 +8,7 @@ import {
   Briefcase,
   Users, 
   Network as NetworkIcon,
+  MessageSquare, // ✅ Add this import
   Settings,
   LogOut,
   ChevronDown,
@@ -43,6 +44,7 @@ export default function DashboardLayout() {
           <SidebarLink to="/provider/schedule" icon={Calendar} label="Schedule" />
           <SidebarLink to="/provider/jobs" icon={Briefcase} label="Jobs" />
           <SidebarLink to="/provider/quotes" icon={FileText} label="Quotes" />
+          <SidebarLink to="/provider/messages" icon={MessageSquare} label="Messages" /> {/* ✅ Add this */}
           <SidebarLink to="/provider/clients" icon={Users} label="Clients" />
           <SidebarLink to="/provider/network" icon={NetworkIcon} label="Network" />
           <SidebarLink to="/provider/settings" icon={Settings} label="Settings" />
@@ -152,8 +154,8 @@ function MobileNav() {
     { to: "/provider", icon: Home, label: "Home" },
     { to: "/provider/jobs", icon: Briefcase, label: "Jobs" },
     { to: "/provider/quotes", icon: FileText, label: "Quotes" },
+    { to: "/provider/messages", icon: MessageSquare, label: "Messages" }, // ✅ Add this
     { to: "/provider/clients", icon: Users, label: "Clients" },
-    { to: "/provider/network", icon: NetworkIcon, label: "Network" },
   ];
 
   return (

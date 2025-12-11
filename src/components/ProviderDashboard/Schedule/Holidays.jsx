@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { AlertCircle, Calendar, Check, X } from "lucide-react";
 import { theme } from "../../../styles/theme";
+import { supabase } from "../../../lib/supabaseClient";
 import { getAllHolidays, getUSHolidays, getPopularHolidays } from "./utils/holidayData";
 
 export default function Holidays({ userId }) {
@@ -11,18 +12,53 @@ export default function Holidays({ userId }) {
   const [selectedHolidays, setSelectedHolidays] = useState(new Set());
   const [customHours, setCustomHours] = useState({});
   const [saving, setSaving] = useState(false);
-  const [filter, setFilter] = useState("all"); // 'all', 'federal', 'popular'
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("all");
 
+  // Load holidays list
   useEffect(() => {
     const allHolidays = getAllHolidays(selectedYear);
-    setHolidays(allHolidays);
+    
+    const uniqueHolidays = allHolidays.filter((holiday, index, self) =>
+      index === self.findIndex((h) => h.date === holiday.date)
+    );
+    
+    setHolidays(uniqueHolidays);
   }, [selectedYear]);
+
+  // Load saved settings from database
+  useEffect(() => {
+    async function loadSettings() {
+      setLoading(true);
+      
+      const { data, error } = await supabase
+        .from("provider_holiday_settings")
+        .select("*")
+        .eq("provider_id", userId)
+        .eq("year", selectedYear)
+        .maybeSingle();
+
+      if (data) {
+        setSelectedHolidays(new Set(data.blocked_holidays || []));
+        setCustomHours(data.custom_hours || {});
+      } else {
+        // No saved settings for this year
+        setSelectedHolidays(new Set());
+        setCustomHours({});
+      }
+      
+      setLoading(false);
+    }
+
+    if (userId) {
+      loadSettings();
+    }
+  }, [userId, selectedYear]);
 
   const toggleHoliday = (date) => {
     const newSelected = new Set(selectedHolidays);
     if (newSelected.has(date)) {
       newSelected.delete(date);
-      // Remove custom hours if unselecting
       const newCustom = { ...customHours };
       delete newCustom[date];
       setCustomHours(newCustom);
@@ -59,10 +95,32 @@ export default function Holidays({ userId }) {
 
   const handleSave = async () => {
     setSaving(true);
-    // TODO: Save blocked holidays and custom hours to database
-    console.log("Blocked holidays:", Array.from(selectedHolidays));
-    console.log("Custom hours:", customHours);
-    setTimeout(() => setSaving(false), 1000);
+    
+    try {
+      const { error } = await supabase
+        .from("provider_holiday_settings")
+        .upsert(
+          {
+            provider_id: userId,
+            year: selectedYear,
+            blocked_holidays: Array.from(selectedHolidays),
+            custom_hours: customHours,
+            updated_at: new Date().toISOString(),
+          },
+          {
+            onConflict: "provider_id,year",
+          }
+        );
+
+      if (error) throw error;
+      
+      alert("Holiday settings saved successfully!");
+    } catch (error) {
+      console.error("Error saving holiday settings:", error);
+      alert("Failed to save holiday settings");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const filteredHolidays = holidays.filter((h) => {
@@ -72,6 +130,14 @@ export default function Holidays({ userId }) {
 
   const federalCount = holidays.filter((h) => h.type === "federal").length;
   const popularCount = holidays.filter((h) => h.type === "popular").length;
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className={theme.text.body}>Loading holiday settings...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -208,7 +274,7 @@ export default function Holidays({ userId }) {
   );
 }
 
-// Holiday Row Component
+// Holiday Row Component (unchanged)
 function HolidayRow({
   holiday,
   dayName,

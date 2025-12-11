@@ -1,10 +1,12 @@
 // src/components/ProviderDashboard/Jobs/components/JobCard.jsx
-import { Calendar, Clock, DollarSign, User, MapPin, AlertCircle, Image as ImageIcon } from "lucide-react";
+import { Calendar, Clock, DollarSign, User, MapPin, AlertCircle, FileText } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { theme } from "../../../../styles/theme";
 import { getStatusBadge, isJobOverdue, getTimeUntilJob } from "../utils/jobHelpers";
 import { formatCurrency, formatDate, formatTime } from "../utils/jobCalculations";
 
 export default function JobCard({ job, customers, onClick }) {
+  const navigate = useNavigate();
   const statusBadge = getStatusBadge(job.status);
   const overdue = isJobOverdue(job);
   const timeUntil = job.status === "scheduled" ? getTimeUntilJob(job.scheduled_date, job.scheduled_time) : null;
@@ -16,11 +18,42 @@ export default function JobCard({ job, customers, onClick }) {
   // ✅ Check if job has photos
   const hasPhotos = job.photos && job.photos.length > 0;
 
+  // ✅ Handle create quote - prevent card click event
+  const handleCreateQuote = (e) => {
+    e.stopPropagation(); // Prevent opening job details
+    navigate('/provider/quotes/new', {
+      state: {
+        jobId: job.id,
+        jobData: {
+          clientName: clientName,
+          clientEmail: customer?.email || job.client_email,
+          clientPhone: customer?.phone || job.client_phone,
+          customerId: job.customer_id,
+          serviceName: job.service_name,
+          address: job.address || job.client_address,
+          description: job.description || job.notes,
+          photos: job.photos || [],
+        }
+      }
+    });
+  };
+
+  // ✅ Determine if quote button should show
+  const canCreateQuote = ['accepted', 'en_route', 'in_progress'].includes(job.status);
+
   return (
-    <button
-      onClick={onClick}
-      className={`${theme.card.base} ${theme.card.padding} ${theme.card.hover} text-left w-full relative overflow-hidden`}
-    >
+        <div
+          onClick={onClick}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              onClick();
+            }
+          }}
+          className={`${theme.card.base} ${theme.card.padding} ${theme.card.hover} text-left w-full relative overflow-hidden cursor-pointer`}
+        >
       {/* Overdue Indicator */}
       {overdue && (
         <div className="absolute top-0 left-0 right-0 h-1 bg-red-500"></div>
@@ -126,6 +159,19 @@ export default function JobCard({ job, customers, onClick }) {
         )}
       </div>
 
+      {/* ✅✅✅ CREATE QUOTE BUTTON ✅✅✅ */}
+      {canCreateQuote && (
+        <div className="mt-3 pt-3 border-t border-slate-200">
+          <button
+            onClick={handleCreateQuote}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition"
+          >
+            <FileText size={16} />
+            Create Quote
+          </button>
+        </div>
+      )}
+
       {/* Overdue Warning */}
       {overdue && (
         <div className="mt-3 pt-3 border-t border-red-200 bg-red-50 -mx-4 -mb-4 px-4 py-2">
@@ -135,6 +181,6 @@ export default function JobCard({ job, customers, onClick }) {
           </div>
         </div>
       )}
-    </button>
+    </div>
   );
 }

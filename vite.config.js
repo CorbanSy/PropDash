@@ -10,4 +10,9 @@ export default defineConfig(({ command }) => ({
     command === "build"
       ? process.env.VITE_BASE_PATH || "/PropDash"
       : "/",
+
+  // Add this to use port 5173 (already allowed by Supabase)
+  server: {
+    port: 5173,
+  },
 }));

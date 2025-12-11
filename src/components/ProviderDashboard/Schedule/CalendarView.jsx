@@ -1,7 +1,8 @@
 // src/components/ProviderDashboard/Schedule/CalendarView.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AlertCircle, ChevronLeft, ChevronRight, Ban, Search, Calendar } from "lucide-react";
 import { theme } from "../../../styles/theme";
+import { supabase } from "../../../lib/supabaseClient";
 import { getDateString } from "./utils/timeUtils";
 import CalendarDay from "./components/CalendarDay";
 import DateModal from "./components/DateModal";
@@ -23,6 +24,7 @@ export default function CalendarView({ userId, jobs, refetchJobs }) {
     { day: 6, enabled: false }, // Saturday
   ]);
   const [dateOverrides, setDateOverrides] = useState([]);
+  const [holidaySettings, setHolidaySettings] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showBlockModal, setShowBlockModal] = useState(false);
@@ -30,6 +32,62 @@ export default function CalendarView({ userId, jobs, refetchJobs }) {
   const [quickActionsMenu, setQuickActionsMenu] = useState(null);
   const [draggedJob, setDraggedJob] = useState(null);
   const [dragOverDate, setDragOverDate] = useState(null);
+
+  // Load weekly hours from database
+  useEffect(() => {
+    async function loadWeeklyHours() {
+      const { data } = await supabase
+        .from("provider_weekly_hours")
+        .select("*")
+        .eq("provider_id", userId)
+        .maybeSingle();
+
+      if (data && data.availability) {
+        // Convert day names to day numbers (0-6)
+        const dayMap = {
+          Sunday: 0,
+          Monday: 1,
+          Tuesday: 2,
+          Wednesday: 3,
+          Thursday: 4,
+          Friday: 5,
+          Saturday: 6,
+        };
+
+        const schedule = data.availability.map((dayData) => ({
+          day: dayMap[dayData.day],
+          enabled: dayData.enabled,
+          blocks: dayData.blocks,
+        }));
+
+        setWeeklySchedule(schedule);
+      }
+    }
+
+    if (userId) {
+      loadWeeklyHours();
+    }
+  }, [userId]);
+
+  // Load holiday settings for the current month's year
+  useEffect(() => {
+    async function loadHolidaySettings() {
+      const year = currentMonth.getFullYear();
+      
+      const { data } = await supabase
+        .from("provider_holiday_settings")
+        .select("*")
+        .eq("provider_id", userId)
+        .eq("year", year)
+        .maybeSingle();
+
+      setHolidaySettings(data);
+    }
+
+    if (userId) {
+      loadHolidaySettings();
+    }
+  }, [userId, currentMonth]);
 
   // Generate calendar days
   const generateCalendar = () => {
@@ -54,8 +112,23 @@ export default function CalendarView({ userId, jobs, refetchJobs }) {
   const getScheduleForDate = (date) => {
     if (!date) return null;
 
-    // Check for override first
     const dateStr = getDateString(date);
+
+    // 1. Check if date is a blocked holiday
+    if (holidaySettings?.blocked_holidays?.includes(dateStr)) {
+      // Check if there are custom hours for this blocked holiday
+      if (holidaySettings.custom_hours?.[dateStr]) {
+        const { start, end } = holidaySettings.custom_hours[dateStr];
+        return { 
+          type: "custom", 
+          blocks: [{ start, end }],
+          reason: "Holiday Hours"
+        };
+      }
+      return { type: "blocked", reason: "Holiday" };
+    }
+
+    // 2. Check for date override (manual blocks/custom hours)
     const override = dateOverrides.find((o) => o.date === dateStr);
     if (override) {
       if (override.type === "blocked") return { type: "blocked", reason: override.reason };
@@ -63,7 +136,7 @@ export default function CalendarView({ userId, jobs, refetchJobs }) {
         return { type: "custom", blocks: override.blocks || [{ start: override.start, end: override.end }] };
     }
 
-    // Fall back to weekly schedule
+    // 3. Fall back to weekly schedule
     const dayOfWeek = date.getDay();
     const daySchedule = weeklySchedule.find((d) => d.day === dayOfWeek);
     if (daySchedule?.enabled) {
@@ -171,6 +244,16 @@ export default function CalendarView({ userId, jobs, refetchJobs }) {
     setDragOverDate(null);
   };
 
+  // Count blocked days (including holidays)
+  const blockedDaysCount = 
+    dateOverrides.filter((o) => o.type === "blocked").length +
+    (holidaySettings?.blocked_holidays?.length || 0);
+
+  // Count custom hours (including holiday custom hours)
+  const customHoursCount = 
+    dateOverrides.filter((o) => o.type === "custom").length +
+    (Object.keys(holidaySettings?.custom_hours || {}).length);
+
   return (
     <div className="space-y-6">
       {/* Info Alert */}
@@ -180,7 +263,7 @@ export default function CalendarView({ userId, jobs, refetchJobs }) {
           <p className="font-semibold text-sm mb-1">Your Availability Calendar</p>
           <p className="text-xs">
             Click dates to manage availability. Right-click for quick actions. Drag jobs to
-            reschedule.
+            reschedule. Holidays are automatically applied.
           </p>
         </div>
       </div>
@@ -201,12 +284,12 @@ export default function CalendarView({ userId, jobs, refetchJobs }) {
         <StatBox label="Upcoming" value={upcomingJobs.length} color="green" />
         <StatBox
           label="Blocked Days"
-          value={dateOverrides.filter((o) => o.type === "blocked").length}
+          value={blockedDaysCount}
           color="orange"
         />
         <StatBox
           label="Custom Hours"
-          value={dateOverrides.filter((o) => o.type === "custom").length}
+          value={customHoursCount}
           color="slate"
         />
       </div>

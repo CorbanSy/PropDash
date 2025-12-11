@@ -28,8 +28,12 @@ export default function AttachmentUploader({ attachments, onChange }) {
     }, 1000);
   };
 
-  const handleRemove = (id) => {
-    onChange(attachments.filter((a) => a.id !== id));
+  const handleRemove = (idOrUrl) => {
+    onChange(attachments.filter((a) => {
+      // Handle both objects with ids and plain URL strings
+      const itemId = a.id || a;
+      return itemId !== idOrUrl;
+    }));
   };
 
   const getFileIcon = (type) => {
@@ -83,8 +87,12 @@ export default function AttachmentUploader({ attachments, onChange }) {
             Attachments ({attachments.length})
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {attachments.map((file) => (
-              <AttachmentCard key={file.id} file={file} onRemove={() => handleRemove(file.id)} />
+            {attachments.map((file, index) => (
+              <AttachmentCard 
+                key={file.id || file || index} 
+                file={file} 
+                onRemove={() => handleRemove(file.id || file)} 
+              />
             ))}
           </div>
         </div>
@@ -94,13 +102,19 @@ export default function AttachmentUploader({ attachments, onChange }) {
 }
 
 function AttachmentCard({ file, onRemove }) {
-  const isImage = file.type.startsWith("image/");
+  // Handle both file objects and simple URL strings
+  const fileType = file.type || '';
+  const fileName = file.name || 'Attachment';
+  const fileUrl = file.url || file;
+  const fileSize = file.size || 0;
+  
+  const isImage = fileType.startsWith("image/") || (!fileType && typeof fileUrl === 'string');
 
   return (
     <div className="border-2 border-slate-200 rounded-lg overflow-hidden hover:border-blue-300 transition">
       {isImage ? (
         <div className="relative h-32 bg-slate-100">
-          <img src={file.url} alt={file.name} className="w-full h-full object-cover" />
+          <img src={fileUrl} alt={fileName} className="w-full h-full object-cover" />
           <button
             onClick={onRemove}
             className="absolute top-2 right-2 p-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
@@ -112,11 +126,11 @@ function AttachmentCard({ file, onRemove }) {
         <div className="p-4 bg-slate-50">
           <div className="flex items-center gap-3">
             <div className="bg-slate-200 text-slate-600 p-3 rounded-lg">
-              {file.type.includes("pdf") ? <FileText size={20} /> : <Paperclip size={20} />}
+              {fileType.includes("pdf") ? <FileText size={20} /> : <Paperclip size={20} />}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-medium text-slate-900 truncate text-sm">{file.name}</p>
-              <p className="text-xs text-slate-500">{formatFileSize(file.size)}</p>
+              <p className="font-medium text-slate-900 truncate text-sm">{fileName}</p>
+              {fileSize > 0 && <p className="text-xs text-slate-500">{formatFileSize(fileSize)}</p>}
             </div>
             <button
               onClick={onRemove}

@@ -20,13 +20,15 @@ import Schedule from "./components/ProviderDashboard/Schedule";
 import Clients from "./components/ProviderDashboard/Clients";
 import Network from "./components/ProviderDashboard/Network";
 import Settings from "./components/ProviderDashboard/Settings";
+import Jobs from "./components/ProviderDashboard/Jobs";
+import ProviderMessages from "./components/ProviderDashboard/Messages"; // ✅ Renamed
 
 // Customer Dashboard Components
 import CustomerDashboardLayout from "./components/CustomerDashboard/CustomerDashboardLayout";
 import CustomerHome from "./components/CustomerDashboard/Home";
 import MyJobs from "./components/CustomerDashboard/MyJobs";
 import BrowsePros from "./components/CustomerDashboard/BrowsePros";
-import Messages from "./components/CustomerDashboard/Messages";
+import CustomerMessages from "./components/CustomerDashboard/Messages"; // ✅ Renamed
 import CustomerSettings from "./components/CustomerDashboard/Settings";
 
 // QuoteBuilder Components
@@ -34,7 +36,6 @@ import QuoteBuilder from "./components/ProviderDashboard/QuoteBuilder";
 import QuoteEditor from "./components/ProviderDashboard/QuoteBuilder/QuoteEditor";
 import QuotePricingLibrary from "./components/ProviderDashboard/QuoteBuilder/QuotePricingLibrary";
 import ClientQuoteView from "./components/ProviderDashboard/QuoteBuilder/components/ClientQuoteView";
-import Jobs from "./components/ProviderDashboard/Jobs";
 
 export default function App() {
   return (
@@ -48,6 +49,7 @@ export default function App() {
         <Route path="/register/client" element={<ClientRegister />} />
         <Route path="/book/:providerId" element={<BookingPage />} />
         <Route path="/quotes/:id/view" element={<ClientQuoteView />} />
+        
         {/* ========== PROVIDER DASHBOARD ========== */}
         <Route
           path="/provider"
@@ -66,6 +68,7 @@ export default function App() {
           <Route path="clients" element={<Clients />} />
           <Route path="network" element={<Network />} />
           <Route path="jobs" element={<Jobs />} />
+          <Route path="messages" element={<ProviderMessages />} /> {/* ✅ Fixed */}
           <Route path="settings" element={<Settings />} />
         </Route>
 
@@ -81,7 +84,7 @@ export default function App() {
           <Route path="dashboard" element={<CustomerHome />} />
           <Route path="browse" element={<BrowsePros />} />
           <Route path="jobs" element={<MyJobs />} />
-          <Route path="messages" element={<Messages />} />
+          <Route path="messages" element={<CustomerMessages />} /> {/* ✅ Fixed */}
           <Route path="settings" element={<CustomerSettings />} />
         </Route>
 

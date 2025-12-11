@@ -88,25 +88,37 @@ function MobileNav() {
     { to: "/customer/dashboard", icon: Home, label: "Home" },
     { to: "/customer/browse", icon: Search, label: "Browse" },
     { to: "/customer/jobs", icon: Briefcase, label: "Jobs" },
+    { to: "/customer/messages", icon: MessageSquare, label: "Messages" },
     { to: "/customer/settings", icon: User, label: "Settings" },
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-2 flex justify-around sm:hidden z-50">
-      {navItems.map((item, i) => (
-        <NavLink
-          key={i}
-          to={item.to}
-          className={({ isActive }) =>
-            `flex flex-col items-center p-2 text-xs ${
-              isActive ? "text-green-600" : "text-slate-500"
-            }`
-          }
-        >
-          <item.icon size={20} />
-          <span className="mt-1">{item.label}</span>
-        </NavLink>
-      ))}
-    </nav>
+    <>
+      {/* Floating Post Job Button */}
+      <NavLink
+        to="/customer/jobs"
+        className="fixed bottom-16 right-4 bg-green-600 text-white p-4 rounded-full shadow-lg sm:hidden z-50"
+      >
+        <Plus size={22} />
+      </NavLink>
+
+      {/* Bottom Navigation */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-2 flex justify-around sm:hidden z-40">
+        {navItems.map((item, i) => (
+          <NavLink
+            key={i}
+            to={item.to}
+            className={({ isActive }) =>
+              `flex flex-col items-center p-2 text-xs ${
+                isActive ? "text-green-600" : "text-slate-500"
+              }`
+            }
+          >
+            <item.icon size={20} />
+            <span className="mt-1">{item.label}</span>
+          </NavLink>
+        ))}
+      </nav>
+    </>
   );
 }

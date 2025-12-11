@@ -1,50 +1,80 @@
 // src/components/ProviderDashboard/Schedule/WeeklyHours.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AlertCircle, Plus, Trash2 } from "lucide-react";
 import { theme } from "../../../styles/theme";
+import { supabase } from "../../../lib/supabaseClient";
 import { checkTimeBlockOverlap, validateTimeBlock } from "./utils/conflictDetection";
 import ConflictWarning from "./components/ConflictWarning";
 
+const DEFAULT_AVAILABILITY = [
+  {
+    day: "Monday",
+    enabled: true,
+    blocks: [{ start: "09:00", end: "17:00" }],
+  },
+  {
+    day: "Tuesday",
+    enabled: true,
+    blocks: [{ start: "09:00", end: "17:00" }],
+  },
+  {
+    day: "Wednesday",
+    enabled: true,
+    blocks: [{ start: "09:00", end: "17:00" }],
+  },
+  {
+    day: "Thursday",
+    enabled: true,
+    blocks: [{ start: "09:00", end: "17:00" }],
+  },
+  {
+    day: "Friday",
+    enabled: true,
+    blocks: [{ start: "09:00", end: "17:00" }],
+  },
+  {
+    day: "Saturday",
+    enabled: false,
+    blocks: [{ start: "10:00", end: "15:00" }],
+  },
+  {
+    day: "Sunday",
+    enabled: false,
+    blocks: [{ start: "10:00", end: "15:00" }],
+  },
+];
+
 export default function WeeklyHours({ userId }) {
-  const [availability, setAvailability] = useState([
-    {
-      day: "Monday",
-      enabled: true,
-      blocks: [{ start: "09:00", end: "17:00" }],
-    },
-    {
-      day: "Tuesday",
-      enabled: true,
-      blocks: [{ start: "09:00", end: "17:00" }],
-    },
-    {
-      day: "Wednesday",
-      enabled: true,
-      blocks: [{ start: "09:00", end: "17:00" }],
-    },
-    {
-      day: "Thursday",
-      enabled: true,
-      blocks: [{ start: "09:00", end: "17:00" }],
-    },
-    {
-      day: "Friday",
-      enabled: true,
-      blocks: [{ start: "09:00", end: "17:00" }],
-    },
-    {
-      day: "Saturday",
-      enabled: false,
-      blocks: [{ start: "10:00", end: "15:00" }],
-    },
-    {
-      day: "Sunday",
-      enabled: false,
-      blocks: [{ start: "10:00", end: "15:00" }],
-    },
-  ]);
+  const [availability, setAvailability] = useState(DEFAULT_AVAILABILITY);
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [conflicts, setConflicts] = useState({});
+
+  // Load saved weekly hours from database
+  useEffect(() => {
+    async function loadWeeklyHours() {
+      setLoading(true);
+
+      const { data, error } = await supabase
+        .from("provider_weekly_hours")
+        .select("*")
+        .eq("provider_id", userId)
+        .maybeSingle();
+
+      if (data && data.availability) {
+        setAvailability(data.availability);
+      } else {
+        // No saved hours, use defaults
+        setAvailability(DEFAULT_AVAILABILITY);
+      }
+
+      setLoading(false);
+    }
+
+    if (userId) {
+      loadWeeklyHours();
+    }
+  }, [userId]);
 
   const toggleDay = (index) => {
     const updated = [...availability];
@@ -134,9 +164,39 @@ export default function WeeklyHours({ userId }) {
     }
 
     setSaving(true);
-    // TODO: Save to database
-    setTimeout(() => setSaving(false), 1000);
+
+    try {
+      const { error } = await supabase
+        .from("provider_weekly_hours")
+        .upsert(
+          {
+            provider_id: userId,
+            availability: availability,
+            updated_at: new Date().toISOString(),
+          },
+          {
+            onConflict: "provider_id",
+          }
+        );
+
+      if (error) throw error;
+
+      alert("Weekly schedule saved successfully!");
+    } catch (error) {
+      console.error("Error saving weekly hours:", error);
+      alert("Failed to save weekly schedule");
+    } finally {
+      setSaving(false);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className={theme.text.body}>Loading weekly schedule...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
