@@ -20,6 +20,7 @@ import {
   Users,
   Zap,
   ArrowRight,
+  Power,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabaseClient";
@@ -34,6 +35,9 @@ export default function Home() {
   const [jobs, setJobs] = useState([]);
   const [quotes, setQuotes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isOnline, setIsOnline] = useState(false); 
+  const [togglingOnline, setTogglingOnline] = useState(false); 
+  
   const {
       currentOffer,
       isListening,
@@ -41,6 +45,109 @@ export default function Home() {
       declineOffer,
       handleTimeout,
   } = useJobOfferListener(user?.id);
+  useEffect(() => {
+    console.log('🏠 Home component mounted');
+    console.log('👤 User ID:', user?.id);
+    console.log('📬 Current offer:', currentOffer);
+    console.log('👂 Is listening:', isListening);
+  }, [user?.id, currentOffer, isListening]);
+
+  useEffect(() => {
+    async function fetchProviderStatus() {
+      if (!user?.id) return;
+      
+      const { data, error } = await supabase
+        .from("providers")
+        .select("is_online, is_available")
+        .eq("id", user.id)
+        .single();
+      
+      if (data) {
+        setIsOnline(data.is_online);
+      }
+    }
+    
+    fetchProviderStatus();
+  }, [user?.id]);
+
+  // ✅ Toggle online/offline status
+const toggleOnlineStatus = async () => {
+    setTogglingOnline(true);
+    
+    try {
+      const newStatus = !isOnline;
+      
+      const { error } = await supabase
+        .from("providers")
+        .update({ 
+          is_online: newStatus,
+          is_available: newStatus // Also set available when going online
+        })
+        .eq("id", user.id);
+      
+      if (error) throw error;
+      
+      setIsOnline(newStatus);
+      
+      // ✅✅✅ NEW: When going ONLINE, check for pending jobs and dispatch them
+      if (newStatus) {
+        try {
+          console.log("🔍 Checking for pending jobs to dispatch...");
+          
+          // Find all jobs that are pending_dispatch or unassigned
+          const { data: pendingJobs, error: fetchError } = await supabase
+            .from("jobs")
+            .select("id, service_name, status")
+            .in("status", ["pending_dispatch", "unassigned"])
+            .order("created_at", { ascending: false });
+          
+          if (fetchError) throw fetchError;
+          
+          console.log("📋 Found pending jobs:", pendingJobs?.length || 0);
+          
+          if (pendingJobs && pendingJobs.length > 0) {
+            // Dispatch each pending job
+            let dispatchedCount = 0;
+            
+            for (const job of pendingJobs) {
+              console.log(`🚀 Dispatching job ${job.id}...`);
+              
+              const { data: dispatchResult, error: dispatchError } = await supabase
+                .rpc('dispatch_job_to_providers', { p_job_id: job.id });
+              
+              if (!dispatchError && dispatchResult && dispatchResult.length > 0) {
+                const { total_providers_found } = dispatchResult[0];
+                if (total_providers_found > 0) {
+                  dispatchedCount++;
+                  console.log(`✅ Job ${job.service_name} dispatched to ${total_providers_found} providers`);
+                }
+              }
+            }
+            
+            if (dispatchedCount > 0) {
+              alert(`✅ You're now ONLINE! We found ${dispatchedCount} pending job${dispatchedCount > 1 ? 's' : ''} and sent them your way!`);
+            } else {
+              alert("✅ You're now ONLINE and ready to receive job offers!");
+            }
+          } else {
+            alert("✅ You're now ONLINE and ready to receive job offers!");
+          }
+        } catch (dispatchErr) {
+          console.error("Error checking/dispatching pending jobs:", dispatchErr);
+          alert("✅ You're now ONLINE and ready to receive job offers!");
+        }
+      } else {
+        alert("⏸️ You're now OFFLINE. You won't receive new job offers.");
+      }
+    } catch (error) {
+      console.error("Error toggling online status:", error);
+      alert("Failed to update status. Please try again.");
+    } finally {
+      setTogglingOnline(false);
+    }
+  };
+
+
   useEffect(() => {
     async function fetchData() {
       // Fetch jobs
@@ -142,13 +249,75 @@ export default function Home() {
 
   return (
     <div className="space-y-6 pb-20 sm:pb-6">
-      {/* ✅ ADD THIS: Listening Indicator */}
-      {isListening && (
+      {/* ✅✅✅ ONLINE/OFFLINE TOGGLE - PROMINENT PLACEMENT ✅✅✅ */}
+      <div 
+        className={`rounded-2xl p-6 border-2 ${
+          isOnline 
+            ? "bg-gradient-to-r from-green-50 to-emerald-50 border-green-300" 
+            : "bg-gradient-to-r from-slate-50 to-gray-50 border-slate-300"
+        }`}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className={`p-3 rounded-full ${isOnline ? "bg-green-100" : "bg-slate-200"}`}>
+              <Power size={24} className={isOnline ? "text-green-600" : "text-slate-600"} />
+            </div>
+            <div>
+              <div className="flex items-center gap-3 mb-1">
+                <h3 className="text-xl font-bold text-slate-900">
+                  {isOnline ? "You're Online" : "You're Offline"}
+                </h3>
+                {isOnline && (
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span className="text-xs font-medium text-green-700">ACTIVE</span>
+                  </div>
+                )}
+              </div>
+              <p className="text-sm text-slate-600">
+                {isOnline 
+                  ? "Ready to receive job offers from customers in your area" 
+                  : "Go online to start receiving job offers"}
+              </p>
+            </div>
+          </div>
+          
+          <button
+            onClick={toggleOnlineStatus}
+            disabled={togglingOnline}
+            className={`px-8 py-3 rounded-xl font-semibold transition shadow-lg flex items-center gap-2 ${
+              isOnline
+                ? "bg-slate-600 hover:bg-slate-700 text-white shadow-slate-500/30"
+                : "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-green-500/30"
+            } disabled:opacity-50 disabled:cursor-not-allowed`}
+          >
+            {togglingOnline ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Updating...
+              </>
+            ) : isOnline ? (
+              <>
+                <Power size={18} />
+                Go Offline
+              </>
+            ) : (
+              <>
+                <Power size={18} />
+                Go Online
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* ✅ Listening Indicator - Only show when online */}
+      {isOnline && isListening && (
         <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 flex items-center gap-3">
           <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
           <div className="flex-1">
             <p className="text-sm text-blue-900 font-semibold">
-              🔔 Online & Listening for Job Offers
+              🔔 Listening for Job Offers
             </p>
             <p className="text-xs text-blue-700">
               You'll receive instant notifications when new jobs are available

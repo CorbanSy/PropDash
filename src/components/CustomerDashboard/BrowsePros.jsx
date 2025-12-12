@@ -19,9 +19,13 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { supabase } from "../../lib/supabaseClient";
+import ProviderProfileModal from "./ProviderProfileModal";
+import PostJobModal from "./MyJobs/components/PostJobModal/PostJobModal"; // ✅ UPDATED IMPORT PATH
+import useAuth from "../../hooks/useAuth";
 
 export default function BrowsePros() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [providers, setProviders] = useState([]);
   const [filteredProviders, setFilteredProviders] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -30,6 +34,9 @@ export default function BrowsePros() {
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [selectedProviderId, setSelectedProviderId] = useState(null);
+  const [bookingProviderId, setBookingProviderId] = useState(null);
+  const [bookingProviderName, setBookingProviderName] = useState(null);
 
   // Fetch providers
   useEffect(() => {
@@ -301,9 +308,44 @@ export default function BrowsePros() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProviders.map((provider) => (
-            <ProviderCard key={provider.id} provider={provider} />
+            <ProviderCard 
+              key={provider.id} 
+              provider={provider}
+              onViewClick={() => setSelectedProviderId(provider.id)}
+              onBookClick={() => {
+                setBookingProviderId(provider.id);
+                setBookingProviderName(provider.business_name);
+              }}
+            />
           ))}
         </div>
+      )}
+
+      {/* Provider Profile Modal */}
+      {selectedProviderId && (
+        <ProviderProfileModal
+          providerId={selectedProviderId}
+          onClose={() => setSelectedProviderId(null)}
+        />
+      )}
+
+      {/* Booking Modal */}
+      {bookingProviderId && (
+        <PostJobModal
+          onClose={() => {
+            setBookingProviderId(null);
+            setBookingProviderName(null);
+          }}
+          onSuccess={() => {
+            setBookingProviderId(null);
+            setBookingProviderName(null);
+            // Optionally navigate to My Jobs
+            navigate('/my-jobs');
+          }}
+          userId={user?.id}
+          directProviderId={bookingProviderId}
+          providerName={bookingProviderName}
+        />
       )}
     </div>
   );
@@ -323,7 +365,7 @@ function StatBadge({ icon, value, label }) {
 }
 
 // Provider Card Component
-function ProviderCard({ provider }) {
+function ProviderCard({ provider, onViewClick, onBookClick }) {
   const navigate = useNavigate();
 
   const getLicenseBadge = (licenseType) => {
@@ -420,7 +462,7 @@ function ProviderCard({ provider }) {
           <span className="text-sm">Base Rate</span>
         </div>
         <div className="text-2xl font-bold text-slate-900">
-          ${provider.base_rate || "N/A"}
+          ${provider.base_rate ? (provider.base_rate / 100).toFixed(0) : "N/A"}
           {provider.base_rate && <span className="text-sm font-normal text-slate-600">/hr</span>}
         </div>
       </div>
@@ -428,14 +470,14 @@ function ProviderCard({ provider }) {
       {/* Actions */}
       <div className="flex gap-2">
         <button
-          onClick={() => navigate(`/book/${provider.id}`)}
+          onClick={onBookClick}
           className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white py-2.5 rounded-lg font-semibold hover:from-green-700 hover:to-emerald-700 transition shadow-lg shadow-green-500/20 flex items-center justify-center gap-2"
         >
           <ExternalLink size={16} />
           Book Now
         </button>
         <button 
-          onClick={() => navigate(`/customer/provider/${provider.id}`)}
+          onClick={onViewClick}
           className="px-4 py-2.5 border-2 border-slate-300 text-slate-700 rounded-lg font-semibold hover:bg-slate-50 transition"
         >
           View

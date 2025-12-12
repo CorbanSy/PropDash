@@ -17,8 +17,17 @@ import {
 } from "lucide-react";
 import { supabase } from "../../../../lib/supabaseClient";
 import { SERVICE_CATEGORIES } from "../../../../constants/serviceCategories";
-export default function PostJobModal({ onClose, onSuccess, userId, editingJob }) {
-  const isEditing = !!editingJob; // ✅ Check if we're editing
+
+export default function PostJobModal({ 
+  onClose, 
+  onSuccess, 
+  userId, 
+  editingJob,
+  directProviderId = null, // ✅ NEW: Optional prop for direct booking
+  providerName = null // ✅ NEW: Provider name for display
+}) {
+  const isEditing = !!editingJob;
+  const isDirectBooking = !!directProviderId && !isEditing; // ✅ Check if booking directly
   const categories = SERVICE_CATEGORIES;
 
   // ✅ Initialize form data from editingJob if it exists
@@ -26,7 +35,7 @@ export default function PostJobModal({ onClose, onSuccess, userId, editingJob })
     jobTitle: editingJob?.service_name || "",
     category: editingJob?.category || "",
     description: editingJob?.notes || "",
-    photos: [], // Photos from existing job will be shown separately
+    photos: [],
     useDefaultAddress: !editingJob?.client_address || editingJob?.client_address === null,
     address: "",
     unit: "",
@@ -47,7 +56,7 @@ export default function PostJobModal({ onClose, onSuccess, userId, editingJob })
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [existingPhotos, setExistingPhotos] = useState(editingJob?.photos || []); // ✅ Track existing photos
+  const [existingPhotos, setExistingPhotos] = useState(editingJob?.photos || []);
 
   // ✅ Parse address if editing
   useEffect(() => {
@@ -90,7 +99,6 @@ export default function PostJobModal({ onClose, onSuccess, userId, editingJob })
     setFormData({ ...formData, photos: newPhotos });
   };
 
-  // ✅ Remove existing photo
   const removeExistingPhoto = (index) => {
     const newExistingPhotos = existingPhotos.filter((_, i) => i !== index);
     setExistingPhotos(newExistingPhotos);
@@ -134,7 +142,7 @@ export default function PostJobModal({ onClose, onSuccess, userId, editingJob })
       if (customerError) throw customerError;
 
       // Upload new photos to Supabase Storage
-      const photoUrls = [...existingPhotos]; // ✅ Keep existing photos
+      const photoUrls = [...existingPhotos];
       for (const photo of formData.photos) {
         const fileName = `${userId}/${Date.now()}-${photo.file.name}`;
         const { data, error: uploadError } = await supabase.storage
@@ -183,20 +191,25 @@ export default function PostJobModal({ onClose, onSuccess, userId, editingJob })
         allow_multiple_quotes: formData.allowMultiplePros,
       };
 
+      // ✅✅✅ NEW: Add provider_id and status for direct booking
+      if (isDirectBooking) {
+        jobData.provider_id = directProviderId;
+        jobData.status = "pending_acceptance"; // Different status for direct bookings
+      }
+
       // ✅ Update or insert based on editing mode
       if (isEditing) {
         const { error: updateError } = await supabase
           .from("jobs")
           .update(jobData)
           .eq("id", editingJob.id)
-          .eq("customer_id", userId); // Security: only update own jobs
+          .eq("customer_id", userId);
 
         if (updateError) {
           console.error("Update error:", updateError);
           throw updateError;
         }
 
-        // Success message for edit
         alert("Job updated successfully!");
         onSuccess();
       } else {
@@ -212,40 +225,47 @@ export default function PostJobModal({ onClose, onSuccess, userId, editingJob })
           throw insertError;
         }
 
-        // ✅✅✅ TRIGGER DISPATCH SYSTEM ✅✅✅
-        if (insertedJob) {
-          try {
-            console.log("🚀 Dispatching job to providers...", insertedJob.id);
-            
-            const { data: dispatchResult, error: dispatchError } = await supabase
-              .rpc('dispatch_job_to_providers', { p_job_id: insertedJob.id });
-            
-            if (dispatchError) {
-              console.error("⚠️ Dispatch error:", dispatchError);
-              // Don't fail the job creation, just log the error
-              alert("Job posted! However, there was an issue notifying providers. Our team will follow up.");
-            } else {
-              console.log("✅ Dispatch result:", dispatchResult);
+        // ✅✅✅ CONDITIONAL: Direct booking vs Dispatch system
+        if (isDirectBooking) {
+          // Direct booking - skip dispatch, just notify provider
+          console.log("📬 Direct booking created for provider:", directProviderId);
+          alert(`🎉 Booking request sent to ${providerName || 'the provider'}! They will be notified and can accept or decline your request.`);
+          onSuccess();
+        } else {
+          // ✅✅✅ TRIGGER DISPATCH SYSTEM (existing flow)
+          if (insertedJob) {
+            try {
+              console.log("🚀 Dispatching job to providers...", insertedJob.id);
               
-              if (dispatchResult && dispatchResult.length > 0) {
-                const { total_providers_found, queue_created } = dispatchResult[0];
-                
-                if (total_providers_found === 0) {
-                  alert("Job posted successfully! However, no providers are currently available in your area. We'll notify you when providers become available.");
-                } else {
-                  alert(`🎉 Job posted successfully! We're notifying ${total_providers_found} qualified providers in your area.`);
-                }
+              const { data: dispatchResult, error: dispatchError } = await supabase
+                .rpc('dispatch_job_to_providers', { p_job_id: insertedJob.id });
+              
+              if (dispatchError) {
+                console.error("⚠️ Dispatch error:", dispatchError);
+                alert("Job posted! However, there was an issue notifying providers. Our team will follow up.");
               } else {
-                alert("Job posted successfully!");
+                console.log("✅ Dispatch result:", dispatchResult);
+                
+                if (dispatchResult && dispatchResult.length > 0) {
+                  const { total_providers_found, queue_created } = dispatchResult[0];
+                  
+                  if (total_providers_found === 0) {
+                    alert("Job posted successfully! However, no providers are currently available in your area. We'll notify you when providers become available.");
+                  } else {
+                    alert(`🎉 Job posted successfully! We're notifying ${total_providers_found} qualified providers in your area.`);
+                  }
+                } else {
+                  alert("Job posted successfully!");
+                }
               }
+            } catch (dispatchErr) {
+              console.error("⚠️ Dispatch exception:", dispatchErr);
+              alert("Job posted! However, there was an issue with the dispatch system. Our team will follow up.");
             }
-          } catch (dispatchErr) {
-            console.error("⚠️ Dispatch exception:", dispatchErr);
-            alert("Job posted! However, there was an issue with the dispatch system. Our team will follow up.");
           }
-        }
 
-        onSuccess();
+          onSuccess();
+        }
       }
     } catch (err) {
       console.error("Full error:", err);
@@ -263,10 +283,14 @@ export default function PostJobModal({ onClose, onSuccess, userId, editingJob })
         <div className="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between z-10">
           <div>
             <h2 className="text-2xl font-bold text-slate-900">
-              {isEditing ? "Edit Job" : "Post a Job"}
+              {isEditing ? "Edit Job" : isDirectBooking ? `Book ${providerName || 'Provider'}` : "Post a Job"}
             </h2>
             <p className="text-sm text-slate-600">
-              {isEditing ? "Update job details below" : "Fill out the details below"}
+              {isEditing 
+                ? "Update job details below" 
+                : isDirectBooking 
+                  ? `Send a direct booking request to ${providerName || 'this provider'}`
+                  : "Fill out the details below"}
             </p>
           </div>
           <button
@@ -277,6 +301,22 @@ export default function PostJobModal({ onClose, onSuccess, userId, editingJob })
           </button>
         </div>
 
+        {/* ✅ NEW: Direct Booking Banner */}
+        {isDirectBooking && (
+          <div className="mx-6 mt-4 bg-blue-50 border border-blue-200 rounded-xl p-4">
+            <div className="flex gap-3">
+              <Info size={20} className="text-blue-600 flex-shrink-0" />
+              <div className="text-sm text-blue-800">
+                <p className="font-semibold mb-1">📬 Direct Booking Request</p>
+                <p className="text-blue-700">
+                  This job will be sent directly to <strong>{providerName || 'the selected provider'}</strong> for their review. 
+                  They can accept or decline your request. You'll be notified of their response.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Error Message */}
         {error && (
           <div className="mx-6 mt-4 bg-red-50 border border-red-200 text-red-800 p-4 rounded-xl flex items-start gap-3">
@@ -285,8 +325,9 @@ export default function PostJobModal({ onClose, onSuccess, userId, editingJob })
           </div>
         )}
 
-        {/* Form */}
+        {/* Form - Rest remains the same */}
         <form onSubmit={handleSubmit} className="p-6 space-y-8">
+          {/* All the existing form fields remain unchanged */}
           {/* Basic Info */}
           <div className="space-y-5">
             <h3 className="text-lg font-semibold text-slate-900 pb-2 border-b border-slate-200">
@@ -363,13 +404,12 @@ export default function PostJobModal({ onClose, onSuccess, userId, editingJob })
             </div>
           </div>
 
-          {/* Photos */}
+          {/* Photos - existing code */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-slate-900 pb-2 border-b border-slate-200">
               Photos (Optional)
             </h3>
 
-            {/* Show existing photos if editing */}
             {existingPhotos.length > 0 && (
               <div>
                 <p className="text-sm font-medium text-slate-700 mb-2">Current Photos:</p>
@@ -394,7 +434,6 @@ export default function PostJobModal({ onClose, onSuccess, userId, editingJob })
               </div>
             )}
 
-            {/* Upload new photos */}
             <div className="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-teal-500 transition">
               <input
                 type="file"
@@ -420,7 +459,6 @@ export default function PostJobModal({ onClose, onSuccess, userId, editingJob })
               </label>
             </div>
 
-            {/* Show newly uploaded photos */}
             {formData.photos.length > 0 && (
               <div>
                 <p className="text-sm font-medium text-slate-700 mb-2">New Photos:</p>
@@ -446,7 +484,7 @@ export default function PostJobModal({ onClose, onSuccess, userId, editingJob })
             )}
           </div>
 
-          {/* Location */}
+          {/* Location - existing code */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-slate-900 pb-2 border-b border-slate-200">
               Location
@@ -544,7 +582,7 @@ export default function PostJobModal({ onClose, onSuccess, userId, editingJob })
             )}
           </div>
 
-          {/* Scheduling */}
+          {/* Scheduling - existing code */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-slate-900 pb-2 border-b border-slate-200">
               Scheduling
@@ -644,29 +682,32 @@ export default function PostJobModal({ onClose, onSuccess, userId, editingJob })
             </div>
           </div>
 
-          {/* Special Requirements */}
+          {/* Special Requirements - existing code */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-slate-900 pb-2 border-b border-slate-200">
               Preferences & Special Requirements
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <label className="flex items-center gap-3 p-4 border-2 border-slate-300 rounded-xl cursor-pointer hover:bg-slate-50 transition">
-                <input
-                  type="checkbox"
-                  checked={formData.allowMultiplePros}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      allowMultiplePros: e.target.checked,
-                    })
-                  }
-                  className="w-5 h-5 text-teal-600 rounded"
-                />
-                <span className="text-sm font-medium text-slate-900">
-                  Let multiple pros send quotes
-                </span>
-              </label>
+              {/* ✅ HIDE "allow multiple pros" option for direct bookings */}
+              {!isDirectBooking && (
+                <label className="flex items-center gap-3 p-4 border-2 border-slate-300 rounded-xl cursor-pointer hover:bg-slate-50 transition">
+                  <input
+                    type="checkbox"
+                    checked={formData.allowMultiplePros}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        allowMultiplePros: e.target.checked,
+                      })
+                    }
+                    className="w-5 h-5 text-teal-600 rounded"
+                  />
+                  <span className="text-sm font-medium text-slate-900">
+                    Let multiple pros send quotes
+                  </span>
+                </label>
+              )}
 
               <label className="flex items-center gap-3 p-4 border-2 border-slate-300 rounded-xl cursor-pointer hover:bg-slate-50 transition">
                 <input
@@ -814,10 +855,21 @@ export default function PostJobModal({ onClose, onSuccess, userId, editingJob })
               <div className="text-sm text-blue-800">
                 <p className="font-semibold mb-1">✨ What happens next?</p>
                 <ul className="text-blue-700 space-y-1">
-                  <li>• Licensed professionals will review your job</li>
-                  <li>• You'll receive quotes within 24 hours</li>
-                  <li>• Compare quotes and choose the best fit</li>
-                  <li>• Message pros directly to discuss details</li>
+                  {isDirectBooking ? (
+                    <>
+                      <li>• {providerName || 'The provider'} will review your request</li>
+                      <li>• They can accept or decline within 24 hours</li>
+                      <li>• You'll receive a notification of their decision</li>
+                      <li>• If accepted, you can discuss details and schedule</li>
+                    </>
+                  ) : (
+                    <>
+                      <li>• Licensed professionals will review your job</li>
+                      <li>• You'll receive quotes within 24 hours</li>
+                      <li>• Compare quotes and choose the best fit</li>
+                      <li>• Message pros directly to discuss details</li>
+                    </>
+                  )}
                 </ul>
               </div>
             </div>
@@ -833,12 +885,12 @@ export default function PostJobModal({ onClose, onSuccess, userId, editingJob })
               {loading ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  {isEditing ? "Updating Job..." : "Posting Job..."}
+                  {isEditing ? "Updating Job..." : isDirectBooking ? "Sending Request..." : "Posting Job..."}
                 </>
               ) : (
                 <>
                   <CheckCircle2 size={20} />
-                  {isEditing ? "Update Job" : "Post Job"}
+                  {isEditing ? "Update Job" : isDirectBooking ? "Send Booking Request" : "Post Job"}
                 </>
               )}
             </button>

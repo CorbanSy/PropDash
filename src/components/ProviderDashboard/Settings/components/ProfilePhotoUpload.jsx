@@ -1,5 +1,5 @@
 // src/components/ProviderDashboard/Settings/components/ProfilePhotoUpload.jsx
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react"; // ✅ Add useEffect
 import { Camera, Upload, X, User } from "lucide-react";
 import { supabase } from "../../../../lib/supabaseClient";
 import { uploadFile, deleteFile } from "../utils/settingsHelpers";
@@ -9,6 +9,10 @@ export default function ProfilePhotoUpload({ currentPhoto, userId, onUploadSucce
   const [preview, setPreview] = useState(currentPhoto);
   const fileInputRef = useRef(null);
 
+  useEffect(() => {
+    setPreview(currentPhoto);
+  }, [currentPhoto]);
+  
   const handleFileSelect = async (e) => {
     const file = e.target.files[0];
     if (!file) return;

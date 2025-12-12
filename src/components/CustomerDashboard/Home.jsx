@@ -118,7 +118,7 @@ export default function CustomerHome() {
           </p>
         </div>
         <button
-          onClick={() => navigate("/customer/new-job")}
+          onClick={() => navigate("/customer/jobs")}
           className="hidden sm:flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-4 py-2.5 rounded-lg font-semibold hover:from-green-700 hover:to-emerald-700 transition shadow-lg shadow-green-500/30"
         >
           <Plus size={18} />
@@ -195,7 +195,7 @@ export default function CustomerHome() {
               Post a job and get quotes from verified pros in your area
             </p>
             <button
-              onClick={() => navigate("/customer/new-job")}
+              onClick={() => navigate("/customer/jobs")}
               className="bg-white text-green-600 px-6 py-2.5 rounded-lg font-semibold hover:bg-green-50 transition flex items-center gap-2"
             >
               Post a Job
@@ -267,19 +267,6 @@ export default function CustomerHome() {
             ))}
           </div>
         )}
-      </div>
-
-      {/* Popular Services */}
-      <div>
-        <h2 className="text-xl font-bold text-slate-900 mb-4">
-          Popular Services
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <ServiceCard icon="🔧" title="Handyman" count="250+ pros" />
-          <ServiceCard icon="🚰" title="Plumbing" count="180+ pros" />
-          <ServiceCard icon="⚡" title="Electrical" count="120+ pros" />
-          <ServiceCard icon="🌳" title="Landscaping" count="200+ pros" />
-        </div>
       </div>
     </div>
   );
@@ -405,17 +392,6 @@ function JobCard({ job, navigate }) {
           </button>
         )}
       </div>
-    </div>
-  );
-}
-
-// Service Card Component
-function ServiceCard({ icon, title, count }) {
-  return (
-    <div className="bg-white rounded-xl border border-slate-200 p-4 hover:shadow-md transition cursor-pointer">
-      <div className="text-3xl mb-2">{icon}</div>
-      <h3 className="font-semibold text-slate-900 mb-1">{title}</h3>
-      <p className="text-xs text-slate-600">{count}</p>
     </div>
   );
 }

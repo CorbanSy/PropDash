@@ -21,14 +21,14 @@ import Clients from "./components/ProviderDashboard/Clients";
 import Network from "./components/ProviderDashboard/Network";
 import Settings from "./components/ProviderDashboard/Settings";
 import Jobs from "./components/ProviderDashboard/Jobs";
-import ProviderMessages from "./components/ProviderDashboard/Messages"; // ✅ Renamed
+import ProviderMessages from "./components/ProviderDashboard/Messages";
 
 // Customer Dashboard Components
 import CustomerDashboardLayout from "./components/CustomerDashboard/CustomerDashboardLayout";
 import CustomerHome from "./components/CustomerDashboard/Home";
 import MyJobs from "./components/CustomerDashboard/MyJobs";
 import BrowsePros from "./components/CustomerDashboard/BrowsePros";
-import CustomerMessages from "./components/CustomerDashboard/Messages"; // ✅ Renamed
+import CustomerMessages from "./components/CustomerDashboard/Messages";
 import CustomerSettings from "./components/CustomerDashboard/Settings";
 
 // QuoteBuilder Components
@@ -54,7 +54,7 @@ export default function App() {
         <Route
           path="/provider"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredUserType="provider">
               <DashboardLayout />
             </ProtectedRoute>
           }
@@ -68,7 +68,7 @@ export default function App() {
           <Route path="clients" element={<Clients />} />
           <Route path="network" element={<Network />} />
           <Route path="jobs" element={<Jobs />} />
-          <Route path="messages" element={<ProviderMessages />} /> {/* ✅ Fixed */}
+          <Route path="messages" element={<ProviderMessages />} />
           <Route path="settings" element={<Settings />} />
         </Route>
 
@@ -76,7 +76,7 @@ export default function App() {
         <Route
           path="/customer"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredUserType="customer">
               <CustomerDashboardLayout />
             </ProtectedRoute>
           }
@@ -84,7 +84,7 @@ export default function App() {
           <Route path="dashboard" element={<CustomerHome />} />
           <Route path="browse" element={<BrowsePros />} />
           <Route path="jobs" element={<MyJobs />} />
-          <Route path="messages" element={<CustomerMessages />} /> {/* ✅ Fixed */}
+          <Route path="messages" element={<CustomerMessages />} />
           <Route path="settings" element={<CustomerSettings />} />
         </Route>
 

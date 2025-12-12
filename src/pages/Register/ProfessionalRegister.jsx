@@ -82,10 +82,16 @@ export default function ProfessionalRegister() {
         .insert({
           id: user.id,
           business_name: formData.name,
+          email: formData.email, // ✅ Add email
+          phone: formData.phone || null, // ✅ Add phone if you have it in form
           base_rate: 85,
           verification_status: "pending",
           insurance_status: "none",
           license_type: "none",
+          // ✅ Add default service categories so they can receive jobs immediately
+          service_categories: ['handyman', 'plumbing', 'electrical', 'hvac', 'carpentry', 'painting', 'landscaping', 'cleaning'],
+          is_online: false, // ✅ Start offline
+          is_available: false, // ✅ Start unavailable
         });
 
       if (providerError) {

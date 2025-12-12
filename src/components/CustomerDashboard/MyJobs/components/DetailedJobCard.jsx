@@ -1,3 +1,4 @@
+//propdash-mvp\src\components\CustomerDashboard\MyJobs\components\DetailedJobCard.jsx
 import { useState, useEffect } from "react";
 import {
   Calendar,

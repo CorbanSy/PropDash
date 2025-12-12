@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Search, Filter, Calendar, Plus } from "lucide-react";
 import { supabase } from "../../../lib/supabaseClient";
 import useAuth from "../../../hooks/useAuth";
-import PostJobModal from "./components/PostJobModal";
+import PostJobModal from "./components/PostJobModal/PostJobModal"; // ✅ UPDATED IMPORT PATH
 import StatBox from "./components/StatBox";
 import DetailedJobCard from "./components/DetailedJobCard";
 
@@ -42,7 +42,7 @@ export default function MyJobs() {
     }
 
     if (data) {
-      console.log("📋 Fetched jobs:", data); // ✅ Debug log
+      console.log("📋 Fetched jobs:", data);
       setJobs(data);
       setFilteredJobs(data);
     }
@@ -59,7 +59,7 @@ export default function MyJobs() {
         .delete()
         .eq("id", jobId)
         .eq("customer_id", user.id)
-        .select(); // ✅ Add select to see what was deleted
+        .select();
 
       console.log("Delete response:", { data, error });
 
@@ -74,7 +74,7 @@ export default function MyJobs() {
         return;
       }
 
-      // ✅ Remove from local state
+      // Remove from local state
       setJobs(jobs.filter((job) => job.id !== jobId));
       setFilteredJobs(filteredJobs.filter((job) => job.id !== jobId));
       
@@ -111,7 +111,6 @@ export default function MyJobs() {
     setFilteredJobs(filtered);
   }, [statusFilter, searchQuery, jobs]);
 
-  // ✅✅✅ FIXED: Update status filters to match new dispatch system
   const activeJobs = filteredJobs.filter(
     (j) => j.status === "pending_dispatch" || 
           j.status === "dispatching" || 

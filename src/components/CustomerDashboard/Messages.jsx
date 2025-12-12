@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   MessageSquare,
   Send,
@@ -10,12 +11,17 @@ import {
   MoreVertical,
   ArrowLeft,
   Shield,
+  Ban,
+  Flag,
+  X,
 } from "lucide-react";
 import { supabase } from "../../lib/supabaseClient";
 import useAuth from "../../hooks/useAuth";
 
 export default function Messages() {
   const { user } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [conversations, setConversations] = useState([]);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -23,17 +29,36 @@ export default function Messages() {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
+  const [showOptionsMenu, setShowOptionsMenu] = useState(false); // ✅ Added
+  const [showBlockModal, setShowBlockModal] = useState(false); // ✅ Added
+  const [showReportModal, setShowReportModal] = useState(false); // ✅ Added
   const messagesEndRef = useRef(null);
+  const optionsMenuRef = useRef(null); // ✅ Added
+
+  // ✅ Close options menu when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (optionsMenuRef.current && !optionsMenuRef.current.contains(event.target)) {
+        setShowOptionsMenu(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Fetch conversations
   useEffect(() => {
     async function fetchConversations() {
-      // Get conversations first
+      console.log("Fetching conversations for user:", user.id);
+
       const { data: convData, error: convError } = await supabase
         .from("conversations")
         .select("*")
         .eq("customer_id", user.id)
         .order("last_message_at", { ascending: false });
+
+      console.log("Conversations data:", convData);
+      console.log("Conversations error:", convError);
 
       if (convError) {
         console.error("Error fetching conversations:", convError);
@@ -42,36 +67,53 @@ export default function Messages() {
       }
 
       if (convData && convData.length > 0) {
-        // Get unique provider IDs
         const providerIds = [...new Set(convData.map(c => c.provider_id))];
         
-        // Fetch provider details
         const { data: providerData } = await supabase
           .from("providers")
           .select("id, business_name, verification_status, base_rate")
           .in("id", providerIds);
 
-        // Get unique job IDs
+        console.log("Provider data:", providerData);
+
         const jobIds = convData.map(c => c.job_id).filter(Boolean);
         
-        // Fetch job details
-        const { data: jobData } = await supabase
-          .from("jobs")
-          .select("id, service_name, status")
-          .in("id", jobIds);
+        let jobData = [];
+        if (jobIds.length > 0) {
+          const { data } = await supabase
+            .from("jobs")
+            .select("id, service_name, status")
+            .in("id", jobIds);
+          jobData = data || [];
+        }
 
-        // Combine the data
+        console.log("Job data:", jobData);
+
         const enrichedConversations = convData.map(conv => ({
           ...conv,
           providers: providerData?.find(p => p.id === conv.provider_id) || null,
           jobs: jobData?.find(j => j.id === conv.job_id) || null,
         }));
 
+        console.log("Enriched conversations:", enrichedConversations);
+
         setConversations(enrichedConversations);
-        if (enrichedConversations.length > 0) {
+        
+        const searchParams = new URLSearchParams(location.search);
+        const conversationId = searchParams.get('conversation');
+        
+        if (conversationId) {
+          const targetConversation = enrichedConversations.find(c => c.id === conversationId);
+          if (targetConversation) {
+            setSelectedConversation(targetConversation);
+          } else {
+            setSelectedConversation(enrichedConversations[0]);
+          }
+        } else if (enrichedConversations.length > 0) {
           setSelectedConversation(enrichedConversations[0]);
         }
       } else {
+        console.log("No conversations found");
         setConversations([]);
       }
       
@@ -79,7 +121,7 @@ export default function Messages() {
     }
     
     if (user) fetchConversations();
-  }, [user]);
+  }, [user, location.search]);
 
   // Fetch messages for selected conversation
   useEffect(() => {
@@ -94,7 +136,6 @@ export default function Messages() {
 
       if (data) {
         setMessages(data);
-        // Mark messages as read
         await supabase
           .from("messages")
           .update({ is_read: true })
@@ -121,23 +162,21 @@ export default function Messages() {
     const { data, error } = await supabase.from("messages").insert({
       conversation_id: selectedConversation.id,
       sender_id: user.id,
-      receiver_id: selectedConversation.customer_id,
+      receiver_id: selectedConversation.provider_id,
       message: newMessage.trim(),
     });
 
     if (!error) {
-      // Update conversation last_message_at
       await supabase
         .from("conversations")
         .update({ last_message_at: new Date().toISOString() })
         .eq("id", selectedConversation.id);
 
-      // Add message to local state
       const newMsg = {
         id: crypto.randomUUID(),
         conversation_id: selectedConversation.id,
         sender_id: user.id,
-        receiver_id: selectedConversation.customer_id,
+        receiver_id: selectedConversation.provider_id,
         message: newMessage.trim(),
         is_read: false,
         created_at: new Date().toISOString(),
@@ -149,8 +188,34 @@ export default function Messages() {
     setSending(false);
   };
 
+  // ✅ Handle block user
+  const handleBlockUser = async () => {
+    setShowBlockModal(false);
+    setShowOptionsMenu(false);
+    
+    // TODO: Implement actual blocking logic in database
+    console.log("Blocking provider:", selectedConversation.provider_id);
+    
+    // You would create a "blocked_users" table and insert a record
+    // For now, just show a success message
+    alert(`${selectedConversation.providers?.business_name} has been blocked. You will no longer receive messages from this provider.`);
+  };
+
+  // ✅ Handle report user
+  const handleReportUser = async (reason) => {
+    setShowReportModal(false);
+    setShowOptionsMenu(false);
+    
+    // TODO: Implement actual reporting logic in database
+    console.log("Reporting provider:", selectedConversation.provider_id, "Reason:", reason);
+    
+    // You would create a "reports" table and insert a record
+    // For now, just show a success message
+    alert(`Thank you for your report. Our team will review ${selectedConversation.providers?.business_name}'s account.`);
+  };
+
   const filteredConversations = conversations.filter((conv) =>
-    conv.customers?.full_name
+    conv.providers?.business_name
       ?.toLowerCase()
       .includes(searchQuery.toLowerCase())
   );
@@ -169,7 +234,7 @@ export default function Messages() {
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-slate-900">Messages</h1>
         <p className="text-slate-600 mt-1">
-          Chat with customers about their projects
+          Chat with service providers about your projects
         </p>
       </div>
 
@@ -206,6 +271,9 @@ export default function Messages() {
                   <MessageSquare className="text-slate-400" size={24} />
                 </div>
                 <p className="text-sm text-slate-600">No conversations yet</p>
+                <p className="text-xs text-slate-500 mt-2">
+                  Start a conversation by messaging a provider
+                </p>
               </div>
             ) : (
               filteredConversations.map((conversation) => (
@@ -237,16 +305,48 @@ export default function Messages() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-slate-900">
-                    {selectedConversation.customers?.full_name || "Customer"}
+                    {selectedConversation.providers?.business_name || "Provider"}
                   </h3>
                   <p className="text-xs text-slate-600">
                     {selectedConversation.jobs?.service_name || "General inquiry"}
                   </p>
                 </div>
               </div>
-              <button className="text-slate-600 hover:text-slate-900">
-                <MoreVertical size={20} />
-              </button>
+              
+              {/* ✅ Options Menu */}
+              <div className="relative" ref={optionsMenuRef}>
+                <button
+                  onClick={() => setShowOptionsMenu(!showOptionsMenu)}
+                  className="text-slate-600 hover:text-slate-900 p-2 hover:bg-slate-100 rounded-lg transition"
+                >
+                  <MoreVertical size={20} />
+                </button>
+                
+                {showOptionsMenu && (
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-slate-200 py-1 z-10">
+                    <button
+                      onClick={() => {
+                        setShowOptionsMenu(false);
+                        setShowBlockModal(true);
+                      }}
+                      className="w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2 transition"
+                    >
+                      <Ban size={16} className="text-red-600" />
+                      Block User
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowOptionsMenu(false);
+                        setShowReportModal(true);
+                      }}
+                      className="w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2 transition"
+                    >
+                      <Flag size={16} className="text-orange-600" />
+                      Report User
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Messages */}
@@ -325,6 +425,151 @@ export default function Messages() {
           </div>
         )}
       </div>
+
+      {/* ✅ Block Confirmation Modal */}
+      {showBlockModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="bg-red-100 p-2 rounded-full">
+                <Ban className="text-red-600" size={24} />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900">Block User</h3>
+            </div>
+            
+            <p className="text-slate-600 mb-6">
+              Are you sure you want to block <strong>{selectedConversation.providers?.business_name}</strong>? 
+              You will no longer receive messages from this provider, and they won't be able to contact you.
+            </p>
+            
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowBlockModal(false)}
+                className="flex-1 px-4 py-2 border-2 border-slate-300 text-slate-700 rounded-lg font-semibold hover:bg-slate-50 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleBlockUser}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition"
+              >
+                Block User
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ✅ Report Modal */}
+      {showReportModal && (
+        <ReportModal
+          providerName={selectedConversation.providers?.business_name}
+          onClose={() => setShowReportModal(false)}
+          onSubmit={handleReportUser}
+        />
+      )}
+    </div>
+  );
+}
+
+// ✅ Report Modal Component
+function ReportModal({ providerName, onClose, onSubmit }) {
+  const [selectedReason, setSelectedReason] = useState("");
+  const [details, setDetails] = useState("");
+
+  const reasons = [
+    "Spam or scam",
+    "Inappropriate behavior",
+    "Harassment",
+    "Fake profile",
+    "Unprofessional conduct",
+    "Other",
+  ];
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!selectedReason) return;
+    onSubmit({ reason: selectedReason, details });
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl max-w-md w-full p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="bg-orange-100 p-2 rounded-full">
+              <Flag className="text-orange-600" size={24} />
+            </div>
+            <h3 className="text-xl font-bold text-slate-900">Report User</h3>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-slate-600 transition"
+          >
+            <X size={20} />
+          </button>
+        </div>
+        
+        <p className="text-slate-600 mb-4">
+          Report <strong>{providerName}</strong> to our team. We'll review the issue.
+        </p>
+        
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">
+              Reason for report *
+            </label>
+            <div className="space-y-2">
+              {reasons.map((reason) => (
+                <label
+                  key={reason}
+                  className="flex items-center gap-2 p-3 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer transition"
+                >
+                  <input
+                    type="radio"
+                    name="reason"
+                    value={reason}
+                    checked={selectedReason === reason}
+                    onChange={(e) => setSelectedReason(e.target.value)}
+                    className="w-4 h-4 text-blue-600"
+                  />
+                  <span className="text-sm text-slate-700">{reason}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">
+              Additional details (optional)
+            </label>
+            <textarea
+              value={details}
+              onChange={(e) => setDetails(e.target.value)}
+              placeholder="Provide more information about the issue..."
+              rows={3}
+              className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+            />
+          </div>
+          
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2 border-2 border-slate-300 text-slate-700 rounded-lg font-semibold hover:bg-slate-50 transition"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={!selectedReason}
+              className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Submit Report
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
@@ -362,7 +607,7 @@ function ConversationItem({ conversation, isSelected, onClick }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-1">
             <h4 className="font-semibold text-slate-900 text-sm truncate">
-              {conversation.customers?.full_name || "Customer"}
+              {conversation.providers?.business_name || "Provider"}
             </h4>
             <span className="text-xs text-slate-500 flex-shrink-0 ml-2">
               {formatTime(conversation.last_message_at)}
