@@ -83,13 +83,9 @@ export default function QuoteBuilder() {
   // Calculate stats
   const stats = {
     total: quotes.length,
-    draft: quotes.filter((q) => q.status === "draft").length,
     sent: quotes.filter((q) => q.status === "sent").length,
     approved: quotes.filter((q) => q.status === "approved").length,
     declined: quotes.filter((q) => q.status === "declined").length,
-    totalValue: quotes
-      .filter((q) => q.status === "approved")
-      .reduce((sum, q) => sum + (q.total || 0), 0),
   };
 
   if (loading) {
@@ -120,18 +116,12 @@ export default function QuoteBuilder() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <StatCard
           label="Total Quotes"
           value={stats.total}
           icon={<FileText size={20} />}
           color="blue"
-        />
-        <StatCard
-          label="Drafts"
-          value={stats.draft}
-          icon={<Edit2 size={20} />}
-          color="slate"
         />
         <StatCard
           label="Sent/Pending"
@@ -146,10 +136,10 @@ export default function QuoteBuilder() {
           color="green"
         />
         <StatCard
-          label="Total Value"
-          value={`$${(stats.totalValue / 100).toFixed(0)}`}
-          icon={<TrendingUp size={20} />}
-          color="emerald"
+          label="Declined"
+          value={stats.declined}
+          icon={<XCircle size={20} />}
+          color="red"
         />
       </div>
 
@@ -276,9 +266,10 @@ function StatCard({ label, value, icon, color }) {
   const colors = {
     blue: theme.statCard.blue,
     slate: theme.statCard.slate,
-    amber: "bg-amber-50 border-amber-200",
+    amber: "bg-amber-50 border-amber-200 text-amber-700",
     green: theme.statCard.green,
     emerald: "bg-emerald-50 border-emerald-200",
+    red: "bg-red-50 border-red-200 text-red-700",
   };
 
   return (

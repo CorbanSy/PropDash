@@ -1,11 +1,12 @@
 // src/components/ProviderDashboard/Settings/utils/settingsHelpers.js
+import { supabase } from "../../../../lib/supabaseClient";
 
 /**
  * Upload file to Supabase Storage
  */
 export const uploadFile = async (file, bucket, folder, userId) => {
   const fileExt = file.name.split(".").pop();
-  const fileName = `${folder}/${userId}/${Date.now()}.${fileExt}`;
+  const fileName = `${userId}/${folder}_${Date.now()}.${fileExt}`;
 
   const { data, error } = await supabase.storage
     .from(bucket)
@@ -32,6 +33,18 @@ export const deleteFile = async (bucket, path) => {
     .remove([path]);
 
   if (error) throw error;
+};
+
+/**
+ * Create signed URL for secure file access
+ */
+export const createSignedUrl = async (bucket, path, expiresIn = 60) => {
+  const { data, error } = await supabase.storage
+    .from(bucket)
+    .createSignedUrl(path, expiresIn);
+
+  if (error) throw error;
+  return data.signedUrl;
 };
 
 /**
@@ -72,10 +85,7 @@ export const validateZipCode = (zip) => {
  * Log audit event
  */
 export const logAuditEvent = async (providerId, eventType, description, metadata = null) => {
-  const { supabase } = await import("../../../../lib/supabaseClient");
-  
-  // Get IP and user agent (in a real app, get from request)
-  const ipAddress = null; // Would come from backend
+  // Get user agent
   const userAgent = navigator.userAgent;
 
   await supabase.from("audit_logs").insert({
@@ -83,7 +93,7 @@ export const logAuditEvent = async (providerId, eventType, description, metadata
     event_type: eventType,
     description,
     metadata,
-    ip_address: ipAddress,
+    ip_address: null, // Would come from backend
     user_agent: userAgent,
   });
 };

@@ -17,11 +17,13 @@ import {
   ChevronDown,
   X,
   AlertTriangle,
+  Home,
 } from "lucide-react";
 import { supabase } from "../../lib/supabaseClient";
 import ProviderProfileModal from "./ProviderProfileModal";
-import PostJobModal from "./MyJobs/components/PostJobModal/PostJobModal"; // ✅ UPDATED IMPORT PATH
+import PostJobModal from "./MyJobs/components/PostJobModal/PostJobModal";
 import useAuth from "../../hooks/useAuth";
+import { SERVICE_CATEGORIES } from "../../constants/serviceCategories";
 
 export default function BrowsePros() {
   const navigate = useNavigate();
@@ -60,6 +62,14 @@ export default function BrowsePros() {
   useEffect(() => {
     let filtered = providers;
 
+    // Category filter
+    if (selectedCategory !== "all") {
+      filtered = filtered.filter((provider) =>
+        provider.service_categories?.includes(selectedCategory) ||
+        provider.services_offered?.includes(selectedCategory)
+      );
+    }
+
     // Search filter
     if (searchQuery) {
       filtered = filtered.filter((provider) =>
@@ -87,16 +97,23 @@ export default function BrowsePros() {
     }
 
     setFilteredProviders(filtered);
-  }, [searchQuery, selectedLicense, verifiedOnly, providers]);
+  }, [searchQuery, selectedCategory, selectedLicense, verifiedOnly, providers]);
 
+  // Build categories with counts from SERVICE_CATEGORIES
   const categories = [
-    { id: "all", name: "All Services", icon: "🏠", count: providers.length },
-    { id: "handyman", name: "Handyman", icon: "🔧", count: providers.filter(p => p.service_type?.includes('handyman')).length },
-    { id: "plumbing", name: "Plumbing", icon: "🚰", count: providers.filter(p => p.service_type?.includes('plumbing')).length },
-    { id: "electrical", name: "Electrical", icon: "⚡", count: providers.filter(p => p.service_type?.includes('electrical')).length },
-    { id: "landscaping", name: "Landscaping", icon: "🌳", count: providers.filter(p => p.service_type?.includes('landscaping')).length },
-    { id: "painting", name: "Painting", icon: "🎨", count: providers.filter(p => p.service_type?.includes('painting')).length },
-    { id: "carpentry", name: "Carpentry", icon: "🪚", count: providers.filter(p => p.service_type?.includes('carpentry')).length },
+    { 
+      id: "all", 
+      name: "All Services", 
+      icon: Home, 
+      count: providers.length 
+    },
+    ...SERVICE_CATEGORIES.map(category => ({
+      ...category,
+      count: providers.filter(p => 
+        p.service_categories?.includes(category.id) ||
+        p.services_offered?.includes(category.id)
+      ).length
+    }))
   ];
 
   const verifiedCount = providers.filter(p => p.verification_status === "verified").length;
@@ -245,24 +262,32 @@ export default function BrowsePros() {
         <h3 className="text-sm font-semibold text-slate-700 mb-3">
           Browse by Category
         </h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => setSelectedCategory(category.id)}
-              className={`p-4 rounded-xl border-2 transition text-left ${
-                selectedCategory === category.id
-                  ? "border-blue-600 bg-blue-50"
-                  : "border-slate-200 bg-white hover:border-slate-300"
-              }`}
-            >
-              <div className="text-2xl mb-2">{category.icon}</div>
-              <div className="font-semibold text-sm text-slate-900 mb-1">
-                {category.name}
-              </div>
-              <div className="text-xs text-slate-600">{category.count} pros</div>
-            </button>
-          ))}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+          {categories.map((category) => {
+            const IconComponent = category.icon;
+            return (
+              <button
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                className={`p-4 rounded-xl border-2 transition text-left ${
+                  selectedCategory === category.id
+                    ? "border-blue-600 bg-blue-50"
+                    : "border-slate-200 bg-white hover:border-slate-300"
+                }`}
+              >
+                <div className="mb-2">
+                  <IconComponent 
+                    size={24} 
+                    className={selectedCategory === category.id ? "text-blue-600" : "text-slate-600"} 
+                  />
+                </div>
+                <div className="font-semibold text-sm text-slate-900 mb-1">
+                  {category.name}
+                </div>
+                <div className="text-xs text-slate-600">{category.count} pros</div>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -278,11 +303,17 @@ export default function BrowsePros() {
               Verified Only
             </span>
           )}
+          {selectedCategory !== "all" && (
+            <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+              {categories.find(c => c.id === selectedCategory)?.name}
+            </span>
+          )}
         </p>
-        {(searchQuery || selectedLicense !== "all" || verifiedOnly) && (
+        {(searchQuery || selectedLicense !== "all" || verifiedOnly || selectedCategory !== "all") && (
           <button
             onClick={() => {
               setSearchQuery("");
+              setSelectedCategory("all");
               setSelectedLicense("all");
               setVerifiedOnly(false);
             }}
@@ -340,7 +371,7 @@ export default function BrowsePros() {
             setBookingProviderId(null);
             setBookingProviderName(null);
             // Optionally navigate to My Jobs
-            navigate('/my-jobs');
+            navigate('/customer/jobs');
           }}
           userId={user?.id}
           directProviderId={bookingProviderId}
@@ -389,17 +420,50 @@ function ProviderCard({ provider, onViewClick, onBookClick }) {
   const mockJobsCompleted = Math.floor(Math.random() * 100) + 20;
   const mockResponseTime = "< 2 hours";
 
+  // Get initials for fallback avatar
+  const getInitials = (name) => {
+    if (!name) return "?";
+    return name
+      .split(" ")
+      .map(word => word[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
   return (
     <div className={`bg-white rounded-xl border-2 p-6 hover:shadow-lg transition group ${
       isVerified ? "border-green-200" : "border-slate-200"
     }`}>
-      {/* Header */}
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex-1">
-          <h3 className="font-bold text-slate-900 text-lg mb-1 group-hover:text-blue-600 transition">
+      {/* Header with Profile Picture */}
+      <div className="flex items-start gap-3 mb-4">
+        {/* Profile Picture */}
+        <div className="relative flex-shrink-0">
+          {provider.profile_photo ? (
+            <img
+              src={provider.profile_photo}
+              alt={provider.business_name}
+              className="w-14 h-14 rounded-full object-cover border-2 border-slate-200"
+            />
+          ) : (
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg border-2 border-slate-200">
+              {getInitials(provider.business_name)}
+            </div>
+          )}
+          {/* Verification Badge Overlay */}
+          {isVerified && (
+            <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-full p-1">
+              <CheckCircle2 size={14} className="text-white" />
+            </div>
+          )}
+        </div>
+
+        {/* Name and Badges */}
+        <div className="flex-1 min-w-0">
+          <h3 className="font-bold text-slate-900 text-lg mb-1 group-hover:text-blue-600 transition truncate">
             {provider.business_name}
           </h3>
-          <div className="flex items-center gap-2 mb-2 flex-wrap">
+          <div className="flex items-center gap-2 flex-wrap">
             <span className={`text-xs px-2 py-1 rounded-full font-medium ${license.color}`}>
               {license.text}
             </span>
@@ -417,11 +481,6 @@ function ProviderCard({ provider, onViewClick, onBookClick }) {
             )}
           </div>
         </div>
-        {isVerified && (
-          <div className="bg-green-100 p-2 rounded-lg">
-            <CheckCircle2 size={18} className="text-green-600" />
-          </div>
-        )}
       </div>
 
       {/* Service Area */}

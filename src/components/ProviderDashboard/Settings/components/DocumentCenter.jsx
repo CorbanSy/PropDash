@@ -1,8 +1,18 @@
 // src/components/ProviderDashboard/Settings/components/DocumentCenter.jsx
 import { useState, useEffect } from "react";
-import { FileText, Upload, CheckCircle2, Clock, XCircle, Download, Trash2 } from "lucide-react";
+import { 
+  FileText, 
+  Upload, 
+  CheckCircle2, 
+  Clock, 
+  XCircle, 
+  Download, 
+  Trash2,
+  AlertTriangle,
+  Eye 
+} from "lucide-react";
 import { supabase } from "../../../../lib/supabaseClient";
-import { uploadFile, deleteFile } from "../utils/settingsHelpers";
+import { uploadFile, deleteFile, createSignedUrl } from "../utils/settingsHelpers";
 
 const DOCUMENT_TYPES = [
   {
@@ -24,7 +34,7 @@ const DOCUMENT_TYPES = [
     required: false,
   },
   {
-    id: "id",
+    id: "government_id",
     name: "Government ID",
     description: "Driver's license or state ID for verification",
     required: true,
@@ -40,10 +50,14 @@ const DOCUMENT_TYPES = [
 export default function DocumentCenter({ providerData, onUpdate }) {
   const [documents, setDocuments] = useState({});
   const [uploading, setUploading] = useState(null);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    fetchDocuments();
-  }, [providerData.id]);
+    if (providerData?.id) {
+      fetchDocuments();
+    }
+  }, [providerData?.id]);
 
   const fetchDocuments = async () => {
     const { data } = await supabase
@@ -69,19 +83,23 @@ export default function DocumentCenter({ providerData, onUpdate }) {
       "image/jpeg",
       "image/png",
       "image/heic",
+      "image/jpg",
     ];
     if (!allowedTypes.includes(file.type)) {
-      alert("Please upload PDF, JPG, PNG, or HEIC files only");
+      setError("Please upload PDF, JPG, PNG, or HEIC files only");
+      setTimeout(() => setError(""), 5000);
       return;
     }
 
     // Validate file size (10MB max)
     if (file.size > 10 * 1024 * 1024) {
-      alert("File size must be less than 10MB");
+      setError("File size must be less than 10MB");
+      setTimeout(() => setError(""), 5000);
       return;
     }
 
     setUploading(documentType);
+    setError("");
 
     try {
       // Delete old document if exists
@@ -98,7 +116,7 @@ export default function DocumentCenter({ providerData, onUpdate }) {
       );
 
       // Save to database
-      const { data, error } = await supabase
+      const { data, error: dbError } = await supabase
         .from("provider_documents")
         .upsert({
           provider_id: providerData.id,
@@ -111,21 +129,39 @@ export default function DocumentCenter({ providerData, onUpdate }) {
         .select()
         .single();
 
-      if (error) throw error;
+      if (dbError) throw dbError;
 
       // Update local state
       setDocuments({ ...documents, [documentType]: data });
-      onUpdate();
-    } catch (error) {
-      console.error("Upload error:", error);
-      alert("Failed to upload document. Please try again.");
+      
+      // Show success message
+      const docName = DOCUMENT_TYPES.find(d => d.id === documentType)?.name;
+      setSuccess(`${docName} uploaded successfully!`);
+      setTimeout(() => setSuccess(""), 3000);
+      
+      if (onUpdate) onUpdate();
+    } catch (err) {
+      console.error("Upload error:", err);
+      setError(err.message || "Failed to upload document. Please try again.");
+      setTimeout(() => setError(""), 5000);
+    } finally {
+      setUploading(null);
     }
+  };
 
-    setUploading(null);
+  const handleDownload = async (doc) => {
+    try {
+      const signedUrl = await createSignedUrl("provider-documents", doc.file_path, 60);
+      window.open(signedUrl, "_blank");
+    } catch (err) {
+      console.error("Download error:", err);
+      setError("Failed to download document");
+      setTimeout(() => setError(""), 3000);
+    }
   };
 
   const handleDelete = async (documentType) => {
-    if (!confirm("Delete this document?")) return;
+    if (!confirm("Delete this document? This action cannot be undone.")) return;
 
     const doc = documents[documentType];
     if (!doc) return;
@@ -135,19 +171,26 @@ export default function DocumentCenter({ providerData, onUpdate }) {
       await deleteFile("provider-documents", doc.file_path);
 
       // Delete from database
-      await supabase
+      const { error: dbError } = await supabase
         .from("provider_documents")
         .delete()
         .eq("id", doc.id);
+
+      if (dbError) throw dbError;
 
       // Update local state
       const newDocs = { ...documents };
       delete newDocs[documentType];
       setDocuments(newDocs);
-      onUpdate();
-    } catch (error) {
-      console.error("Delete error:", error);
-      alert("Failed to delete document. Please try again.");
+      
+      setSuccess("Document deleted successfully");
+      setTimeout(() => setSuccess(""), 3000);
+      
+      if (onUpdate) onUpdate();
+    } catch (err) {
+      console.error("Delete error:", err);
+      setError("Failed to delete document. Please try again.");
+      setTimeout(() => setError(""), 3000);
     }
   };
 
@@ -173,8 +216,28 @@ export default function DocumentCenter({ providerData, onUpdate }) {
     return badges[status] || badges.pending;
   };
 
+  // Calculate progress
+  const requiredDocs = DOCUMENT_TYPES.filter(d => d.required);
+  const uploadedRequired = requiredDocs.filter(d => documents[d.id]).length;
+  const approvedRequired = requiredDocs.filter(d => documents[d.id]?.status === "approved").length;
+  const progressPercentage = (uploadedRequired / requiredDocs.length) * 100;
+
   return (
     <div className="space-y-6">
+      {/* Success/Error Messages */}
+      {success && (
+        <div className="bg-green-50 border border-green-200 text-green-800 p-4 rounded-xl flex items-center gap-3">
+          <CheckCircle2 size={20} />
+          <span className="font-medium">{success}</span>
+        </div>
+      )}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-xl flex items-center gap-3">
+          <AlertTriangle size={20} />
+          <span className="font-medium">{error}</span>
+        </div>
+      )}
+
       {/* Header */}
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
         <div className="flex items-center gap-3 mb-4">
@@ -198,159 +261,214 @@ export default function DocumentCenter({ providerData, onUpdate }) {
         </div>
       </div>
 
-      {/* Document Upload Cards */}
-      <div className="space-y-4">
-        {DOCUMENT_TYPES.map((docType) => {
-          const doc = documents[docType.id];
-          const status = doc ? getStatusBadge(doc.status) : null;
-
-          return (
-            <div
-              key={docType.id}
-              className="bg-white rounded-xl shadow-sm border border-slate-200 p-6"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h4 className="font-semibold text-slate-900">
-                      {docType.name}
-                    </h4>
-                    {docType.required && (
-                      <span className="text-xs px-2 py-0.5 bg-red-100 text-red-700 rounded font-semibold">
-                        Required
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-sm text-slate-600">{docType.description}</p>
-                </div>
-
-                {doc && status && (
-                  <span
-                    className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold border ${status.color}`}
-                  >
-                    {status.icon}
-                    {status.text}
-                  </span>
-                )}
-              </div>
-
-              {/* Document Info */}
-              {doc ? (
-                <div className="space-y-3">
-                  <div className="bg-slate-50 rounded-lg p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-slate-900 mb-1">
-                          {doc.file_path.split("/").pop()}
-                        </p>
-                        <p className="text-xs text-slate-600">
-                          Uploaded{" "}
-                          {new Date(doc.uploaded_at).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <div className="flex gap-2">
-                        <a
-                          href={doc.file_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
-                        >
-                          <Download size={18} />
-                        </a>
-                        <button
-                          onClick={() => handleDelete(docType.id)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {doc.status === "rejected" && doc.rejection_reason && (
-                    <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                      <p className="text-sm font-semibold text-red-900 mb-1">
-                        Rejection Reason:
-                      </p>
-                      <p className="text-sm text-red-800">
-                        {doc.rejection_reason}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Replace Button */}
-                  <label className="block">
-                    <input
-                      type="file"
-                      accept=".pdf,.jpg,.jpeg,.png,.heic"
-                      onChange={(e) =>
-                        handleUpload(docType.id, e.target.files[0])
-                      }
-                      disabled={uploading === docType.id}
-                      className="hidden"
-                    />
-                    <span className="inline-block w-full text-center px-4 py-2 border-2 border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition cursor-pointer font-medium">
-                      {uploading === docType.id
-                        ? "Uploading..."
-                        : "Replace Document"}
-                    </span>
-                  </label>
-                </div>
-              ) : (
-                // Upload Button
-                <label className="block">
-                  <input
-                    type="file"
-                    accept=".pdf,.jpg,.jpeg,.png,.heic"
-                    onChange={(e) => handleUpload(docType.id, e.target.files[0])}
-                    disabled={uploading === docType.id}
-                    className="hidden"
-                  />
-                  <span className="inline-flex items-center justify-center gap-2 w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition cursor-pointer font-semibold">
-                    <Upload size={18} />
-                    {uploading === docType.id
-                      ? "Uploading..."
-                      : "Upload Document"}
-                  </span>
-                </label>
-              )}
-
-              <p className="text-xs text-slate-500 mt-2">
-                Accepted formats: PDF, JPG, PNG, HEIC (max 10MB)
-              </p>
+      {/* Verification Progress - MOVED TO TOP */}
+      <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-6">
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <h4 className="text-lg font-semibold text-slate-900 mb-1">
+              Verification Progress
+            </h4>
+            <p className="text-sm text-slate-600">
+              {approvedRequired === requiredDocs.length 
+                ? "✅ All required documents verified!" 
+                : `${uploadedRequired} of ${requiredDocs.length} required documents uploaded`}
+            </p>
+          </div>
+          <div className="text-right">
+            <div className="text-3xl font-bold text-green-600">
+              {Math.round(progressPercentage)}%
             </div>
-          );
-        })}
-      </div>
+            <div className="text-xs text-slate-600">Complete</div>
+          </div>
+        </div>
 
-      {/* Verification Status */}
-      <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
-        <h4 className="font-semibold text-slate-900 mb-3">
-          Verification Progress
-        </h4>
+        {/* Progress Bar */}
+        <div className="w-full bg-slate-200 rounded-full h-3 mb-4">
+          <div
+            className="bg-gradient-to-r from-green-500 to-emerald-500 h-3 rounded-full transition-all duration-500"
+            style={{ width: `${progressPercentage}%` }}
+          ></div>
+        </div>
+
+        {/* Document Checklist */}
         <div className="space-y-2">
-          {DOCUMENT_TYPES.filter((d) => d.required).map((docType) => {
+          {requiredDocs.map((docType) => {
             const doc = documents[docType.id];
             const uploaded = !!doc;
             const approved = doc?.status === "approved";
+            const pending = doc?.status === "pending";
+            const rejected = doc?.status === "rejected";
 
             return (
               <div
                 key={docType.id}
-                className="flex items-center justify-between text-sm"
+                className="flex items-center justify-between text-sm bg-white rounded-lg p-3 border border-slate-200"
               >
-                <span className="text-slate-700">{docType.name}</span>
+                <span className="text-slate-700 font-medium">{docType.name}</span>
                 <span
-                  className={`font-medium ${
+                  className={`font-semibold flex items-center gap-1 ${
                     approved
                       ? "text-green-600"
-                      : uploaded
+                      : rejected
+                      ? "text-red-600"
+                      : pending
                       ? "text-amber-600"
                       : "text-slate-400"
                   }`}
                 >
-                  {approved ? "✓ Verified" : uploaded ? "⏳ Pending" : "Not Uploaded"}
+                  {approved && <CheckCircle2 size={16} />}
+                  {pending && <Clock size={16} />}
+                  {rejected && <XCircle size={16} />}
+                  {approved ? "Verified" : rejected ? "Rejected" : pending ? "Under Review" : "Not Uploaded"}
                 </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Document Upload Cards */}
+      <div>
+        <h4 className="text-lg font-semibold text-slate-900 mb-4">Upload Documents</h4>
+        <div className="space-y-4">
+          {DOCUMENT_TYPES.map((docType) => {
+            const doc = documents[docType.id];
+            const status = doc ? getStatusBadge(doc.status) : null;
+
+            return (
+              <div
+                key={docType.id}
+                className="bg-white rounded-xl shadow-sm border border-slate-200 p-6"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h4 className="font-semibold text-slate-900">
+                        {docType.name}
+                      </h4>
+                      {docType.required && (
+                        <span className="text-xs px-2 py-0.5 bg-red-100 text-red-700 rounded font-semibold">
+                          Required
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-slate-600">{docType.description}</p>
+                  </div>
+
+                  {doc && status && (
+                    <span
+                      className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold border ${status.color}`}
+                    >
+                      {status.icon}
+                      {status.text}
+                    </span>
+                  )}
+                </div>
+
+                {/* Document Info */}
+                {doc ? (
+                  <div className="space-y-3">
+                    <div className="bg-slate-50 rounded-lg p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-slate-900 mb-1">
+                            {doc.file_path.split("/").pop()}
+                          </p>
+                          <p className="text-xs text-slate-600">
+                            Uploaded{" "}
+                            {new Date(doc.uploaded_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleDownload(doc)}
+                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                            title="View document"
+                          >
+                            <Eye size={18} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(docType.id)}
+                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
+                            title="Delete document"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {doc.status === "rejected" && doc.rejection_reason && (
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                        <p className="text-sm font-semibold text-red-900 mb-1">
+                          Rejection Reason:
+                        </p>
+                        <p className="text-sm text-red-800">
+                          {doc.rejection_reason}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Replace Button */}
+                    <label className="block">
+                      <input
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png,.heic"
+                        onChange={(e) =>
+                          handleUpload(docType.id, e.target.files[0])
+                        }
+                        disabled={uploading === docType.id}
+                        className="hidden"
+                      />
+                      <span className={`inline-block w-full text-center px-4 py-2 border-2 rounded-lg font-medium transition cursor-pointer ${
+                        uploading === docType.id
+                          ? "border-slate-300 text-slate-400 cursor-not-allowed"
+                          : "border-slate-300 text-slate-700 hover:bg-slate-50"
+                      }`}>
+                        {uploading === docType.id ? (
+                          <span className="flex items-center justify-center gap-2">
+                            <div className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin"></div>
+                            Uploading...
+                          </span>
+                        ) : (
+                          "Replace Document"
+                        )}
+                      </span>
+                    </label>
+                  </div>
+                ) : (
+                  // Upload Button
+                  <label className="block">
+                    <input
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png,.heic"
+                      onChange={(e) => handleUpload(docType.id, e.target.files[0])}
+                      disabled={uploading === docType.id}
+                      className="hidden"
+                    />
+                    <span className={`inline-flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg font-semibold transition cursor-pointer ${
+                      uploading === docType.id
+                        ? "bg-blue-400 text-white cursor-not-allowed"
+                        : "bg-blue-600 text-white hover:bg-blue-700"
+                    }`}>
+                      {uploading === docType.id ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          Uploading...
+                        </>
+                      ) : (
+                        <>
+                          <Upload size={18} />
+                          Upload Document
+                        </>
+                      )}
+                    </span>
+                  </label>
+                )}
+
+                <p className="text-xs text-slate-500 mt-2">
+                  Accepted formats: PDF, JPG, PNG, HEIC (max 10MB)
+                </p>
               </div>
             );
           })}

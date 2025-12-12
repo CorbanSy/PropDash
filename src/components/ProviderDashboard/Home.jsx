@@ -8,18 +8,11 @@ import {
   MapPin,
   Phone,
   MessageSquare,
-  ExternalLink,
   Plus,
-  Ban,
   FileText,
-  AlertCircle,
   CheckCircle2,
-  XCircle,
   ChevronRight,
-  Sparkles,
   Users,
-  Zap,
-  ArrowRight,
   Power,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -35,8 +28,8 @@ export default function Home() {
   const [jobs, setJobs] = useState([]);
   const [quotes, setQuotes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isOnline, setIsOnline] = useState(false); 
-  const [togglingOnline, setTogglingOnline] = useState(false); 
+  const [isOnline, setIsOnline] = useState(false);
+  const [togglingOnline, setTogglingOnline] = useState(false);
   
   const {
       currentOffer,
@@ -45,6 +38,7 @@ export default function Home() {
       declineOffer,
       handleTimeout,
   } = useJobOfferListener(user?.id);
+
   useEffect(() => {
     console.log('🏠 Home component mounted');
     console.log('👤 User ID:', user?.id);
@@ -70,8 +64,7 @@ export default function Home() {
     fetchProviderStatus();
   }, [user?.id]);
 
-  // ✅ Toggle online/offline status
-const toggleOnlineStatus = async () => {
+  const toggleOnlineStatus = async () => {
     setTogglingOnline(true);
     
     try {
@@ -81,7 +74,7 @@ const toggleOnlineStatus = async () => {
         .from("providers")
         .update({ 
           is_online: newStatus,
-          is_available: newStatus // Also set available when going online
+          is_available: newStatus
         })
         .eq("id", user.id);
       
@@ -89,12 +82,10 @@ const toggleOnlineStatus = async () => {
       
       setIsOnline(newStatus);
       
-      // ✅✅✅ NEW: When going ONLINE, check for pending jobs and dispatch them
       if (newStatus) {
         try {
           console.log("🔍 Checking for pending jobs to dispatch...");
           
-          // Find all jobs that are pending_dispatch or unassigned
           const { data: pendingJobs, error: fetchError } = await supabase
             .from("jobs")
             .select("id, service_name, status")
@@ -106,7 +97,6 @@ const toggleOnlineStatus = async () => {
           console.log("📋 Found pending jobs:", pendingJobs?.length || 0);
           
           if (pendingJobs && pendingJobs.length > 0) {
-            // Dispatch each pending job
             let dispatchedCount = 0;
             
             for (const job of pendingJobs) {
@@ -147,17 +137,14 @@ const toggleOnlineStatus = async () => {
     }
   };
 
-
   useEffect(() => {
     async function fetchData() {
-      // Fetch jobs
       const { data: jobsData } = await supabase
         .from("jobs")
         .select("*")
         .eq("provider_id", user.id)
         .order("scheduled_date", { ascending: true });
 
-      // Fetch quotes
       const { data: quotesData } = await supabase
         .from("quotes")
         .select("*")
@@ -221,24 +208,6 @@ const toggleOnlineStatus = async () => {
   const draftQuotes = quotes.filter((q) => q.status === "draft").length;
   const approvedQuotes = quotes.filter((q) => q.status === "approved").length;
 
-  // Recent activity
-  const recentActivity = [
-    ...jobs.slice(0, 3).map((j) => ({
-      type: "booking",
-      message: `New booking: ${j.service_name}`,
-      time: j.created_at,
-      icon: Calendar,
-      color: "blue",
-    })),
-    ...quotes.slice(0, 2).map((q) => ({
-      type: "quote",
-      message: `Quote ${q.status}: ${q.service_name || "Service"}`,
-      time: q.created_at,
-      icon: FileText,
-      color: "purple",
-    })),
-  ].sort((a, b) => new Date(b.time) - new Date(a.time)).slice(0, 5);
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -249,7 +218,7 @@ const toggleOnlineStatus = async () => {
 
   return (
     <div className="space-y-6 pb-20 sm:pb-6">
-      {/* ✅✅✅ ONLINE/OFFLINE TOGGLE - PROMINENT PLACEMENT ✅✅✅ */}
+      {/* ONLINE/OFFLINE TOGGLE */}
       <div 
         className={`rounded-2xl p-6 border-2 ${
           isOnline 
@@ -311,7 +280,7 @@ const toggleOnlineStatus = async () => {
         </div>
       </div>
 
-      {/* ✅ Listening Indicator - Only show when online */}
+      {/* Listening Indicator */}
       {isOnline && isListening && (
         <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 flex items-center gap-3">
           <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
@@ -325,7 +294,8 @@ const toggleOnlineStatus = async () => {
           </div>
         </div>
       )}
-      {/* ==================== HERO: TODAY AT A GLANCE ==================== */}
+
+      {/* HERO: TODAY AT A GLANCE */}
       <div className={`${theme.gradient.providerLight} rounded-2xl p-8 text-white`}>
         <div className="flex items-start justify-between mb-6">
           <div>
@@ -425,10 +395,10 @@ const toggleOnlineStatus = async () => {
         )}
       </div>
 
-      {/* ==================== QUICK ACTIONS ==================== */}
+      {/* QUICK ACTIONS - Simplified to 3 most important */}
       <div className={`${theme.card.base} ${theme.card.padding}`}>
         <h2 className={`${theme.text.h3} mb-4`}>Quick Actions</h2>
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           <QuickActionButton
             to="/provider/quotes"
             icon={<FileText size={20} />}
@@ -438,33 +408,21 @@ const toggleOnlineStatus = async () => {
           <QuickActionButton
             to="/provider/schedule"
             icon={<Plus size={20} />}
-            label="Add Booking"
+            label="View Schedule"
             color="emerald"
           />
           <QuickActionButton
-            to="/provider/clients"
+            to="/provider/messages"
             icon={<MessageSquare size={20} />}
-            label="Message Client"
+            label="Messages"
             color="purple"
-          />
-          <QuickActionButton
-            to="/provider/schedule"
-            icon={<Ban size={20} />}
-            label="Block Day"
-            color="red"
-          />
-          <QuickActionButton
-            to="/provider"
-            icon={<ExternalLink size={20} />}
-            label="Share Link"
-            color="indigo"
           />
         </div>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* ==================== UPCOMING JOBS ==================== */}
-        <div className="lg:col-span-2 space-y-6">
+        {/* UPCOMING JOBS */}
+        <div className="lg:col-span-2">
           <div className={`${theme.card.base} ${theme.card.padding}`}>
             <div className="flex items-center justify-between mb-4">
               <h2 className={theme.text.h3}>Upcoming Jobs (Next 7 Days)</h2>
@@ -484,23 +442,20 @@ const toggleOnlineStatus = async () => {
                 </div>
                 <p className={theme.text.h4}>No Upcoming Jobs</p>
                 <p className={`${theme.text.body} mt-2`}>
-                  Share your booking link to get more bookings!
+                  Go online to start receiving job offers!
                 </p>
               </div>
             ) : (
               <div className="space-y-3">
                 {upcomingJobs.slice(0, 5).map((job) => (
-                  <UpcomingJobCard key={job.id} job={job} />
+                  <UpcomingJobCard key={job.id} job={job} navigate={navigate} />
                 ))}
               </div>
             )}
           </div>
-
-          {/* ==================== SMART RECOMMENDATIONS ==================== */}
-          <SmartRecommendations jobs={jobs} quotes={quotes} />
         </div>
 
-        {/* ==================== SIDEBAR ==================== */}
+        {/* SIDEBAR */}
         <div className="space-y-6">
           {/* Weekly Stats */}
           <div className={`${theme.card.base} ${theme.card.padding}`}>
@@ -542,25 +497,9 @@ const toggleOnlineStatus = async () => {
               <QuotePipelineItem label="Approved" count={approvedQuotes} color="emerald" />
             </div>
           </div>
-
-          {/* Mini Calendar Preview */}
-          <MiniCalendar jobs={jobs} />
-
-          {/* Recent Activity */}
-          <div className={`${theme.card.base} ${theme.card.padding}`}>
-            <h3 className={`${theme.text.h4} mb-4`}>Recent Activity</h3>
-            <div className="space-y-3">
-              {recentActivity.length === 0 ? (
-                <p className={`${theme.text.body} text-center py-4`}>No recent activity</p>
-              ) : (
-                recentActivity.map((activity, i) => (
-                  <ActivityItem key={i} activity={activity} />
-                ))
-              )}
-            </div>
-          </div>
         </div>
       </div>
+
       {currentOffer && (
         <JobOfferModal
           jobOffer={currentOffer}
@@ -573,7 +512,7 @@ const toggleOnlineStatus = async () => {
   );
 }
 
-// ==================== SUB-COMPONENTS ====================
+// SUB-COMPONENTS
 
 function TodayMetric({ label, value, icon }) {
   return (
@@ -592,8 +531,6 @@ function QuickActionButton({ to, icon, label, color }) {
     blue: "bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200",
     emerald: "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-200",
     purple: "bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-200",
-    red: "bg-red-50 text-red-700 hover:bg-red-100 border-red-200",
-    indigo: "bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border-indigo-200",
   };
 
   return (
@@ -607,9 +544,7 @@ function QuickActionButton({ to, icon, label, color }) {
   );
 }
 
-function UpcomingJobCard({ job }) {
-  const navigate = useNavigate();
-  
+function UpcomingJobCard({ job, navigate }) {
   const getStatusBadge = (status) => {
     switch (status) {
       case "confirmed":
@@ -624,7 +559,6 @@ function UpcomingJobCard({ job }) {
   };
 
   const handleMessageClick = () => {
-    // Navigate to messages and pass the customer_id to open that conversation
     navigate('/provider/messages', { 
       state: { customerId: job.customer_id, jobId: job.id } 
     });
@@ -703,105 +637,6 @@ function UpcomingJobCard({ job }) {
   );
 }
 
-function SmartRecommendations({ jobs, quotes }) {
-  const recommendations = [];
-
-  // Check for empty slots
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  tomorrow.setHours(0, 0, 0, 0);
-  const tomorrowEnd = new Date(tomorrow);
-  tomorrowEnd.setDate(tomorrowEnd.getDate() + 1);
-
-  const tomorrowJobs = jobs.filter((j) => {
-    const jobDate = new Date(j.scheduled_date);
-    return jobDate >= tomorrow && jobDate < tomorrowEnd && j.status !== "cancelled";
-  });
-
-  if (tomorrowJobs.length === 0) {
-    recommendations.push({
-      icon: <Calendar size={20} />,
-      color: "blue",
-      message: "You have no bookings tomorrow",
-      action: "Share your booking link to fill your schedule",
-      link: "/provider",
-    });
-  }
-
-  // Check for pending quotes
-  const pendingQuotes = quotes.filter((q) => q.status === "pending");
-  if (pendingQuotes.length > 0) {
-    recommendations.push({
-      icon: <FileText size={20} />,
-      color: "amber",
-      message: `${pendingQuotes.length} quotes awaiting response`,
-      action: "Follow up with clients",
-      link: "/provider/quotes",
-    });
-  }
-
-  // Check for draft quotes
-  const draftQuotes = quotes.filter((q) => q.status === "draft");
-  if (draftQuotes.length > 0) {
-    recommendations.push({
-      icon: <Sparkles size={20} />,
-      color: "purple",
-      message: `${draftQuotes.length} draft quotes ready to send`,
-      action: "Complete and send quotes",
-      link: "/provider/quotes",
-    });
-  }
-
-  if (recommendations.length === 0) {
-    return null;
-  }
-
-  return (
-    <div className={`${theme.card.base} ${theme.card.padding}`}>
-      <div className="flex items-center gap-2 mb-4">
-        <Zap className="text-amber-500" size={20} />
-        <h3 className={theme.text.h3}>Smart Recommendations</h3>
-      </div>
-      <div className="space-y-3">
-        {recommendations.map((rec, i) => (
-          <Link
-            key={i}
-            to={rec.link}
-            className={`block p-4 rounded-lg border-2 transition hover:shadow-md ${
-              rec.color === "blue"
-                ? "bg-blue-50 border-blue-200 hover:border-blue-300"
-                : rec.color === "amber"
-                ? "bg-amber-50 border-amber-200 hover:border-amber-300"
-                : "bg-purple-50 border-purple-200 hover:border-purple-300"
-            }`}
-          >
-            <div className="flex items-start gap-3">
-              <div
-                className={`p-2 rounded-lg ${
-                  rec.color === "blue"
-                    ? "bg-blue-100 text-blue-700"
-                    : rec.color === "amber"
-                    ? "bg-amber-100 text-amber-700"
-                    : "bg-purple-100 text-purple-700"
-                }`}
-              >
-                {rec.icon}
-              </div>
-              <div className="flex-1">
-                <p className="font-semibold text-slate-900 mb-1">{rec.message}</p>
-                <p className="text-sm text-slate-600 flex items-center gap-1">
-                  {rec.action}
-                  <ArrowRight size={14} />
-                </p>
-              </div>
-            </div>
-          </Link>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 function WeeklyStat({ label, value, icon }) {
   return (
     <div className="flex items-center justify-between">
@@ -825,108 +660,6 @@ function QuotePipelineItem({ label, count, color }) {
     <div className="flex items-center justify-between py-2">
       <span className="text-sm font-medium text-slate-700">{label}</span>
       <span className={`${colors[color]} px-3 py-1 rounded-full text-sm font-bold`}>{count}</span>
-    </div>
-  );
-}
-
-function MiniCalendar({ jobs }) {
-  const today = new Date();
-  const next5Days = Array.from({ length: 6 }, (_, i) => {
-    const date = new Date(today);
-    date.setDate(today.getDate() + i);
-    return date;
-  });
-
-  const getJobsForDate = (date) => {
-    return jobs.filter((j) => {
-      const jobDate = new Date(j.scheduled_date);
-      return (
-        jobDate.toDateString() === date.toDateString() && j.status !== "cancelled"
-      );
-    });
-  };
-
-  return (
-    <div className={`${theme.card.base} ${theme.card.padding}`}>
-      <div className="flex items-center justify-between mb-4">
-        <h3 className={theme.text.h4}>This Week</h3>
-        <Link to="/provider/schedule" className="text-sm font-medium text-blue-600 hover:text-blue-700">
-          Full Calendar
-        </Link>
-      </div>
-      <div className="space-y-2">
-        {next5Days.map((date, i) => {
-          const jobsOnDate = getJobsForDate(date);
-          const isToday = date.toDateString() === today.toDateString();
-
-          return (
-            <div
-              key={i}
-              className={`p-3 rounded-lg border-2 ${
-                isToday
-                  ? "bg-blue-50 border-blue-300"
-                  : jobsOnDate.length > 0
-                  ? "bg-emerald-50 border-emerald-200"
-                  : "bg-slate-50 border-slate-200"
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p
-                    className={`text-sm font-semibold ${
-                      isToday ? "text-blue-900" : "text-slate-900"
-                    }`}
-                  >
-                    {date.toLocaleDateString("en-US", { weekday: "short" })}
-                  </p>
-                  <p className="text-xs text-slate-600">
-                    {date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                  </p>
-                </div>
-                <div
-                  className={`text-lg font-bold ${
-                    isToday
-                      ? "text-blue-700"
-                      : jobsOnDate.length > 0
-                      ? "text-emerald-700"
-                      : "text-slate-400"
-                  }`}
-                >
-                  {jobsOnDate.length}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function ActivityItem({ activity }) {
-  const colors = {
-    blue: "bg-blue-100 text-blue-700",
-    purple: "bg-purple-100 text-purple-700",
-    emerald: "bg-emerald-100 text-emerald-700",
-  };
-
-  const timeAgo = (date) => {
-    const seconds = Math.floor((new Date() - new Date(date)) / 1000);
-    if (seconds < 60) return "Just now";
-    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-    if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-    return `${Math.floor(seconds / 86400)}d ago`;
-  };
-
-  return (
-    <div className="flex items-start gap-3">
-      <div className={`p-2 rounded-lg ${colors[activity.color]}`}>
-        <activity.icon size={16} />
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-slate-900 truncate">{activity.message}</p>
-        <p className="text-xs text-slate-500">{timeAgo(activity.time)}</p>
-      </div>
     </div>
   );
 }

@@ -10,15 +10,21 @@ export default function ClientCommunication({ client, onRefresh }) {
   const [communications, setCommunications] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newComm, setNewComm] = useState({
-    type: "call", // call, email, sms, meeting
+    type: "call",
     notes: "",
   });
 
   useEffect(() => {
-    fetchCommunications();
-  }, [client.id]);
+    // ✅ Guard: Only fetch if both user and client exist
+    if (user?.id && client?.id) {
+      fetchCommunications();
+    }
+  }, [client?.id, user?.id]); // ✅ Added user.id to dependency array
 
   const fetchCommunications = async () => {
+    // ✅ Double-check user exists
+    if (!user?.id || !client?.id) return;
+
     const { data } = await supabase
       .from("client_communications")
       .select("*")
@@ -30,6 +36,9 @@ export default function ClientCommunication({ client, onRefresh }) {
   };
 
   const handleAddCommunication = async () => {
+    // ✅ Guard check
+    if (!user?.id || !client?.id) return;
+
     if (!newComm.notes.trim()) {
       alert("Please add notes about this communication");
       return;
@@ -76,6 +85,11 @@ export default function ClientCommunication({ client, onRefresh }) {
         return "bg-slate-100 text-slate-700";
     }
   };
+
+  // ✅ Show loading state if user not loaded
+  if (!user) {
+    return <div className="text-center py-8 text-slate-600">Loading...</div>;
+  }
 
   return (
     <div className="space-y-6">

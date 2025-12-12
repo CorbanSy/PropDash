@@ -30,8 +30,7 @@ export function buildJobData(formData, userId, customerData, photoUrls, jobAddre
     category: formData.category,
     notes: formData.description,
     client_address: jobAddress,
-    scheduled_date:
-      formData.schedulingType === "specific" ? formData.preferredDate : null,
+    scheduled_date: formData.schedulingType === "specific" ? formData.preferredDate : null,
     photos: photoUrls,
     special_requirements: {
       schedulingType: formData.schedulingType,
@@ -44,12 +43,12 @@ export function buildJobData(formData, userId, customerData, photoUrls, jobAddre
       backupDate: formData.backupDate,
     },
     allow_multiple_quotes: formData.allowMultiplePros,
+    // DON'T set status - let database default handle it
   };
 
-  // Add provider_id and status for direct booking
+  // Add provider_id for direct booking (but NOT status)
   if (isDirectBooking) {
     jobData.provider_id = directProviderId;
-    jobData.status = "pending_acceptance";
   }
 
   return jobData;
@@ -68,8 +67,7 @@ export async function dispatchJobToProviders(jobId) {
       console.error("⚠️ Dispatch error:", dispatchError);
       return {
         success: false,
-        message:
-          "Job posted! However, there was an issue notifying providers. Our team will follow up.",
+        message: "Job posted! However, there was an issue notifying providers. Our team will follow up.",
       };
     }
 
@@ -81,8 +79,7 @@ export async function dispatchJobToProviders(jobId) {
       if (total_providers_found === 0) {
         return {
           success: true,
-          message:
-            "Job posted successfully! However, no providers are currently available in your area. We'll notify you when providers become available.",
+          message: "Job posted successfully! However, no providers are currently available in your area. We'll notify you when providers become available.",
         };
       }
 
@@ -100,8 +97,7 @@ export async function dispatchJobToProviders(jobId) {
     console.error("⚠️ Dispatch exception:", dispatchErr);
     return {
       success: false,
-      message:
-        "Job posted! However, there was an issue with the dispatch system. Our team will follow up.",
+      message: "Job posted! However, there was an issue with the dispatch system. Our team will follow up.",
     };
   }
 }

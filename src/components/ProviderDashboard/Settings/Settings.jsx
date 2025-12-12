@@ -21,7 +21,6 @@ import {
   Mail,
   Eye,
   EyeOff,
-  Clock,
   MapPin,
   Briefcase,
   Settings as SettingsIcon,
@@ -31,13 +30,13 @@ import { supabase } from "../../../lib/supabaseClient";
 import useAuth from "../../../hooks/useAuth";
 import ProfilePhotoUpload from "./components/ProfilePhotoUpload";
 import PhoneVerification from "./components/PhoneVerification";
-import AvailabilitySettings from "./components/AvailabilitySettings";
 import ServiceAreas from "./components/ServiceAreas";
 import ServicesOffered from "./components/ServicesOffered";
 import DocumentCenter from "./components/DocumentCenter";
 import StripeConnect from "./components/StripeConnect";
 import AIQuotePreferences from "./components/AIQuotePreferences";
 import AuditLog from "./components/AuditLog";
+import Security from "./components/Security";
 
 export default function Settings() {
   const { user } = useAuth();
@@ -47,7 +46,6 @@ export default function Settings() {
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
 
   // Provider data
   const [providerData, setProviderData] = useState({
@@ -64,12 +62,6 @@ export default function Settings() {
     availability: null,
     ai_preferences: null,
     stripe_connected: false,
-  });
-
-  // Password change
-  const [passwordData, setPasswordData] = useState({
-    newPassword: "",
-    confirmPassword: "",
   });
 
   // Notification preferences
@@ -350,12 +342,6 @@ export default function Settings() {
           label="Profile"
         />
         <TabButton
-          active={activeTab === "availability"}
-          onClick={() => setActiveTab("availability")}
-          icon={<Clock size={18} />}
-          label="Availability"
-        />
-        <TabButton
           active={activeTab === "services"}
           onClick={() => setActiveTab("services")}
           icon={<Briefcase size={18} />}
@@ -412,12 +398,6 @@ export default function Settings() {
             refreshProviderData={refreshProviderData}
           />
         )}
-        {activeTab === "availability" && (
-          <AvailabilitySettings
-            providerData={providerData}
-            onUpdate={refreshProviderData}
-          />
-        )}
         {activeTab === "services" && (
           <ServicesOffered
             providerData={providerData}
@@ -443,13 +423,10 @@ export default function Settings() {
           />
         )}
         {activeTab === "security" && (
-          <SecurityTab
-            passwordData={passwordData}
-            setPasswordData={setPasswordData}
-            showPassword={showPassword}
-            setShowPassword={setShowPassword}
-            handleChangePassword={handleChangePassword}
-            handleLogout={handleLogout}
+          <Security
+            user={user}
+            providerData={providerData}
+            onUpdate={refreshProviderData}
           />
         )}
         {activeTab === "billing" && (

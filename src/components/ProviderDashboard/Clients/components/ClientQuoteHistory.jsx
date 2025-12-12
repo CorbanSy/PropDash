@@ -12,16 +12,31 @@ export default function ClientQuoteHistory({ client }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchQuotes();
-  }, [client.id]);
+    if (user?.id && client?.id) {
+      fetchQuotes();
+    } else {
+      setLoading(false);
+    }
+  }, [client?.id, user?.id]);
 
   const fetchQuotes = async () => {
-    const { data } = await supabase
+    if (!user?.id || !client?.id) {
+      setLoading(false);
+      return;
+    }
+
+    const { data, error } = await supabase
       .from("quotes")
       .select("*")
       .eq("provider_id", user.id)
-      .eq("client_id", client.id)
+      .eq("customer_id", client.id) // ✅ FIXED: Changed from client_id to customer_id
       .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching quotes:", error);
+      setLoading(false);
+      return;
+    }
 
     if (data) setQuotes(data);
     setLoading(false);
@@ -66,6 +81,10 @@ export default function ClientQuoteHistory({ client }) {
     return <div className="text-center py-8">Loading quotes...</div>;
   }
 
+  if (!user) {
+    return <div className="text-center py-8 text-slate-600">Loading user data...</div>;
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -90,7 +109,7 @@ export default function ClientQuoteHistory({ client }) {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <h4 className="font-semibold text-slate-900">
-                        Quote #{quote.quote_number || quote.id.slice(0, 8)}
+                        {quote.service_name || `Quote #${quote.id.slice(0, 8)}`}
                       </h4>
                       <span className={`text-xs px-2 py-1 rounded-full font-semibold border flex items-center gap-1 ${status.badge}`}>
                         {status.icon}
@@ -100,14 +119,22 @@ export default function ClientQuoteHistory({ client }) {
                     <p className="text-sm text-slate-600 mb-2">
                       {quote.description || "No description"}
                     </p>
-                    <p className="text-xs text-slate-500">
-                      Created {new Date(quote.created_at).toLocaleDateString()}
-                    </p>
+                    <div className="flex items-center gap-4 text-xs text-slate-500">
+                      <span>Created {new Date(quote.created_at).toLocaleDateString()}</span>
+                      {quote.line_items?.length > 0 && (
+                        <span>• {quote.line_items.length} line item{quote.line_items.length > 1 ? 's' : ''}</span>
+                      )}
+                    </div>
                   </div>
                   <div className="text-right">
                     <p className="text-xl font-bold text-slate-900">
                       {formatCurrency(quote.total || 0)}
                     </p>
+                    {quote.subtotal !== quote.total && (
+                      <p className="text-xs text-slate-500">
+                        Subtotal: {formatCurrency(quote.subtotal || 0)}
+                      </p>
+                    )}
                     <button className="text-sm text-blue-600 hover:text-blue-700 mt-2">
                       View Details
                     </button>
