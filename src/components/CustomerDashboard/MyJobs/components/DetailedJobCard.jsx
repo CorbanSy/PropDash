@@ -1,5 +1,6 @@
 //propdash-mvp\src\components\CustomerDashboard\MyJobs\components\DetailedJobCard.jsx
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // ✅ Added
 import {
   Calendar,
   DollarSign,
@@ -20,8 +21,11 @@ import {
   Eye,
 } from "lucide-react";
 import { supabase } from "../../../../lib/supabaseClient";
+import useAuth from "../../../../hooks/useAuth"; // ✅ Added
 
 export default function DetailedJobCard({ job, onEdit, onDelete }) {
+  const navigate = useNavigate(); // ✅ Added
+  const { user } = useAuth(); // ✅ Added
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [lightboxImage, setLightboxImage] = useState(null);
   const [quote, setQuote] = useState(null);
@@ -43,11 +47,10 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
       .order("created_at", { ascending: false })
       .limit(1);
 
-    // ✅ Check if array has items and get first one
     if (data && data.length > 0 && !error) {
-      setQuote(data[0]); // Get first item from array
+      setQuote(data[0]);
     } else {
-      setQuote(null); // No quote found
+      setQuote(null);
     }
     setLoadingQuote(false);
   };
@@ -70,6 +73,48 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
       }
     } else {
       alert("Failed to update quote. Please try again.");
+    }
+  };
+
+  // ✅ Handle messaging with provider
+  const handleMessage = async () => {
+    if (!job.provider_id || !user) return;
+
+    try {
+      // Check if conversation already exists
+      const { data: existingConversation, error: fetchError } = await supabase
+        .from("conversations")
+        .select("id")
+        .eq("customer_id", user.id)
+        .eq("provider_id", job.provider_id)
+        .maybeSingle();
+
+      if (existingConversation) {
+        // Navigate to existing conversation
+        navigate(`/customer/messages?conversation=${existingConversation.id}`);
+        return;
+      }
+
+      // Create new conversation
+      const { data: newConversation, error: createError } = await supabase
+        .from("conversations")
+        .insert({
+          customer_id: user.id,
+          provider_id: job.provider_id,
+          job_id: job.id, // Link to this job
+          last_message_at: new Date().toISOString(),
+        })
+        .select()
+        .single();
+
+      if (createError) throw createError;
+
+      // Navigate to new conversation
+      navigate(`/customer/messages?conversation=${newConversation.id}`);
+    } catch (error) {
+      console.error("Error handling message:", error);
+      // Fallback: just navigate to messages page
+      navigate("/customer/messages");
     }
   };
 
@@ -224,7 +269,7 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
           </div>
         )}
 
-        {/* ✅✅✅ QUOTE SECTION ✅✅✅ */}
+        {/* QUOTE SECTION */}
         {!loadingQuote && quote && (
           <div className="mb-4 border-2 border-blue-200 rounded-lg overflow-hidden">
             {/* Quote Header */}
@@ -286,7 +331,7 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
                     </button>
                   </>
                 )}
-                  <a
+                <a
                   href={`/quotes/${quote.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -383,9 +428,12 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
             </>
           )}
 
-          {/* Message button */}
-          {job.providers?.business_name && (
-            <button className="flex-1 py-2 px-4 border border-slate-300 text-slate-700 rounded-lg font-medium hover:bg-slate-50 transition flex items-center justify-center gap-2">
+          {/* ✅ FIXED: Message button with onClick handler */}
+          {job.provider_id && job.providers?.business_name && (
+            <button 
+              onClick={handleMessage}
+              className="flex-1 py-2 px-4 border border-slate-300 text-slate-700 rounded-lg font-medium hover:bg-slate-50 transition flex items-center justify-center gap-2"
+            >
               <MessageSquare size={16} />
               Message
             </button>

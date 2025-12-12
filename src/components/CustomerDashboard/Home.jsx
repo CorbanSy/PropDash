@@ -118,7 +118,7 @@ export default function CustomerHome() {
           </p>
         </div>
         <button
-          onClick={() => navigate("/customer/jobs")}
+          onClick={() => navigate("/customer/jobs?post=true")}
           className="hidden sm:flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-4 py-2.5 rounded-lg font-semibold hover:from-green-700 hover:to-emerald-700 transition shadow-lg shadow-green-500/30"
         >
           <Plus size={18} />
@@ -195,7 +195,7 @@ export default function CustomerHome() {
               Post a job and get quotes from verified pros in your area
             </p>
             <button
-              onClick={() => navigate("/customer/jobs")}
+              onClick={() => navigate("/customer/jobs?post=true")}
               className="bg-white text-green-600 px-6 py-2.5 rounded-lg font-semibold hover:bg-green-50 transition flex items-center gap-2"
             >
               Post a Job
@@ -253,7 +253,7 @@ export default function CustomerHome() {
               Post your first job to get started
             </p>
             <button
-              onClick={() => navigate("/customer/new-job")}
+              onClick={() => navigate("/customer/jobs?post=true")}
               className="bg-green-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-green-700 transition inline-flex items-center gap-2"
             >
               <Plus size={18} />

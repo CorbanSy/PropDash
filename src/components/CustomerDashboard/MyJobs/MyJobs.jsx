@@ -1,14 +1,17 @@
 // src/components/CustomerDashboard/MyJobs/MyJobs.jsx
 import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom"; // ✅ Added useLocation and useNavigate
 import { Search, Filter, Calendar, Plus } from "lucide-react";
 import { supabase } from "../../../lib/supabaseClient";
 import useAuth from "../../../hooks/useAuth";
-import PostJobModal from "./components/PostJobModal/PostJobModal"; // ✅ UPDATED IMPORT PATH
+import PostJobModal from "./components/PostJobModal/PostJobModal";
 import StatBox from "./components/StatBox";
 import DetailedJobCard from "./components/DetailedJobCard";
 
 export default function MyJobs() {
   const { user } = useAuth();
+  const location = useLocation(); // ✅ Added
+  const navigate = useNavigate(); // ✅ Added
   const [jobs, setJobs] = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [statusFilter, setStatusFilter] = useState("all");
@@ -16,6 +19,16 @@ export default function MyJobs() {
   const [loading, setLoading] = useState(true);
   const [showPostJobModal, setShowPostJobModal] = useState(false);
   const [editingJob, setEditingJob] = useState(null);
+
+  // ✅ Check for ?post=true query parameter on mount
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    if (searchParams.get('post') === 'true') {
+      setShowPostJobModal(true);
+      // Remove the query parameter from URL after opening modal
+      navigate('/customer/jobs', { replace: true });
+    }
+  }, [location.search, navigate]);
 
   useEffect(() => {
     if (user) {
