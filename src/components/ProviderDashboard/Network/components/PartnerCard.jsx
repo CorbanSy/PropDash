@@ -8,10 +8,12 @@ import {
   ExternalLink,
   Phone,
   Mail,
+  MessageSquare,
+  Send,
 } from "lucide-react";
 import { theme } from "../../../../styles/theme";
 
-export default function PartnerCard({ partner, onClick }) {
+export default function PartnerCard({ partner, onClick, onMessage, onRefer }) {
   const getStatusColor = (status) => {
     switch (status) {
       case "active":
@@ -24,10 +26,7 @@ export default function PartnerCard({ partner, onClick }) {
   };
 
   return (
-    <button
-      onClick={onClick}
-      className={`${theme.card.base} ${theme.card.padding} ${theme.card.hover} text-left w-full`}
-    >
+    <div className={`${theme.card.base} ${theme.card.padding} relative`}>
       {/* Header */}
       <div className="flex items-start gap-3 mb-4">
         <img
@@ -61,6 +60,16 @@ export default function PartnerCard({ partner, onClick }) {
             )}
           </div>
         </div>
+
+        {/* Online Status Badge */}
+        {partner.is_online && (
+          <div className="absolute top-4 right-4">
+            <div className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              Online
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Stats */}
@@ -97,12 +106,34 @@ export default function PartnerCard({ partner, onClick }) {
         )}
       </div>
 
-      {/* Quick Actions */}
-      <div className="flex gap-2">
-        <div className={`flex-1 ${theme.button.provider} justify-center text-sm py-2`}>
+      {/* Action Buttons */}
+      <div className="grid grid-cols-3 gap-2">
+        {/* View Profile */}
+        <button
+          onClick={onClick}
+          className="flex items-center justify-center gap-1 px-3 py-2 border-2 border-slate-300 text-slate-700 rounded-lg font-semibold hover:bg-slate-50 transition text-xs"
+        >
           <ExternalLink size={14} />
-          View Profile
-        </div>
+          Profile
+        </button>
+
+        {/* Message */}
+        <button
+          onClick={() => onMessage(partner)}
+          className="flex items-center justify-center gap-1 px-3 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition text-xs"
+        >
+          <MessageSquare size={14} />
+          Message
+        </button>
+
+        {/* Refer */}
+        <button
+          onClick={() => onRefer(partner)}
+          className="flex items-center justify-center gap-1 px-3 py-2 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition text-xs"
+        >
+          <Send size={14} />
+          Refer
+        </button>
       </div>
 
       {/* Status Badge */}
@@ -113,6 +144,6 @@ export default function PartnerCard({ partner, onClick }) {
           </span>
         </div>
       )}
-    </button>
+    </div>
   );
 }
