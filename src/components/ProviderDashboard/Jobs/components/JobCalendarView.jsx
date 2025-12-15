@@ -59,26 +59,26 @@ export default function JobCalendarView({ jobs, onJobClick, customers }) {
   };
 
   return (
-    <div className={`${theme.card.base} ${theme.card.padding}`}>
+    <div className="bg-white rounded-xl border-2 border-secondary-200 shadow-card p-6">
       {/* Calendar Header */}
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-2xl font-bold text-slate-900">{monthName}</h3>
+        <h3 className="text-2xl font-bold text-secondary-900">{monthName}</h3>
         <div className="flex gap-2">
           <button
             onClick={today}
-            className={`${theme.button.secondary} px-3 py-2`}
+            className="border-2 border-secondary-400 text-secondary-700 px-3 py-2 rounded-lg font-semibold hover:bg-secondary-50 active:bg-secondary-100 transition-all"
           >
             Today
           </button>
           <button
             onClick={previousMonth}
-            className={`${theme.button.secondary} p-2`}
+            className="border-2 border-secondary-400 text-secondary-700 p-2 rounded-lg font-semibold hover:bg-secondary-50 active:bg-secondary-100 transition-all"
           >
             <ChevronLeft size={20} />
           </button>
           <button
             onClick={nextMonth}
-            className={`${theme.button.secondary} p-2`}
+            className="border-2 border-secondary-400 text-secondary-700 p-2 rounded-lg font-semibold hover:bg-secondary-50 active:bg-secondary-100 transition-all"
           >
             <ChevronRight size={20} />
           </button>
@@ -88,7 +88,7 @@ export default function JobCalendarView({ jobs, onJobClick, customers }) {
       {/* Day Names */}
       <div className="grid grid-cols-7 gap-2 mb-2">
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-          <div key={day} className="text-center font-semibold text-slate-600 text-sm py-2">
+          <div key={day} className="text-center font-semibold text-secondary-700 text-sm py-2">
             {day}
           </div>
         ))}
@@ -107,16 +107,16 @@ export default function JobCalendarView({ jobs, onJobClick, customers }) {
           return (
             <div
               key={day}
-              className={`aspect-square border-2 rounded-lg p-2 ${
+              className={`aspect-square border-2 rounded-lg p-2 transition-all duration-200 ${
                 isTodayDay
-                  ? "border-blue-400 bg-blue-50"
+                  ? "border-primary-400 bg-primary-50"
                   : dayJobs.length > 0
-                  ? "border-slate-300 bg-white hover:border-slate-400"
-                  : "border-slate-200 hover:border-slate-300"
-              } transition`}
+                  ? "border-secondary-300 bg-white hover:border-secondary-400 hover:shadow-sm"
+                  : "border-secondary-200 hover:border-secondary-300"
+              }`}
             >
               <div className={`text-sm font-semibold mb-1 ${
-                isTodayDay ? "text-blue-700" : "text-slate-700"
+                isTodayDay ? "text-primary-700" : "text-secondary-700"
               }`}>
                 {day}
               </div>
@@ -128,7 +128,7 @@ export default function JobCalendarView({ jobs, onJobClick, customers }) {
                     <button
                       key={job.id}
                       onClick={() => onJobClick(job)}
-                      className={`w-full text-left px-2 py-1 rounded text-xs font-medium truncate ${status.color}`}
+                      className={`w-full text-left px-2 py-1 rounded text-xs font-semibold truncate border ${status.color} transition-all duration-200`}
                       title={job.service_name}
                     >
                       {job.service_name}
@@ -137,7 +137,7 @@ export default function JobCalendarView({ jobs, onJobClick, customers }) {
                 })}
                 
                 {dayJobs.length > 2 && (
-                  <div className="text-xs text-slate-600 text-center">
+                  <div className="text-xs text-secondary-600 text-center font-medium">
                     +{dayJobs.length - 2} more
                   </div>
                 )}
@@ -147,13 +147,13 @@ export default function JobCalendarView({ jobs, onJobClick, customers }) {
         })}
       </div>
 
-      {/* ✅✅✅ Unscheduled Jobs Section ✅✅✅ */}
+      {/* Unscheduled Jobs Section */}
       {jobs.filter(j => !j.scheduled_date).length > 0 && (
-        <div className="mt-6 pt-6 border-t border-slate-200">
-          <h4 className="text-lg font-semibold text-slate-900 mb-3">
+        <div className="mt-6 pt-6 border-t-2 border-secondary-200">
+          <h4 className="text-lg font-semibold text-secondary-900 mb-3">
             📋 Unscheduled Jobs ({jobs.filter(j => !j.scheduled_date).length})
           </h4>
-          <p className="text-sm text-slate-600 mb-3">
+          <p className="text-sm text-secondary-600 mb-3">
             These jobs don't have a scheduled date yet. Click to view details and set a date.
           </p>
           <div className="grid gap-2">
@@ -164,15 +164,15 @@ export default function JobCalendarView({ jobs, onJobClick, customers }) {
                 <button
                   key={job.id}
                   onClick={() => onJobClick(job)}
-                  className="text-left p-3 border-2 border-slate-200 rounded-lg hover:border-blue-400 transition"
+                  className="text-left p-3 border-2 border-secondary-200 rounded-lg hover:border-primary-400 hover:shadow-sm transition-all duration-200"
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <span className="font-semibold text-slate-900">{job.service_name}</span>
-                    <span className={`text-xs px-2 py-1 rounded-full font-semibold ${status.color}`}>
+                    <span className="font-semibold text-secondary-900">{job.service_name}</span>
+                    <span className={`text-xs px-2 py-1 rounded-full font-semibold border ${status.color}`}>
                       {status.label}
                     </span>
                   </div>
-                  <div className="text-sm text-slate-600">
+                  <div className="text-sm text-secondary-600">
                     {customer?.full_name || job.client_name || "Customer"}
                   </div>
                 </button>
@@ -183,18 +183,18 @@ export default function JobCalendarView({ jobs, onJobClick, customers }) {
       )}
 
       {/* Scheduled Jobs Count & Legend */}
-      <div className="mt-6 pt-6 border-t border-slate-200">
-        <p className="text-sm text-slate-600 mb-3">
+      <div className="mt-6 pt-6 border-t-2 border-secondary-200">
+        <p className="text-sm text-secondary-600 mb-3">
           Showing {jobs.filter(j => j.scheduled_date).length} scheduled jobs
         </p>
-        <p className="text-sm font-semibold text-slate-900 mb-3">Status Legend:</p>
+        <p className="text-sm font-semibold text-secondary-900 mb-3">Status Legend:</p>
         <div className="flex flex-wrap gap-3">
           {["accepted", "en_route", "in_progress", "completed"].map((status) => {
             const badge = getStatusBadge(status);
             return (
               <div key={status} className="flex items-center gap-2">
-                <div className={`w-4 h-4 rounded border ${badge.color}`}></div>
-                <span className="text-sm text-slate-700">{badge.label}</span>
+                <div className={`w-4 h-4 rounded border-2 ${badge.color}`}></div>
+                <span className="text-sm text-secondary-700">{badge.label}</span>
               </div>
             );
           })}

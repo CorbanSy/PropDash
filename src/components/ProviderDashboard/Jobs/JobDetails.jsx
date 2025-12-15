@@ -41,16 +41,16 @@ export default function JobDetails({ job, customers, onClose, onRefresh }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
         {/* Header */}
-        <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-purple-600 p-6 flex items-start justify-between z-10">
+        <div className="sticky top-0 bg-gradient-to-r from-primary-700 via-primary-800 to-primary-900 p-6 flex items-start justify-between z-10">
           <div className="flex items-center gap-4 text-white">
             <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
               <Briefcase size={24} />
             </div>
             <div>
               <h2 className="text-2xl font-bold">{job.service_name || "Service"}</h2>
-              <p className="text-blue-100">{clientName}</p>
+              <p className="text-primary-100">{clientName}</p>
             </div>
           </div>
           <button onClick={onClose} className="text-white/80 hover:text-white transition">
@@ -59,18 +59,18 @@ export default function JobDetails({ job, customers, onClose, onRefresh }) {
         </div>
 
         {/* Quick Actions */}
-        <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
+        <div className="px-6 py-4 border-b-2 border-secondary-200 bg-secondary-50">
           <div className="flex gap-2">
             <button
               onClick={() => setShowEditModal(true)}
-              className={`${theme.button.secondary} flex items-center gap-2`}
+              className="border-2 border-secondary-400 text-secondary-700 px-4 py-2 rounded-lg font-semibold hover:bg-secondary-50 active:bg-secondary-100 transition-all inline-flex items-center gap-2"
             >
               <Edit size={16} />
               Edit
             </button>
             <button
               onClick={handleDelete}
-              className="px-4 py-2 bg-red-50 text-red-700 rounded-lg font-semibold hover:bg-red-100 transition flex items-center gap-2"
+              className="px-4 py-2 bg-error-50 text-error-700 rounded-lg font-semibold hover:bg-error-100 transition border-2 border-error-300 inline-flex items-center gap-2"
             >
               <Trash2 size={16} />
               Delete
@@ -79,7 +79,7 @@ export default function JobDetails({ job, customers, onClose, onRefresh }) {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 border-b border-slate-200 px-6 overflow-x-auto">
+        <div className="flex gap-2 border-b border-secondary-200 px-6 overflow-x-auto">
           <TabButton
             active={activeTab === "details"}
             onClick={() => setActiveTab("details")}
@@ -117,7 +117,7 @@ export default function JobDetails({ job, customers, onClose, onRefresh }) {
           {activeTab === "details" && (
             <div className="space-y-6">
               {/* Status Badge */}
-              <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-semibold border ${statusBadge.color}`}>
+              <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-semibold border-2 ${statusBadge.color}`}>
                 <span className="text-lg">{statusBadge.icon}</span>
                 <span>{statusBadge.label}</span>
               </div>
@@ -125,7 +125,7 @@ export default function JobDetails({ job, customers, onClose, onRefresh }) {
               {/* Job Info Grid */}
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <h3 className={`${theme.text.h4} mb-4`}>Job Information</h3>
+                  <h3 className="text-lg font-semibold text-secondary-900 mb-4">Job Information</h3>
                   <div className="space-y-3">
                     <InfoRow label="Service" value={job.service_name || "N/A"} />
                     <InfoRow label="Date" value={formatDate(job.scheduled_date)} />
@@ -136,7 +136,7 @@ export default function JobDetails({ job, customers, onClose, onRefresh }) {
                 </div>
 
                 <div>
-                  <h3 className={`${theme.text.h4} mb-4`}>Client Information</h3>
+                  <h3 className="text-lg font-semibold text-secondary-900 mb-4">Client Information</h3>
                   <div className="space-y-3">
                     <InfoRow label="Name" value={clientName} />
                     <InfoRow label="Email" value={customer?.email || job.client_email || "N/A"} />
@@ -148,8 +148,8 @@ export default function JobDetails({ job, customers, onClose, onRefresh }) {
               {/* Description */}
               {job.description && (
                 <div>
-                  <h3 className={`${theme.text.h4} mb-3`}>Description</h3>
-                  <p className="text-slate-700 bg-slate-50 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold text-secondary-900 mb-3">Description</h3>
+                  <p className="text-secondary-700 bg-secondary-50 p-4 rounded-lg">
                     {job.description}
                   </p>
                 </div>
@@ -199,12 +199,12 @@ function TabButton({ active, onClick, label }) {
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-3 font-semibold transition relative whitespace-nowrap ${
-        active ? "text-blue-700" : "text-slate-600 hover:text-slate-900"
+      className={`px-4 py-3 font-semibold transition-all duration-200 relative whitespace-nowrap ${
+        active ? "text-primary-700" : "text-secondary-600 hover:text-secondary-900"
       }`}
     >
       {label}
-      {active && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-700"></div>}
+      {active && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-700"></div>}
     </button>
   );
 }
@@ -212,8 +212,8 @@ function TabButton({ active, onClick, label }) {
 function InfoRow({ label, value, bold }) {
   return (
     <div className="flex justify-between items-start">
-      <span className="text-sm text-slate-600">{label}:</span>
-      <span className={`text-sm text-slate-900 text-right ${bold ? "font-bold text-base" : ""}`}>
+      <span className="text-sm text-secondary-600">{label}:</span>
+      <span className={`text-sm text-secondary-900 text-right ${bold ? "font-bold text-base" : ""}`}>
         {value}
       </span>
     </div>

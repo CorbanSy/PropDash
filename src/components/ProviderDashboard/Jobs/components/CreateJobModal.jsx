@@ -30,7 +30,6 @@ export default function CreateJobModal({ customers, onClose, onSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate
     const validation = validateJob(jobData);
     if (!validation.isValid) {
       setErrors(validation.errors);
@@ -96,12 +95,12 @@ export default function CreateJobModal({ customers, onClose, onSuccess }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
         {/* Header */}
-        <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-purple-600 p-6 flex items-start justify-between z-10">
+        <div className="sticky top-0 bg-gradient-to-r from-primary-700 via-primary-800 to-primary-900 p-6 flex items-start justify-between z-10">
           <div>
             <h2 className="text-2xl font-bold text-white">Create New Job</h2>
-            <p className="text-blue-100">Add a new job to your schedule</p>
+            <p className="text-primary-100">Add a new job to your schedule</p>
           </div>
           <button onClick={onClose} className="text-white/80 hover:text-white transition">
             <X size={24} />
@@ -111,9 +110,9 @@ export default function CreateJobModal({ customers, onClose, onSuccess }) {
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Errors */}
           {errors.length > 0 && (
-            <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4">
-              <p className="text-sm font-semibold text-red-900 mb-2">Please fix the following errors:</p>
-              <ul className="text-sm text-red-700 list-disc list-inside">
+            <div className="bg-error-50 border-2 border-error-300 rounded-lg p-4 shadow-sm">
+              <p className="text-sm font-semibold text-error-900 mb-2">Please fix the following errors:</p>
+              <ul className="text-sm text-error-700 list-disc list-inside">
                 {errors.map((error, i) => (
                   <li key={i}>{error}</li>
                 ))}
@@ -123,24 +122,24 @@ export default function CreateJobModal({ customers, onClose, onSuccess }) {
 
           {/* Service Name */}
           <div>
-            <label className={theme.text.label}>Service Name *</label>
+            <label className="text-sm font-semibold text-secondary-700">Service Name *</label>
             <input
               type="text"
               required
               value={jobData.service_name}
               onChange={(e) => setJobData({ ...jobData, service_name: e.target.value })}
-              className={`${theme.input.base} ${theme.input.provider} mt-2`}
+              className="w-full border-2 border-secondary-300 rounded-lg px-4 py-3 bg-white text-secondary-900 placeholder:text-secondary-400 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all mt-2"
               placeholder="e.g., Kitchen Faucet Repair, Deck Staining, etc."
             />
           </div>
 
           {/* Customer Selection */}
           <div>
-            <label className={theme.text.label}>Customer</label>
+            <label className="text-sm font-semibold text-secondary-700">Customer</label>
             <select
               value={jobData.customer_id}
               onChange={(e) => handleCustomerSelect(e.target.value)}
-              className={`${theme.input.base} ${theme.input.provider} mt-2`}
+              className="w-full border-2 border-secondary-300 rounded-lg px-4 py-3 bg-white text-secondary-900 placeholder:text-secondary-400 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all mt-2"
             >
               <option value="">New Customer (Enter Details Below)</option>
               <option disabled>──────────</option>
@@ -154,19 +153,19 @@ export default function CreateJobModal({ customers, onClose, onSuccess }) {
 
           {/* Client Info (if no customer selected) */}
           {!jobData.customer_id && (
-            <div className="bg-slate-50 rounded-lg p-4 border-2 border-slate-200 space-y-4">
-              <h3 className="font-semibold text-slate-900">New Customer Information</h3>
+            <div className="bg-secondary-50 rounded-lg p-4 border-2 border-secondary-200 space-y-4">
+              <h3 className="font-semibold text-secondary-900">New Customer Information</h3>
               
               <div>
-                <label className={theme.text.label}>Full Name *</label>
+                <label className="text-sm font-semibold text-secondary-700">Full Name *</label>
                 <div className="relative mt-2">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={18} />
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400" size={18} />
                   <input
                     type="text"
                     required={!jobData.customer_id}
                     value={jobData.client_name}
                     onChange={(e) => setJobData({ ...jobData, client_name: e.target.value })}
-                    className={`${theme.input.base} ${theme.input.provider} pl-10`}
+                    className="w-full border-2 border-secondary-300 rounded-lg px-4 py-3 bg-white text-secondary-900 placeholder:text-secondary-400 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all pl-10"
                     placeholder="John Smith"
                   />
                 </div>
@@ -174,23 +173,23 @@ export default function CreateJobModal({ customers, onClose, onSuccess }) {
 
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className={theme.text.label}>Email</label>
+                  <label className="text-sm font-semibold text-secondary-700">Email</label>
                   <input
                     type="email"
                     value={jobData.client_email}
                     onChange={(e) => setJobData({ ...jobData, client_email: e.target.value })}
-                    className={`${theme.input.base} ${theme.input.provider} mt-2`}
+                    className="w-full border-2 border-secondary-300 rounded-lg px-4 py-3 bg-white text-secondary-900 placeholder:text-secondary-400 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all mt-2"
                     placeholder="john@example.com"
                   />
                 </div>
 
                 <div>
-                  <label className={theme.text.label}>Phone</label>
+                  <label className="text-sm font-semibold text-secondary-700">Phone</label>
                   <input
                     type="tel"
                     value={jobData.client_phone}
                     onChange={(e) => setJobData({ ...jobData, client_phone: e.target.value })}
-                    className={`${theme.input.base} ${theme.input.provider} mt-2`}
+                    className="w-full border-2 border-secondary-300 rounded-lg px-4 py-3 bg-white text-secondary-900 placeholder:text-secondary-400 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all mt-2"
                     placeholder="(555) 123-4567"
                   />
                 </div>
@@ -201,28 +200,28 @@ export default function CreateJobModal({ customers, onClose, onSuccess }) {
           {/* Date & Time */}
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className={theme.text.label}>Scheduled Date *</label>
+              <label className="text-sm font-semibold text-secondary-700">Scheduled Date *</label>
               <div className="relative mt-2">
-                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={18} />
+                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400" size={18} />
                 <input
                   type="date"
                   required
                   value={jobData.scheduled_date}
                   onChange={(e) => setJobData({ ...jobData, scheduled_date: e.target.value })}
-                  className={`${theme.input.base} ${theme.input.provider} pl-10`}
+                  className="w-full border-2 border-secondary-300 rounded-lg px-4 py-3 bg-white text-secondary-900 placeholder:text-secondary-400 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all pl-10"
                 />
               </div>
             </div>
 
             <div>
-              <label className={theme.text.label}>Time</label>
+              <label className="text-sm font-semibold text-secondary-700">Time</label>
               <div className="relative mt-2">
-                <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={18} />
+                <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400" size={18} />
                 <input
                   type="time"
                   value={jobData.scheduled_time}
                   onChange={(e) => setJobData({ ...jobData, scheduled_time: e.target.value })}
-                  className={`${theme.input.base} ${theme.input.provider} pl-10`}
+                  className="w-full border-2 border-secondary-300 rounded-lg px-4 py-3 bg-white text-secondary-900 placeholder:text-secondary-400 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all pl-10"
                 />
               </div>
             </div>
@@ -230,14 +229,14 @@ export default function CreateJobModal({ customers, onClose, onSuccess }) {
 
           {/* Address */}
           <div>
-            <label className={theme.text.label}>Address</label>
+            <label className="text-sm font-semibold text-secondary-700">Address</label>
             <div className="relative mt-2">
-              <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={18} />
+              <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400" size={18} />
               <input
                 type="text"
                 value={jobData.address}
                 onChange={(e) => setJobData({ ...jobData, address: e.target.value })}
-                className={`${theme.input.base} ${theme.input.provider} pl-10`}
+                className="w-full border-2 border-secondary-300 rounded-lg px-4 py-3 bg-white text-secondary-900 placeholder:text-secondary-400 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all pl-10"
                 placeholder="123 Main St, City, State 12345"
               />
             </div>
@@ -245,22 +244,22 @@ export default function CreateJobModal({ customers, onClose, onSuccess }) {
 
           {/* Description */}
           <div>
-            <label className={theme.text.label}>Description</label>
+            <label className="text-sm font-semibold text-secondary-700">Description</label>
             <textarea
               value={jobData.description}
               onChange={(e) => setJobData({ ...jobData, description: e.target.value })}
-              className={`${theme.input.base} ${theme.input.provider} mt-2`}
+              className="w-full border-2 border-secondary-300 rounded-lg px-4 py-3 bg-white text-secondary-900 placeholder:text-secondary-400 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all mt-2"
               rows={3}
               placeholder="Details about the work to be done..."
             />
           </div>
 
           {/* Pricing */}
-          <div className="bg-blue-50 rounded-lg p-4 border-2 border-blue-200">
-            <h4 className="font-semibold text-slate-900 mb-3">Pricing</h4>
+          <div className="bg-primary-50 rounded-lg p-4 border-2 border-primary-300 shadow-sm">
+            <h4 className="font-semibold text-secondary-900 mb-3">Pricing</h4>
             <div className="grid md:grid-cols-3 gap-4">
               <div>
-                <label className={theme.text.label}>Est. Hours</label>
+                <label className="text-sm font-semibold text-secondary-700">Est. Hours</label>
                 <input
                   type="number"
                   step="0.5"
@@ -268,13 +267,13 @@ export default function CreateJobModal({ customers, onClose, onSuccess }) {
                   value={jobData.estimated_hours}
                   onChange={(e) => setJobData({ ...jobData, estimated_hours: e.target.value })}
                   onBlur={calculateTotal}
-                  className={`${theme.input.base} ${theme.input.provider} mt-2`}
+                  className="w-full border-2 border-secondary-300 rounded-lg px-4 py-3 bg-white text-secondary-900 placeholder:text-secondary-400 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all mt-2"
                   placeholder="0"
                 />
               </div>
 
               <div>
-                <label className={theme.text.label}>Hourly Rate ($)</label>
+                <label className="text-sm font-semibold text-secondary-700">Hourly Rate ($)</label>
                 <input
                   type="number"
                   step="1"
@@ -282,15 +281,15 @@ export default function CreateJobModal({ customers, onClose, onSuccess }) {
                   value={jobData.hourly_rate}
                   onChange={(e) => setJobData({ ...jobData, hourly_rate: e.target.value })}
                   onBlur={calculateTotal}
-                  className={`${theme.input.base} ${theme.input.provider} mt-2`}
+                  className="w-full border-2 border-secondary-300 rounded-lg px-4 py-3 bg-white text-secondary-900 placeholder:text-secondary-400 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all mt-2"
                   placeholder="0"
                 />
               </div>
 
               <div>
-                <label className={theme.text.label}>Total ($) *</label>
+                <label className="text-sm font-semibold text-secondary-700">Total ($) *</label>
                 <div className="relative mt-2">
-                  <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={18} />
+                  <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400" size={18} />
                   <input
                     type="number"
                     step="0.01"
@@ -298,7 +297,7 @@ export default function CreateJobModal({ customers, onClose, onSuccess }) {
                     required
                     value={jobData.total}
                     onChange={(e) => setJobData({ ...jobData, total: e.target.value })}
-                    className={`${theme.input.base} ${theme.input.provider} pl-10`}
+                    className="w-full border-2 border-secondary-300 rounded-lg px-4 py-3 bg-white text-secondary-900 placeholder:text-secondary-400 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all pl-10"
                     placeholder="0.00"
                   />
                 </div>
@@ -308,13 +307,13 @@ export default function CreateJobModal({ customers, onClose, onSuccess }) {
 
           {/* Internal Notes */}
           <div>
-            <label className={theme.text.label}>Internal Notes</label>
+            <label className="text-sm font-semibold text-secondary-700">Internal Notes</label>
             <div className="relative mt-2">
-              <FileText className="absolute left-3 top-3 text-slate-400" size={18} />
+              <FileText className="absolute left-3 top-3 text-secondary-400" size={18} />
               <textarea
                 value={jobData.notes}
                 onChange={(e) => setJobData({ ...jobData, notes: e.target.value })}
-                className={`${theme.input.base} ${theme.input.provider} pl-10`}
+                className="w-full border-2 border-secondary-300 rounded-lg px-4 py-3 bg-white text-secondary-900 placeholder:text-secondary-400 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all pl-10"
                 rows={3}
                 placeholder="Private notes about this job (not visible to client)..."
               />
@@ -326,14 +325,14 @@ export default function CreateJobModal({ customers, onClose, onSuccess }) {
             <button
               type="button"
               onClick={onClose}
-              className={`flex-1 ${theme.button.secondary} justify-center`}
+              className="flex-1 border-2 border-secondary-400 text-secondary-700 px-5 py-3 rounded-lg font-semibold hover:bg-secondary-50 active:bg-secondary-100 transition-all inline-flex items-center justify-center"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className={`flex-1 ${theme.button.provider} justify-center ${
+              className={`flex-1 bg-primary-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-primary-700 active:bg-primary-800 transition-all shadow-sm hover:shadow-md inline-flex items-center justify-center gap-2 ${
                 loading ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >

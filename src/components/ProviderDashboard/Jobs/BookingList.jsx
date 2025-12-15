@@ -1,12 +1,12 @@
-//propdash-mvp\src\components\ProviderDashboard\BookingList.jsx
+// src/components/ProviderDashboard/BookingList.jsx
 import { useEffect, useState } from "react";
-import { supabase } from "../../../lib/supabase/client";
-import { Calendar, Clock, User, Loader2, CircleCheck } from "lucide-react";
+import { supabase } from "../../lib/supabaseClient";
+import { Calendar, Clock, User, Loader2 } from "lucide-react";
+
 export default function BookingList() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch jobs for the logged-in provider
   useEffect(() => {
     loadJobs();
   }, []);
@@ -29,16 +29,15 @@ export default function BookingList() {
     setLoading(false);
   }
 
-  // Status badge color mapping
   function StatusBadge({ status }) {
     const map = {
-      confirmed: "bg-blue-100 text-blue-700 border-blue-200",
-      completed: "bg-green-100 text-green-700 border-green-200",
-      paid: "bg-purple-100 text-purple-700 border-purple-200",
+      confirmed: "bg-primary-100 text-primary-800 border-primary-300",
+      completed: "bg-success-100 text-success-800 border-success-300",
+      paid: "bg-premium-100 text-premium-800 border-premium-300",
     };
 
     return (
-      <span className={`px-2 py-0.5 text-[10px] rounded font-bold border ${map[status]}`}>
+      <span className={`px-2 py-0.5 text-[10px] rounded font-bold border-2 ${map[status] || map.confirmed}`}>
         {status.toUpperCase()}
       </span>
     );
@@ -47,15 +46,15 @@ export default function BookingList() {
   if (loading) {
     return (
       <div className="flex justify-center py-10">
-        <Loader2 size={24} className="animate-spin text-slate-400" />
+        <Loader2 size={24} className="animate-spin text-secondary-400" />
       </div>
     );
   }
 
   if (jobs.length === 0) {
     return (
-      <div className="text-center text-slate-500 py-10">
-        <Calendar className="mx-auto mb-2 text-slate-400" size={32} />
+      <div className="text-center text-secondary-500 py-10">
+        <Calendar className="mx-auto mb-2 text-secondary-400" size={32} />
         <p>No bookings yet.</p>
       </div>
     );
@@ -66,23 +65,23 @@ export default function BookingList() {
       {jobs.map((job) => (
         <div
           key={job.id}
-          className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm"
+          className="bg-white border-2 border-secondary-200 rounded-xl p-4 shadow-card hover:shadow-card-hover hover:border-secondary-300 transition-all duration-300"
         >
           <div className="flex justify-between items-center mb-1">
-            <strong className="text-sm text-slate-800">{job.client_name}</strong>
+            <strong className="text-sm text-secondary-900">{job.client_name}</strong>
             <StatusBadge status={job.status} />
           </div>
 
-          <div className="text-xs text-slate-500 flex items-center gap-1 mb-1">
+          <div className="text-xs text-secondary-500 flex items-center gap-1 mb-1">
             <User size={14} /> {job.client_phone}
           </div>
 
-          <div className="flex items-center gap-2 text-xs text-slate-500">
+          <div className="flex items-center gap-2 text-xs text-secondary-500">
             <Clock size={14} />
             {job.time ? formatDateTime(job.time) : "Time not set"}
           </div>
 
-          <div className="mt-3 flex justify-end text-green-600 font-bold text-sm">
+          <div className="mt-3 flex justify-end text-success-600 font-bold text-sm">
             {job.price ? `$${job.price}` : ""}
           </div>
         </div>
@@ -91,7 +90,6 @@ export default function BookingList() {
   );
 }
 
-// Small helper that formats timestamps
 function formatDateTime(timestamp) {
   const d = new Date(timestamp);
   return d.toLocaleString("en-US", {
