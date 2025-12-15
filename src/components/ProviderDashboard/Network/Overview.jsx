@@ -1,56 +1,71 @@
 // src/components/ProviderDashboard/Network/Overview.jsx
-import { DollarSign, TrendingUp, Users, Zap, ExternalLink } from "lucide-react";
+import {
+  DollarSign,
+  TrendingUp,
+  Users,
+  Zap,
+  ExternalLink,
+} from "lucide-react";
 import { Link } from "react-router-dom";
-import { theme } from "../../../styles/theme";
 import ActivityFeed from "./components/ActivityFeed";
 import { formatCurrency } from "./utils/networkCalculations";
 
-export default function Overview({ stats, partners, referredJobs, activityFeed, onRefresh }) {
+export default function Overview({
+  stats,
+  partners,
+  referredJobs,
+  activityFeed,
+  onRefresh,
+}) {
   const recentEarnings = referredJobs
     .filter((j) => j.status === "completed" && j.commission > 0)
     .slice(0, 5);
 
-  const topPartners = partners
+  const topPartners = [...partners]
     .sort((a, b) => (b.jobsReferred || 0) - (a.jobsReferred || 0))
     .slice(0, 3);
 
   return (
     <div className="grid lg:grid-cols-3 gap-6">
-      {/* Main Content */}
+      {/* MAIN */}
       <div className="lg:col-span-2 space-y-6">
-        {/* Recent Earnings */}
-        <div className={`${theme.card.base} ${theme.card.padding}`}>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className={theme.text.h3}>Recent Commissions</h2>
-            <Link to="#" className="text-sm font-medium text-blue-600 hover:text-blue-700">
-              View All
-            </Link>
-          </div>
+        {/* Recent Commissions */}
+        <Card>
+          <Header
+            title="Recent Commissions"
+            action={
+              <Link
+                to="#"
+                className="text-sm font-medium text-primary-600 hover:text-primary-700"
+              >
+                View all
+              </Link>
+            }
+          />
 
           {recentEarnings.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <DollarSign className="text-slate-400" size={32} />
-              </div>
-              <p className={`${theme.text.h4} mb-2`}>No Commissions Yet</p>
-              <p className={theme.text.body}>
-                Start referring jobs to earn your first commission
-              </p>
-            </div>
+            <EmptyState
+              icon={<DollarSign size={32} />}
+              title="No commissions yet"
+              description="Start referring jobs to earn your first commission."
+            />
           ) : (
             <div className="space-y-3">
               {recentEarnings.map((job) => (
                 <div
                   key={job.id}
-                  className="flex items-start justify-between p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition"
+                  className="flex items-start justify-between rounded-xl border border-slate-200 bg-slate-50 p-4 hover:bg-slate-100 transition"
                 >
-                  <div className="flex items-start gap-3">
-                    <div className="bg-emerald-100 text-emerald-700 p-2 rounded-lg">
-                      <DollarSign size={20} />
-                    </div>
+                  <div className="flex gap-3">
+                    <IconBadge>
+                      <DollarSign size={18} />
+                    </IconBadge>
+
                     <div>
-                      <h4 className="font-semibold text-slate-900">{job.clientName}</h4>
-                      <p className="text-sm text-slate-600 mt-1">
+                      <p className="font-semibold text-slate-900">
+                        {job.clientName}
+                      </p>
+                      <p className="text-sm text-slate-600 mt-0.5">
                         {job.serviceName} • {job.partnerName}
                       </p>
                       <p className="text-xs text-slate-500 mt-1">
@@ -61,6 +76,7 @@ export default function Overview({ stats, partners, referredJobs, activityFeed, 
                       </p>
                     </div>
                   </div>
+
                   <div className="text-right">
                     <p className="text-lg font-bold text-emerald-600">
                       +{formatCurrency(job.commission)}
@@ -73,118 +89,196 @@ export default function Overview({ stats, partners, referredJobs, activityFeed, 
               ))}
             </div>
           )}
-        </div>
+        </Card>
 
         {/* Top Partners */}
-        <div className={`${theme.card.base} ${theme.card.padding}`}>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className={theme.text.h3}>Top Partners This Month</h2>
-          </div>
+        <Card>
+          <Header title="Top Partners This Month" />
 
           {topPartners.length === 0 ? (
-            <div className="text-center py-8">
-              <Users className="text-slate-400 mx-auto mb-3" size={32} />
-              <p className={theme.text.body}>No partner data yet</p>
-            </div>
+            <EmptyState
+              icon={<Users size={32} />}
+              description="No partner data yet."
+            />
           ) : (
             <div className="space-y-3">
               {topPartners.map((partner, index) => (
                 <div
                   key={partner.id}
-                  className="flex items-center justify-between p-4 bg-slate-50 rounded-lg"
+                  className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 p-4"
                 >
                   <div className="flex items-center gap-3">
                     <div className="relative">
                       <img
-                        src={partner.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${partner.id}`}
+                        src={
+                          partner.avatar_url ||
+                          `https://api.dicebear.com/7.x/avataaars/svg?seed=${partner.id}`
+                        }
                         alt={partner.business_name}
                         className="w-12 h-12 rounded-full bg-slate-200"
                       />
                       {index < 3 && (
-                        <div className="absolute -top-1 -right-1 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center text-xs font-bold">
+                        <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-slate-900 text-white text-xs font-bold flex items-center justify-center">
                           {index + 1}
                         </div>
                       )}
                     </div>
+
                     <div>
-                      <p className="font-semibold text-slate-900">{partner.business_name}</p>
-                      <p className="text-sm text-slate-600">{partner.trade}</p>
+                      <p className="font-semibold text-slate-900">
+                        {partner.business_name}
+                      </p>
+                      <p className="text-sm text-slate-600">
+                        {partner.trade}
+                      </p>
                     </div>
                   </div>
+
                   <div className="text-right">
-                    <p className="font-bold text-slate-900">{partner.jobsReferred || 0}</p>
-                    <p className="text-xs text-slate-500">jobs referred</p>
+                    <p className="font-bold text-slate-900">
+                      {partner.jobsReferred || 0}
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      jobs referred
+                    </p>
                   </div>
                 </div>
               ))}
             </div>
           )}
-        </div>
+        </Card>
 
         {/* Quick Actions */}
-        <div className={`${theme.card.base} ${theme.card.padding}`}>
-          <h3 className={`${theme.text.h4} mb-4`}>Quick Actions</h3>
+        <Card>
+          <h3 className="text-lg font-semibold text-slate-900 mb-4">
+            Quick actions
+          </h3>
+
           <div className="grid grid-cols-2 gap-3">
-            <button className="p-4 bg-blue-50 border-2 border-blue-200 rounded-lg hover:bg-blue-100 transition text-left">
-              <Zap className="text-blue-600 mb-2" size={24} />
-              <p className="font-semibold text-slate-900 text-sm">Refer a Job</p>
-              <p className="text-xs text-slate-600 mt-1">Send lead to partner</p>
-            </button>
-            <button className="p-4 bg-purple-50 border-2 border-purple-200 rounded-lg hover:bg-purple-100 transition text-left">
-              <Users className="text-purple-600 mb-2" size={24} />
-              <p className="font-semibold text-slate-900 text-sm">Invite Partner</p>
-              <p className="text-xs text-slate-600 mt-1">Grow your network</p>
-            </button>
+            <QuickAction
+              icon={<Zap size={20} />}
+              title="Refer a job"
+              description="Send a lead to a partner"
+            />
+            <QuickAction
+              icon={<Users size={20} />}
+              title="Invite partner"
+              description="Grow your network"
+            />
           </div>
-        </div>
+        </Card>
       </div>
 
-      {/* Sidebar */}
+      {/* SIDEBAR */}
       <div className="space-y-6">
-        {/* Earnings Chart Placeholder */}
-        <div className={`${theme.card.base} ${theme.card.padding}`}>
-          <h3 className={`${theme.text.h4} mb-4`}>Earnings This Month</h3>
-          <div className="h-48 bg-gradient-to-br from-emerald-50 to-blue-50 rounded-lg flex items-center justify-center border-2 border-slate-200">
+        {/* Earnings */}
+        <Card>
+          <h3 className="text-lg font-semibold text-slate-900 mb-4">
+            Earnings this month
+          </h3>
+
+          <div className="h-48 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-center">
             <div className="text-center">
-              <TrendingUp className="text-emerald-600 mx-auto mb-2" size={32} />
-              <p className="text-sm text-slate-600">Chart coming soon</p>
+              <TrendingUp
+                className="text-slate-500 mx-auto mb-2"
+                size={32}
+              />
+              <p className="text-sm text-slate-600">
+                Chart coming soon
+              </p>
             </div>
           </div>
-          <div className="mt-4 p-3 bg-emerald-50 rounded-lg">
-            <p className="text-2xl font-bold text-emerald-700 mb-1">
+
+          <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+            <p className="text-2xl font-bold text-emerald-700">
               {formatCurrency(stats.thisMonth)}
             </p>
-            <p className="text-xs text-emerald-600">
-              {stats.thisMonth > 0 ? "↗" : ""} This month
+            <p className="text-xs text-emerald-600 mt-1">
+              {stats.thisMonth > 0 && "↗"} This month
             </p>
           </div>
-        </div>
+        </Card>
 
-        {/* Activity Feed */}
+        {/* Activity */}
         <ActivityFeed activities={activityFeed} />
 
-        {/* Network Tips */}
-        <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-6">
+        {/* Tips */}
+        <Card>
           <div className="flex items-center gap-2 mb-3">
-            <Zap className="text-blue-600" size={20} />
-            <h4 className="font-semibold text-blue-900">Pro Tips</h4>
+            <Zap className="text-primary-600" size={18} />
+            <h4 className="font-semibold text-slate-900">
+              Pro tips
+            </h4>
           </div>
-          <ul className="space-y-2 text-sm text-blue-800">
-            <li className="flex items-start gap-2">
-              <span>💡</span>
-              <span>Partners with higher ratings get more referrals</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span>🚀</span>
-              <span>VIP partners earn 10% instead of 5%</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span>⭐</span>
-              <span>Respond fast to keep clients happy</span>
-            </li>
+
+          <ul className="space-y-2 text-sm text-slate-600">
+            <li>• Higher-rated partners receive more referrals</li>
+            <li>• VIP partners earn higher commission</li>
+            <li>• Fast responses increase repeat clients</li>
           </ul>
-        </div>
+        </Card>
       </div>
     </div>
+  );
+}
+
+/* ---------- Small shared UI helpers ---------- */
+
+function Card({ children }) {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      {children}
+    </div>
+  );
+}
+
+function Header({ title, action }) {
+  return (
+    <div className="flex items-center justify-between mb-4">
+      <h2 className="text-xl font-semibold text-slate-900">
+        {title}
+      </h2>
+      {action}
+    </div>
+  );
+}
+
+function IconBadge({ children }) {
+  return (
+    <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600">
+      {children}
+    </div>
+  );
+}
+
+function EmptyState({ icon, title, description }) {
+  return (
+    <div className="py-12 text-center">
+      <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4 text-slate-400">
+        {icon}
+      </div>
+      {title && (
+        <p className="text-lg font-semibold text-slate-900 mb-1">
+          {title}
+        </p>
+      )}
+      <p className="text-sm text-slate-600">
+        {description}
+      </p>
+    </div>
+  );
+}
+
+function QuickAction({ icon, title, description }) {
+  return (
+    <button className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-left hover:bg-slate-100 transition">
+      <div className="mb-2 text-primary-600">{icon}</div>
+      <p className="font-semibold text-slate-900 text-sm">
+        {title}
+      </p>
+      <p className="text-xs text-slate-600 mt-1">
+        {description}
+      </p>
+    </button>
   );
 }

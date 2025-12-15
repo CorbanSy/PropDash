@@ -114,13 +114,6 @@ export default function Header({
             </>
           )}
         </div>
-
-        <Link
-          to="/register/professional"
-          className="btn-primary hover:scale-105 transition-transform duration-200"
-        >
-          Get Started Free
-        </Link>
       </nav>
 
       {/* Mobile Menu Button */}
