@@ -1,42 +1,39 @@
+/* App-specific styles - cleaned for production */
+
+/* Root container - only used on landing/auth pages */
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  min-height: 100vh;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* Remove default Vite template styles that aren't needed */
+/* Keep this file minimal - use Tailwind classes instead */
+
+/* Custom scrollbar for webkit browsers (optional) */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+::-webkit-scrollbar-track {
+  background: #F8FAFC; /* secondary-50 */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1; /* secondary-300 */
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8; /* secondary-400 */
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
   }
-  to {
-    transform: rotate(360deg);
+  
+  .no-print {
+    display: none !important;
   }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
 }

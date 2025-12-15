@@ -3,12 +3,14 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Improve text rendering */
+/* Trust-First Professional Theme - Global Styles */
+
+/* Base styling - Slate background for work apps */
 html, body {
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background-color: #f8fafc; /* slate-50 */
-  color: #0f172a; /* slate-900 */
+  background-color: #F8FAFC; /* secondary-50 (Slate 50) - easy on eyes for long sessions */
+  color: #334155; /* secondary-700 (Slate 700) - readable body text */
   margin: 0;
   padding: 0;
 }
@@ -28,27 +30,156 @@ html {
   scrollbar-width: none;
 }
 
-/* Reusable UI helpers */
+/* Reusable UI helpers - Updated for Trust-First theme */
 .card {
-  @apply bg-white rounded-xl border border-slate-200 shadow-sm p-4;
+  @apply bg-white rounded-xl border border-secondary-200 shadow-sm p-4;
 }
 
+.card-hover {
+  @apply hover:shadow-md transition-shadow cursor-pointer;
+}
+
+/* Buttons - Clean, solid colors (minimal gradients) */
 .btn {
-  @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium transition;
-}
-.btn-primary {
-  @apply bg-blue-600 text-white hover:bg-blue-700;
-}
-.btn-outline {
-  @apply border border-slate-300 hover:bg-slate-100;
+  @apply inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg font-semibold transition shadow-sm;
 }
 
+.btn-primary {
+  @apply bg-primary-600 text-white hover:bg-primary-700 hover:shadow-md;
+}
+
+.btn-secondary {
+  @apply border-2 border-secondary-300 text-secondary-700 hover:bg-secondary-50;
+}
+
+.btn-success {
+  @apply bg-success-600 text-white hover:bg-success-700 hover:shadow-md;
+}
+
+.btn-danger {
+  @apply bg-error-600 text-white hover:bg-error-700 hover:shadow-md;
+}
+
+.btn-ghost {
+  @apply text-secondary-700 hover:bg-secondary-100 shadow-none;
+}
+
+.btn-outline {
+  @apply border-2 border-secondary-300 text-secondary-700 hover:bg-secondary-50 shadow-none;
+}
+
+/* Form inputs - Professional, accessible */
 input, select, textarea {
-  @apply w-full border border-slate-300 rounded-lg px-3 py-2 bg-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+  @apply w-full border-2 border-secondary-300 rounded-lg px-4 py-3 bg-white text-secondary-900 placeholder:text-secondary-400;
+  @apply focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition;
+}
+
+input:disabled, select:disabled, textarea:disabled {
+  @apply bg-secondary-100 text-secondary-500 cursor-not-allowed;
+}
+
+.input-error {
+  @apply border-error-400 focus:ring-error-500 focus:border-error-500;
+}
+
+.input-success {
+  @apply border-success-400 focus:ring-success-500 focus:border-success-500;
 }
 
 .form-error {
-  @apply text-red-600 text-sm mt-1;
+  @apply text-error-600 text-sm mt-1;
+}
+
+.form-helper {
+  @apply text-secondary-500 text-sm mt-1;
+}
+
+/* Status Badges - Clean, professional */
+.badge {
+  @apply inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold border;
+}
+
+.badge-success {
+  @apply bg-success-100 text-success-800 border-success-200;
+}
+
+.badge-warning {
+  @apply bg-warning-100 text-warning-800 border-warning-200;
+}
+
+.badge-error {
+  @apply bg-error-100 text-error-800 border-error-200;
+}
+
+.badge-info {
+  @apply bg-primary-100 text-primary-800 border-primary-200;
+}
+
+.badge-neutral {
+  @apply bg-secondary-100 text-secondary-800 border-secondary-200;
+}
+
+.badge-vip {
+  @apply bg-gradient-to-r from-vip-600 to-purple-600 text-white border-0 shadow-sm;
+}
+
+/* Alerts - Clear, actionable */
+.alert {
+  @apply p-4 rounded-lg border-2;
+}
+
+.alert-success {
+  @apply bg-success-50 border-success-200 text-success-800;
+}
+
+.alert-warning {
+  @apply bg-warning-50 border-warning-200 text-warning-800;
+}
+
+.alert-error {
+  @apply bg-error-50 border-error-200 text-error-800;
+}
+
+.alert-info {
+  @apply bg-primary-50 border-primary-200 text-primary-800;
+}
+
+/* Stat Cards - Minimal, professional */
+.stat-card {
+  @apply bg-white rounded-xl border-2 p-6 shadow-sm hover:shadow-md transition;
+}
+
+.stat-card-primary {
+  @apply bg-primary-50 border-primary-200;
+}
+
+.stat-card-success {
+  @apply bg-success-50 border-success-200;
+}
+
+.stat-card-warning {
+  @apply bg-warning-50 border-warning-200;
+}
+
+.stat-card-neutral {
+  @apply bg-secondary-50 border-secondary-200;
+}
+
+/* Typography helpers */
+.text-heading {
+  @apply text-secondary-900 font-bold;
+}
+
+.text-body {
+  @apply text-secondary-700;
+}
+
+.text-muted {
+  @apply text-secondary-500;
+}
+
+.text-disabled {
+  @apply text-secondary-400;
 }
 
 /* Job Offer Modal Animations */
@@ -72,10 +203,86 @@ input, select, textarea {
   }
 }
 
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-out;
 }
 
 .animate-slideUp {
   animation: slideUp 0.4s ease-out;
+}
+
+.animate-slideDown {
+  animation: slideDown 0.4s ease-out;
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.3s ease-out;
+}
+
+/* Smooth transitions for interactive elements */
+button, a, input, select, textarea {
+  @apply transition-all duration-200;
+}
+
+/* Focus visible for accessibility */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  @apply outline-2 outline-offset-2 outline-primary-600;
+}
+
+/* Loading spinner */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  @apply inline-block w-5 h-5 border-2 border-secondary-300 border-t-primary-600 rounded-full;
+  animation: spin 0.6s linear infinite;
+}
+
+/* Gradient backgrounds - USE SPARINGLY */
+.gradient-primary {
+  @apply bg-gradient-to-r from-primary-600 to-blue-700;
+}
+
+.gradient-success {
+  @apply bg-gradient-to-r from-success-600 to-emerald-700;
+}
+
+.gradient-vip {
+  @apply bg-gradient-to-r from-vip-600 to-purple-600;
+}
+
+.gradient-hero {
+  @apply bg-gradient-to-r from-primary-600 via-purple-600 to-success-600;
 }
