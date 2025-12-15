@@ -34,7 +34,6 @@ export default function ProfessionalRegister() {
     e.preventDefault();
     setError("");
 
-    // Client-side validation
     if (formData.password.length < 6) {
       setError("Password must be at least 6 characters long");
       return;
@@ -82,16 +81,15 @@ export default function ProfessionalRegister() {
         .insert({
           id: user.id,
           business_name: formData.name,
-          email: formData.email, // ✅ Add email
-          phone: formData.phone || null, // ✅ Add phone if you have it in form
+          email: formData.email,
+          phone: formData.phone || null,
           base_rate: 85,
           verification_status: "pending",
           insurance_status: "none",
           license_type: "none",
-          // ✅ Add default service categories so they can receive jobs immediately
           service_categories: ['handyman', 'plumbing', 'electrical', 'hvac', 'carpentry', 'painting', 'landscaping', 'cleaning'],
-          is_online: false, // ✅ Start offline
-          is_available: false, // ✅ Start unavailable
+          is_online: false,
+          is_available: false,
         });
 
       if (providerError) {
@@ -110,7 +108,7 @@ export default function ProfessionalRegister() {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Branding & Benefits */}
-      <div className={`hidden lg:flex lg:w-1/2 ${theme.gradient.providerLight} p-12 flex-col justify-between relative overflow-hidden`}>
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 p-12 flex-col justify-between relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-20 right-20 w-72 h-72 bg-white rounded-full blur-3xl"></div>
@@ -121,7 +119,7 @@ export default function ProfessionalRegister() {
         <div className="relative z-10">
           {/* Logo - Clickable */}
           <Link to="/" className="flex items-center gap-3 mb-12 group cursor-pointer">
-            <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl shadow-lg group-hover:bg-white/30 transition">
+            <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl shadow-lg group-hover:bg-white/30 transition-all duration-300">
               <Wrench className="text-white" size={32} />
             </div>
             <div>
@@ -180,34 +178,34 @@ export default function ProfessionalRegister() {
       </div>
 
       {/* Right Side - Registration Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-slate-50">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-secondary-50">
         <div className="w-full max-w-md">
           {/* Mobile Logo - Clickable */}
           <Link to="/" className="lg:hidden flex items-center justify-center gap-3 mb-8 group cursor-pointer">
-            <div className={`${theme.gradient.provider} p-3 rounded-xl shadow-lg group-hover:shadow-xl transition`}>
+            <div className="bg-gradient-to-r from-primary-600 to-primary-700 p-3 rounded-xl shadow-lg group-hover:shadow-xl transition">
               <Wrench className="text-white" size={28} />
             </div>
             <div>
-              <h1 className={`${theme.text.h2} group-hover:text-slate-700 transition`}>PropDash</h1>
-              <p className={theme.text.caption}>Business Management</p>
+              <h1 className="text-2xl font-bold text-secondary-900 group-hover:text-secondary-700 transition">PropDash</h1>
+              <p className="text-xs text-secondary-500">Business Management</p>
             </div>
           </Link>
 
           {/* Header */}
           <div className="mb-8">
-            <h2 className={`${theme.text.h1} mb-2`}>
+            <h2 className="text-3xl font-bold text-secondary-900 tracking-tight mb-2">
               Create Professional Account
             </h2>
-            <p className={theme.text.body}>
+            <p className="text-secondary-700 leading-relaxed">
               Start managing your business operations efficiently
             </p>
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className={`${theme.alert.error} mb-6 flex items-start gap-3`}>
-              <div className="bg-red-200 rounded-full p-1 flex-shrink-0 mt-0.5">
-                <div className="w-1.5 h-1.5 bg-red-600 rounded-full"></div>
+            <div className="bg-error-50 border-2 border-error-300 text-error-900 p-4 rounded-lg shadow-sm mb-6 flex items-start gap-3">
+              <div className="bg-error-200 rounded-full p-1 flex-shrink-0 mt-0.5">
+                <div className="w-1.5 h-1.5 bg-error-600 rounded-full"></div>
               </div>
               <span className="text-sm">{error}</span>
             </div>
@@ -217,7 +215,7 @@ export default function ProfessionalRegister() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Business Name */}
             <div>
-              <label className={theme.text.label}>
+              <label className="text-sm font-semibold text-secondary-700">
                 Business Name
               </label>
               <input
@@ -226,14 +224,14 @@ export default function ProfessionalRegister() {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className={`${theme.input.base} ${theme.input.provider} mt-2`}
+                className="w-full border-2 border-secondary-300 rounded-lg px-4 py-3 bg-white text-secondary-900 placeholder:text-secondary-400 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all mt-2"
                 placeholder="Professional Services LLC"
               />
             </div>
 
             {/* Email */}
             <div>
-              <label className={theme.text.label}>
+              <label className="text-sm font-semibold text-secondary-700">
                 Email Address
               </label>
               <input
@@ -242,14 +240,14 @@ export default function ProfessionalRegister() {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className={`${theme.input.base} ${theme.input.provider} mt-2`}
+                className="w-full border-2 border-secondary-300 rounded-lg px-4 py-3 bg-white text-secondary-900 placeholder:text-secondary-400 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all mt-2"
                 placeholder="you@company.com"
               />
             </div>
 
             {/* Password */}
             <div>
-              <label className={theme.text.label}>
+              <label className="text-sm font-semibold text-secondary-700">
                 Password
               </label>
               <input
@@ -259,10 +257,10 @@ export default function ProfessionalRegister() {
                 onChange={handleChange}
                 required
                 minLength={6}
-                className={`${theme.input.base} ${theme.input.provider} mt-2`}
+                className="w-full border-2 border-secondary-300 rounded-lg px-4 py-3 bg-white text-secondary-900 placeholder:text-secondary-400 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all mt-2"
                 placeholder="••••••••"
               />
-              <p className="mt-2 text-xs text-slate-500 flex items-center gap-1.5">
+              <p className="mt-2 text-xs text-secondary-500 flex items-center gap-1.5">
                 <Shield size={12} />
                 Minimum 6 characters required
               </p>
@@ -270,7 +268,7 @@ export default function ProfessionalRegister() {
 
             {/* Confirm Password */}
             <div>
-              <label className={theme.text.label}>
+              <label className="text-sm font-semibold text-secondary-700">
                 Confirm Password
               </label>
               <input
@@ -279,20 +277,20 @@ export default function ProfessionalRegister() {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
-                className={`${theme.input.base} ${theme.input.provider} mt-2`}
+                className="w-full border-2 border-secondary-300 rounded-lg px-4 py-3 bg-white text-secondary-900 placeholder:text-secondary-400 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all mt-2"
                 placeholder="••••••••"
               />
             </div>
 
             {/* Terms */}
             <div className="pt-2">
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-secondary-600 leading-relaxed">
                 By creating an account, you agree to our{" "}
-                <a href="#" className="text-blue-700 hover:underline font-semibold">
+                <a href="#" className="text-primary-700 hover:underline font-semibold">
                   Terms of Service
                 </a>{" "}
                 and{" "}
-                <a href="#" className="text-blue-700 hover:underline font-semibold">
+                <a href="#" className="text-primary-700 hover:underline font-semibold">
                   Privacy Policy
                 </a>
               </p>
@@ -302,7 +300,7 @@ export default function ProfessionalRegister() {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full ${theme.button.provider} disabled:opacity-50 disabled:cursor-not-allowed justify-center`}
+              className="w-full bg-primary-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-primary-700 active:bg-primary-800 transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
@@ -320,37 +318,37 @@ export default function ProfessionalRegister() {
 
           {/* Divider */}
           <div className="flex items-center gap-4 my-6">
-            <div className="flex-1 border-t border-slate-300"></div>
-            <span className="text-xs text-slate-500 font-semibold">
+            <div className="flex-1 border-t border-secondary-300"></div>
+            <span className="text-xs text-secondary-500 font-semibold">
               ALREADY REGISTERED?
             </span>
-            <div className="flex-1 border-t border-slate-300"></div>
+            <div className="flex-1 border-t border-secondary-300"></div>
           </div>
 
           {/* Login Link */}
           <Link
             to="/login/professional"
-            className={theme.button.secondary + " w-full text-center justify-center"}
+            className="w-full border-2 border-secondary-400 text-secondary-700 px-5 py-3 rounded-lg font-semibold hover:bg-secondary-50 active:bg-secondary-100 transition-all inline-flex items-center justify-center"
           >
             Sign In to Account
           </Link>
 
           {/* Customer Registration Link */}
-          <p className="mt-6 text-center text-sm text-slate-600">
+          <p className="mt-6 text-center text-sm text-secondary-600">
             Looking to hire a professional?{" "}
-            <Link to="/register/client" className="text-teal-700 hover:underline font-semibold">
+            <Link to="/register/client" className="text-accent-700 hover:underline font-semibold">
               Register as Property Owner
             </Link>
           </p>
 
           {/* Trust Badges */}
-          <div className="mt-8 pt-6 border-t border-slate-200 flex items-center justify-center gap-8 text-xs text-slate-600">
+          <div className="mt-8 pt-6 border-t border-secondary-200 flex items-center justify-center gap-8 text-xs text-secondary-600">
             <div className="flex items-center gap-2">
-              <Shield size={16} className="text-emerald-600" />
+              <Shield size={16} className="text-success-600" />
               <span className="font-medium">Bank-Level Security</span>
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle2 size={16} className="text-blue-600" />
+              <CheckCircle2 size={16} className="text-primary-600" />
               <span className="font-medium">No Credit Card</span>
             </div>
           </div>

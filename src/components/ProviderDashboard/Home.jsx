@@ -211,39 +211,43 @@ export default function Home() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className={theme.text.body}>Loading dashboard...</div>
+        <div className="text-secondary-700">Loading dashboard...</div>
       </div>
     );
   }
 
   return (
     <div className="space-y-6 pb-20 sm:pb-6">
-      {/* ONLINE/OFFLINE TOGGLE */}
+      {/* ONLINE/OFFLINE TOGGLE - Corporate Style */}
       <div 
-        className={`rounded-2xl p-6 border-2 ${
+        className={`rounded-2xl p-6 border-2 shadow-lg transition-all duration-300 ${
           isOnline 
-            ? "bg-gradient-to-r from-green-50 to-emerald-50 border-green-300" 
-            : "bg-gradient-to-r from-slate-50 to-gray-50 border-slate-300"
+            ? "bg-gradient-to-br from-success-50 to-emerald-50 border-success-300" 
+            : "bg-gradient-to-br from-secondary-50 to-slate-50 border-secondary-300"
         }`}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className={`p-3 rounded-full ${isOnline ? "bg-green-100" : "bg-slate-200"}`}>
-              <Power size={24} className={isOnline ? "text-green-600" : "text-slate-600"} />
+            <div className={`p-3 rounded-xl transition-all duration-300 ${
+              isOnline ? "bg-success-100" : "bg-secondary-200"
+            }`}>
+              <Power size={24} className={isOnline ? "text-success-700" : "text-secondary-600"} />
             </div>
             <div>
               <div className="flex items-center gap-3 mb-1">
-                <h3 className="text-xl font-bold text-slate-900">
+                <h3 className="text-xl font-bold text-secondary-900">
                   {isOnline ? "You're Online" : "You're Offline"}
                 </h3>
                 {isOnline && (
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <span className="text-xs font-medium text-green-700">ACTIVE</span>
+                    <div className="w-2 h-2 bg-success-500 rounded-full animate-pulse"></div>
+                    <span className="text-xs font-semibold text-success-700 px-2 py-1 bg-success-100 rounded-full">
+                      ACTIVE
+                    </span>
                   </div>
                 )}
               </div>
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-secondary-600">
                 {isOnline 
                   ? "Ready to receive job offers from customers in your area" 
                   : "Go online to start receiving job offers"}
@@ -254,11 +258,11 @@ export default function Home() {
           <button
             onClick={toggleOnlineStatus}
             disabled={togglingOnline}
-            className={`px-8 py-3 rounded-xl font-semibold transition shadow-lg flex items-center gap-2 ${
+            className={`px-8 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg flex items-center gap-2 ${
               isOnline
-                ? "bg-slate-600 hover:bg-slate-700 text-white shadow-slate-500/30"
-                : "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-green-500/30"
-            } disabled:opacity-50 disabled:cursor-not-allowed`}
+                ? "bg-secondary-600 hover:bg-secondary-700 text-white shadow-secondary-500/30"
+                : "bg-gradient-to-r from-success-600 to-emerald-600 hover:from-success-700 hover:to-emerald-700 text-white shadow-success-500/30"
+            } disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105`}
           >
             {togglingOnline ? (
               <>
@@ -280,29 +284,29 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Listening Indicator */}
+      {/* Listening Indicator - Corporate Style */}
       {isOnline && isListening && (
-        <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 flex items-center gap-3">
-          <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+        <div className="bg-primary-50 border-2 border-primary-300 rounded-xl p-4 flex items-center gap-3 shadow-sm">
+          <div className="w-3 h-3 bg-primary-600 rounded-full animate-pulse"></div>
           <div className="flex-1">
-            <p className="text-sm text-blue-900 font-semibold">
+            <p className="text-sm text-primary-900 font-semibold">
               🔔 Listening for Job Offers
             </p>
-            <p className="text-xs text-blue-700">
+            <p className="text-xs text-primary-700">
               You'll receive instant notifications when new jobs are available
             </p>
           </div>
         </div>
       )}
 
-      {/* HERO: TODAY AT A GLANCE */}
-      <div className={`${theme.gradient.providerLight} rounded-2xl p-8 text-white`}>
+      {/* HERO: TODAY AT A GLANCE - Corporate Primary Gradient */}
+      <div className="bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 rounded-2xl p-8 text-white shadow-xl">
         <div className="flex items-start justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold mb-2">
               Welcome back, {user.user_metadata?.full_name?.split(" ")[0] || "Pro"}! 👋
             </h1>
-            <p className="text-blue-100 text-lg">
+            <p className="text-primary-100 text-lg">
               {new Date().toLocaleDateString("en-US", {
                 weekday: "long",
                 month: "long",
@@ -338,14 +342,14 @@ export default function Home() {
 
         {/* Next Appointment Highlight */}
         {nextAppointment && (
-          <div className="mt-6 bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20">
+          <div className="mt-6 bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20 hover:bg-white/15 transition-all duration-300">
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <p className="text-blue-100 text-sm font-medium mb-2">Next Appointment</p>
+                <p className="text-primary-100 text-sm font-medium mb-2">Next Appointment</p>
                 <h3 className="text-xl font-bold mb-3">{nextAppointment.service_name}</h3>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="flex items-center gap-2">
-                    <Clock size={16} className="text-blue-200" />
+                    <Clock size={16} className="text-primary-200" />
                     <span>
                       {new Date(nextAppointment.scheduled_date).toLocaleTimeString("en-US", {
                         hour: "numeric",
@@ -355,15 +359,15 @@ export default function Home() {
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Users size={16} className="text-blue-200" />
+                    <Users size={16} className="text-primary-200" />
                     <span>{nextAppointment.client_name}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <MapPin size={16} className="text-blue-200" />
+                    <MapPin size={16} className="text-primary-200" />
                     <span>{nextAppointment.address || "Address TBD"}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <DollarSign size={16} className="text-blue-200" />
+                    <DollarSign size={16} className="text-primary-200" />
                     <span>${(nextAppointment.price / 100).toFixed(0)}</span>
                   </div>
                 </div>
@@ -371,7 +375,7 @@ export default function Home() {
               <div className="flex gap-2">
                 <button 
                   onClick={() => window.location.href = `tel:${nextAppointment.client_phone}`}
-                  className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition"
+                  className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition-all duration-200"
                 >
                   <Phone size={18} />
                 </button>
@@ -379,13 +383,13 @@ export default function Home() {
                   onClick={() => navigate('/provider/messages', { 
                     state: { customerId: nextAppointment.customer_id, jobId: nextAppointment.id } 
                   })}
-                  className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition"
+                  className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition-all duration-200"
                 >
                   <MessageSquare size={18} />
                 </button>
                 <button 
                   onClick={() => window.open(`https://maps.google.com/?q=${encodeURIComponent(nextAppointment.address || nextAppointment.client_name)}`, '_blank')}
-                  className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition"
+                  className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition-all duration-200"
                 >
                   <MapPin size={18} />
                 </button>
@@ -395,27 +399,27 @@ export default function Home() {
         )}
       </div>
 
-      {/* QUICK ACTIONS - Simplified to 3 most important */}
-      <div className={`${theme.card.base} ${theme.card.padding}`}>
-        <h2 className={`${theme.text.h3} mb-4`}>Quick Actions</h2>
+      {/* QUICK ACTIONS - Corporate Style */}
+      <div className="bg-white rounded-xl border-2 border-secondary-200 shadow-card p-6">
+        <h2 className="text-xl font-semibold text-secondary-900 mb-4">Quick Actions</h2>
         <div className="grid grid-cols-3 gap-3">
           <QuickActionButton
             to="/provider/quotes"
             icon={<FileText size={20} />}
             label="Create Quote"
-            color="blue"
+            color="primary"
           />
           <QuickActionButton
             to="/provider/schedule"
             icon={<Plus size={20} />}
             label="View Schedule"
-            color="emerald"
+            color="success"
           />
           <QuickActionButton
             to="/provider/messages"
             icon={<MessageSquare size={20} />}
             label="Messages"
-            color="purple"
+            color="premium"
           />
         </div>
       </div>
@@ -423,12 +427,14 @@ export default function Home() {
       <div className="grid lg:grid-cols-3 gap-6">
         {/* UPCOMING JOBS */}
         <div className="lg:col-span-2">
-          <div className={`${theme.card.base} ${theme.card.padding}`}>
+          <div className="bg-white rounded-xl border-2 border-secondary-200 shadow-card p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className={theme.text.h3}>Upcoming Jobs (Next 7 Days)</h2>
+              <h2 className="text-xl font-semibold text-secondary-900">
+                Upcoming Jobs (Next 7 Days)
+              </h2>
               <Link
                 to="/provider/schedule"
-                className="text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                className="text-sm font-semibold text-primary-700 hover:text-primary-800 flex items-center gap-1 hover:underline transition"
               >
                 View All
                 <ChevronRight size={16} />
@@ -437,11 +443,11 @@ export default function Home() {
 
             {upcomingJobs.length === 0 ? (
               <div className="text-center py-12">
-                <div className="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Calendar className="text-slate-400" size={32} />
+                <div className="bg-secondary-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Calendar className="text-secondary-400" size={32} />
                 </div>
-                <p className={theme.text.h4}>No Upcoming Jobs</p>
-                <p className={`${theme.text.body} mt-2`}>
+                <p className="text-lg font-semibold text-secondary-900">No Upcoming Jobs</p>
+                <p className="text-secondary-600 mt-2">
                   Go online to start receiving job offers!
                 </p>
               </div>
@@ -458,8 +464,8 @@ export default function Home() {
         {/* SIDEBAR */}
         <div className="space-y-6">
           {/* Weekly Stats */}
-          <div className={`${theme.card.base} ${theme.card.padding}`}>
-            <h3 className={`${theme.text.h4} mb-4`}>This Week</h3>
+          <div className="bg-white rounded-xl border-2 border-secondary-200 shadow-card p-6">
+            <h3 className="text-lg font-semibold text-secondary-900 mb-4">This Week</h3>
             <div className="space-y-3">
               <WeeklyStat label="Bookings" value={thisWeeksJobs.length} icon={<Calendar size={16} />} />
               <WeeklyStat
@@ -481,20 +487,20 @@ export default function Home() {
           </div>
 
           {/* Quote Pipeline */}
-          <div className={`${theme.card.base} ${theme.card.padding}`}>
+          <div className="bg-white rounded-xl border-2 border-secondary-200 shadow-card p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className={theme.text.h4}>Quote Pipeline</h3>
+              <h3 className="text-lg font-semibold text-secondary-900">Quote Pipeline</h3>
               <Link
                 to="/provider/quotes"
-                className="text-sm font-medium text-blue-600 hover:text-blue-700"
+                className="text-sm font-semibold text-primary-700 hover:text-primary-800 hover:underline transition"
               >
                 View All
               </Link>
             </div>
             <div className="space-y-2">
-              <QuotePipelineItem label="Draft" count={draftQuotes} color="slate" />
-              <QuotePipelineItem label="Sent" count={pendingQuotes} color="amber" />
-              <QuotePipelineItem label="Approved" count={approvedQuotes} color="emerald" />
+              <QuotePipelineItem label="Draft" count={draftQuotes} color="secondary" />
+              <QuotePipelineItem label="Sent" count={pendingQuotes} color="warning" />
+              <QuotePipelineItem label="Approved" count={approvedQuotes} color="success" />
             </div>
           </div>
         </div>
@@ -516,8 +522,8 @@ export default function Home() {
 
 function TodayMetric({ label, value, icon }) {
   return (
-    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-      <div className="flex items-center gap-2 mb-2 text-blue-100">
+    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-all duration-300">
+      <div className="flex items-center gap-2 mb-2 text-primary-100">
         {icon}
         <span className="text-sm font-medium">{label}</span>
       </div>
@@ -528,15 +534,15 @@ function TodayMetric({ label, value, icon }) {
 
 function QuickActionButton({ to, icon, label, color }) {
   const colors = {
-    blue: "bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200",
-    emerald: "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-200",
-    purple: "bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-200",
+    primary: "bg-primary-50 text-primary-700 hover:bg-primary-100 border-primary-200",
+    success: "bg-success-50 text-success-700 hover:bg-success-100 border-success-200",
+    premium: "bg-premium-50 text-premium-700 hover:bg-premium-100 border-premium-200",
   };
 
   return (
     <Link
       to={to}
-      className={`${colors[color]} border-2 rounded-xl p-4 flex flex-col items-center gap-2 transition font-medium text-sm`}
+      className={`${colors[color]} border-2 rounded-xl p-4 flex flex-col items-center gap-2 transition-all duration-300 font-semibold text-sm hover:scale-105`}
     >
       {icon}
       <span className="text-center">{label}</span>
@@ -548,13 +554,13 @@ function UpcomingJobCard({ job, navigate }) {
   const getStatusBadge = (status) => {
     switch (status) {
       case "confirmed":
-        return theme.badge.success;
+        return "bg-success-100 text-success-800 border-success-300";
       case "pending":
-        return theme.badge.warning;
+        return "bg-warning-100 text-warning-800 border-warning-300";
       case "completed":
-        return theme.badge.info;
+        return "bg-primary-100 text-primary-800 border-primary-300";
       default:
-        return theme.badge.neutral;
+        return "bg-secondary-100 text-secondary-800 border-secondary-300";
     }
   };
 
@@ -565,16 +571,16 @@ function UpcomingJobCard({ job, navigate }) {
   };
 
   return (
-    <div className={`${theme.card.base} ${theme.card.padding} ${theme.card.hover}`}>
+    <div className="bg-white rounded-xl border-2 border-secondary-200 shadow-card p-4 hover:shadow-card-hover hover:border-secondary-300 transition-all duration-300">
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
-            <h4 className="font-semibold text-slate-900">{job.service_name}</h4>
-            <span className={`text-xs px-2 py-1 rounded-full font-medium border ${getStatusBadge(job.status)}`}>
+            <h4 className="font-semibold text-secondary-900">{job.service_name}</h4>
+            <span className={`text-xs px-2 py-1 rounded-full font-semibold border ${getStatusBadge(job.status)}`}>
               {job.status}
             </span>
           </div>
-          <div className="space-y-1 text-sm text-slate-600">
+          <div className="space-y-1 text-sm text-secondary-600">
             <div className="flex items-center gap-2">
               <Calendar size={14} />
               <span>
@@ -601,34 +607,34 @@ function UpcomingJobCard({ job, navigate }) {
           </div>
         </div>
         <div className="text-right">
-          <p className="text-lg font-bold text-slate-900">${(job.price / 100).toFixed(0)}</p>
+          <p className="text-lg font-bold text-secondary-900">${(job.price / 100).toFixed(0)}</p>
           <div className="flex gap-1 mt-2">
             <button 
               onClick={(e) => {
                 e.stopPropagation();
                 window.location.href = `tel:${job.client_phone}`;
               }}
-              className="p-1.5 bg-slate-100 rounded hover:bg-slate-200 transition"
+              className="p-1.5 bg-secondary-100 rounded hover:bg-secondary-200 transition"
             >
-              <Phone size={14} className="text-slate-600" />
+              <Phone size={14} className="text-secondary-600" />
             </button>
             <button 
               onClick={(e) => {
                 e.stopPropagation();
                 handleMessageClick();
               }}
-              className="p-1.5 bg-slate-100 rounded hover:bg-slate-200 transition"
+              className="p-1.5 bg-secondary-100 rounded hover:bg-secondary-200 transition"
             >
-              <MessageSquare size={14} className="text-slate-600" />
+              <MessageSquare size={14} className="text-secondary-600" />
             </button>
             <button 
               onClick={(e) => {
                 e.stopPropagation();
                 window.open(`https://maps.google.com/?q=${encodeURIComponent(job.address || job.client_name)}`, '_blank');
               }}
-              className="p-1.5 bg-slate-100 rounded hover:bg-slate-200 transition"
+              className="p-1.5 bg-secondary-100 rounded hover:bg-secondary-200 transition"
             >
-              <MapPin size={14} className="text-slate-600" />
+              <MapPin size={14} className="text-secondary-600" />
             </button>
           </div>
         </div>
@@ -640,25 +646,25 @@ function UpcomingJobCard({ job, navigate }) {
 function WeeklyStat({ label, value, icon }) {
   return (
     <div className="flex items-center justify-between">
-      <div className="flex items-center gap-2 text-slate-600">
+      <div className="flex items-center gap-2 text-secondary-600">
         {icon}
         <span className="text-sm font-medium">{label}</span>
       </div>
-      <span className="text-lg font-bold text-slate-900">{value}</span>
+      <span className="text-lg font-bold text-secondary-900">{value}</span>
     </div>
   );
 }
 
 function QuotePipelineItem({ label, count, color }) {
   const colors = {
-    slate: "bg-slate-100 text-slate-700",
-    amber: "bg-amber-100 text-amber-700",
-    emerald: "bg-emerald-100 text-emerald-700",
+    secondary: "bg-secondary-100 text-secondary-700",
+    warning: "bg-warning-100 text-warning-700",
+    success: "bg-success-100 text-success-700",
   };
 
   return (
     <div className="flex items-center justify-between py-2">
-      <span className="text-sm font-medium text-slate-700">{label}</span>
+      <span className="text-sm font-medium text-secondary-700">{label}</span>
       <span className={`${colors[color]} px-3 py-1 rounded-full text-sm font-bold`}>{count}</span>
     </div>
   );

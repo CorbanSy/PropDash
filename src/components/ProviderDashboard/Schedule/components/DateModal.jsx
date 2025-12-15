@@ -54,7 +54,6 @@ export default function DateModal({
   const validateBlocks = (blocks) => {
     const newErrors = [];
 
-    // Validate each block
     blocks.forEach((block, index) => {
       const blockErrors = validateTimeBlock(block.start, block.end);
       if (blockErrors.length > 0) {
@@ -66,7 +65,6 @@ export default function DateModal({
       }
     });
 
-    // Check for overlaps
     const overlaps = checkTimeBlockOverlap(blocks);
     if (overlaps.length > 0) {
       newErrors.push({
@@ -88,11 +86,11 @@ export default function DateModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b border-slate-200 p-6 flex items-start justify-between">
+      <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div className="sticky top-0 bg-white border-b-2 border-secondary-200 p-6 flex items-start justify-between">
           <div>
-            <h2 className={theme.text.h2}>{formatDate}</h2>
-            <p className={theme.text.caption}>
+            <h2 className="text-2xl font-bold text-secondary-900">{formatDate}</h2>
+            <p className="text-xs text-secondary-500">
               {dateInfo.type === "blocked"
                 ? "Blocked"
                 : dateInfo.type === "custom"
@@ -104,7 +102,7 @@ export default function DateModal({
                 : "Unavailable"}
             </p>
           </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition">
+          <button onClick={onClose} className="text-secondary-400 hover:text-secondary-600 transition">
             <X size={24} />
           </button>
         </div>
@@ -113,22 +111,22 @@ export default function DateModal({
           {view === "overview" && (
             <>
               <div>
-                <h3 className={`${theme.text.h4} mb-3`}>Current Status</h3>
+                <h3 className="text-lg font-semibold text-secondary-900 mb-3">Current Status</h3>
                 {dateInfo.type === "blocked" && (
-                  <div className={theme.alert.error}>
-                    <Ban className="flex-shrink-0" size={20} />
+                  <div className="bg-error-50 border-2 border-error-300 text-error-900 p-4 rounded-lg shadow-sm flex items-start gap-3">
+                    <Ban className="flex-shrink-0 text-error-700" size={20} />
                     <div>
                       <p className="font-semibold text-sm">Date Blocked</p>
-                      <p className="text-xs mt-1">{dateInfo.schedule.reason}</p>
+                      <p className="text-xs mt-1 text-error-700">{dateInfo.schedule.reason}</p>
                     </div>
                   </div>
                 )}
                 {dateInfo.type === "custom" && (
-                  <div className={theme.alert.warning}>
-                    <Clock className="flex-shrink-0" size={20} />
+                  <div className="bg-warning-50 border-2 border-warning-300 text-warning-900 p-4 rounded-lg shadow-sm flex items-start gap-3">
+                    <Clock className="flex-shrink-0 text-warning-700" size={20} />
                     <div>
                       <p className="font-semibold text-sm">Custom Hours</p>
-                      <div className="text-xs mt-1 space-y-1">
+                      <div className="text-xs mt-1 space-y-1 text-warning-700">
                         {dateInfo.schedule.blocks?.map((block, i) => (
                           <p key={i}>
                             Block {i + 1}: {block.start} - {block.end}
@@ -139,11 +137,11 @@ export default function DateModal({
                   </div>
                 )}
                 {dateInfo.type === "available" && (
-                  <div className={theme.alert.info}>
-                    <CheckCircle2 className="flex-shrink-0" size={20} />
+                  <div className="bg-primary-50 border-2 border-primary-300 text-primary-900 p-4 rounded-lg shadow-sm flex items-start gap-3">
+                    <CheckCircle2 className="flex-shrink-0 text-primary-700" size={20} />
                     <div>
                       <p className="font-semibold text-sm">Available</p>
-                      <div className="text-xs mt-1 space-y-1">
+                      <div className="text-xs mt-1 space-y-1 text-primary-700">
                         {daySchedule?.blocks?.map((block, i) => (
                           <p key={i}>
                             {block.start} - {block.end}
@@ -154,20 +152,20 @@ export default function DateModal({
                   </div>
                 )}
                 {dateInfo.type === "unavailable" && (
-                  <div className="bg-slate-100 rounded-lg p-4">
-                    <p className={theme.text.body}>This day is not in your weekly schedule</p>
+                  <div className="bg-secondary-100 rounded-lg p-4">
+                    <p className="text-secondary-700 leading-relaxed">This day is not in your weekly schedule</p>
                   </div>
                 )}
               </div>
 
               {dateInfo.jobs?.length > 0 && (
                 <div>
-                  <h3 className={`${theme.text.h4} mb-3`}>Bookings on This Day</h3>
+                  <h3 className="text-lg font-semibold text-secondary-900 mb-3">Bookings on This Day</h3>
                   <div className="space-y-2">
                     {dateInfo.jobs.map((job) => (
-                      <div key={job.id} className="bg-slate-50 rounded-lg p-3">
-                        <p className="font-semibold text-slate-900">{job.service_name}</p>
-                        <p className={`${theme.text.caption} mt-1`}>
+                      <div key={job.id} className="bg-secondary-50 rounded-lg p-3">
+                        <p className="font-semibold text-secondary-900">{job.service_name}</p>
+                        <p className="text-xs text-secondary-500 mt-1">
                           {job.client_name} •{" "}
                           {new Date(job.scheduled_date).toLocaleTimeString("en-US", {
                             hour: "numeric",
@@ -185,7 +183,7 @@ export default function DateModal({
                 {dateInfo.type === "blocked" || dateInfo.type === "custom" ? (
                   <button
                     onClick={onUnblock}
-                    className={`w-full ${theme.button.secondary} justify-center`}
+                    className="w-full border-2 border-secondary-400 text-secondary-700 px-5 py-3 rounded-lg font-semibold hover:bg-secondary-50 active:bg-secondary-100 transition-all inline-flex items-center justify-center gap-2"
                   >
                     <CheckCircle2 size={18} />
                     Remove Override (Use Weekly Schedule)
@@ -194,14 +192,14 @@ export default function DateModal({
                   <>
                     <button
                       onClick={() => setView("block")}
-                      className={`w-full ${theme.button.danger} justify-center`}
+                      className="w-full bg-error-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-error-700 active:bg-error-800 transition-all shadow-sm hover:shadow-md inline-flex items-center justify-center gap-2"
                     >
                       <Ban size={18} />
                       Block This Date
                     </button>
                     <button
                       onClick={() => setView("custom")}
-                      className={`w-full ${theme.button.secondary} justify-center`}
+                      className="w-full border-2 border-secondary-400 text-secondary-700 px-5 py-3 rounded-lg font-semibold hover:bg-secondary-50 active:bg-secondary-100 transition-all inline-flex items-center justify-center gap-2"
                     >
                       <Clock size={18} />
                       Set Custom Hours
@@ -215,25 +213,25 @@ export default function DateModal({
           {view === "block" && (
             <>
               <div>
-                <label className={theme.text.label}>Reason for Blocking (Optional)</label>
+                <label className="text-sm font-semibold text-secondary-700">Reason for Blocking (Optional)</label>
                 <input
                   type="text"
                   value={blockReason}
                   onChange={(e) => setBlockReason(e.target.value)}
                   placeholder="e.g., Vacation, Holiday, Personal"
-                  className={`${theme.input.base} ${theme.input.provider} mt-2`}
+                  className="w-full border-2 border-secondary-300 rounded-lg px-4 py-3 bg-white text-secondary-900 placeholder:text-secondary-400 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all mt-2"
                 />
               </div>
               <div className="flex gap-2">
                 <button
                   onClick={() => setView("overview")}
-                  className={`flex-1 ${theme.button.secondary} justify-center`}
+                  className="flex-1 border-2 border-secondary-400 text-secondary-700 px-5 py-3 rounded-lg font-semibold hover:bg-secondary-50 active:bg-secondary-100 transition-all inline-flex items-center justify-center"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => onBlock(blockReason || "Unavailable")}
-                  className={`flex-1 ${theme.button.danger} justify-center`}
+                  className="flex-1 bg-error-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-error-700 active:bg-error-800 transition-all shadow-sm hover:shadow-md inline-flex items-center justify-center"
                 >
                   Block Date
                 </button>
@@ -245,10 +243,10 @@ export default function DateModal({
             <>
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <label className={theme.text.label}>Custom Time Blocks</label>
+                  <label className="text-sm font-semibold text-secondary-700">Custom Time Blocks</label>
                   <button
                     onClick={addTimeBlock}
-                    className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+                    className="text-sm text-primary-700 hover:text-primary-800 font-semibold flex items-center gap-1 hover:underline transition"
                   >
                     <Plus size={16} />
                     Add Block
@@ -263,20 +261,20 @@ export default function DateModal({
                           type="time"
                           value={block.start}
                           onChange={(e) => updateTimeBlock(index, "start", e.target.value)}
-                          className={`${theme.input.base} ${theme.input.provider}`}
+                          className="border-2 border-secondary-300 rounded-lg px-4 py-3 bg-white text-secondary-900 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all"
                         />
-                        <span className="text-slate-600">to</span>
+                        <span className="text-secondary-600 font-medium">to</span>
                         <input
                           type="time"
                           value={block.end}
                           onChange={(e) => updateTimeBlock(index, "end", e.target.value)}
-                          className={`${theme.input.base} ${theme.input.provider}`}
+                          className="border-2 border-secondary-300 rounded-lg px-4 py-3 bg-white text-secondary-900 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all"
                         />
                       </div>
                       {customBlocks.length > 1 && (
                         <button
                           onClick={() => removeTimeBlock(index)}
-                          className="text-red-600 hover:text-red-700 p-2"
+                          className="text-error-600 hover:text-error-700 p-2 transition"
                         >
                           <Trash2 size={18} />
                         </button>
@@ -286,12 +284,12 @@ export default function DateModal({
                 </div>
 
                 {errors.length > 0 && (
-                  <div className={`${theme.alert.error} mt-4`}>
-                    <AlertTriangle className="flex-shrink-0" size={20} />
+                  <div className="bg-error-50 border-2 border-error-300 text-error-900 p-4 rounded-lg shadow-sm flex items-start gap-3 mt-4">
+                    <AlertTriangle className="flex-shrink-0 text-error-700" size={20} />
                     <div className="space-y-1">
                       <p className="font-semibold text-sm">Errors Found</p>
                       {errors.map((error, index) => (
-                        <div key={index} className="text-xs">
+                        <div key={index} className="text-xs text-error-700">
                           {error.type === "validation" && (
                             <>
                               <p className="font-medium">Block {error.blockIndex + 1}:</p>
@@ -317,14 +315,14 @@ export default function DateModal({
               <div className="flex gap-2">
                 <button
                   onClick={() => setView("overview")}
-                  className={`flex-1 ${theme.button.secondary} justify-center`}
+                  className="flex-1 border-2 border-secondary-400 text-secondary-700 px-5 py-3 rounded-lg font-semibold hover:bg-secondary-50 active:bg-secondary-100 transition-all inline-flex items-center justify-center"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSaveCustomHours}
                   disabled={errors.length > 0}
-                  className={`flex-1 ${theme.button.provider} justify-center ${
+                  className={`flex-1 bg-primary-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-primary-700 active:bg-primary-800 transition-all shadow-sm hover:shadow-md inline-flex items-center justify-center ${
                     errors.length > 0 ? "opacity-50 cursor-not-allowed" : ""
                   }`}
                 >

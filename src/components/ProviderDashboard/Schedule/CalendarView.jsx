@@ -15,13 +15,13 @@ import DraggableJob from "./components/DraggableJob";
 export default function CalendarView({ userId, jobs, refetchJobs }) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [weeklySchedule, setWeeklySchedule] = useState([
-    { day: 0, enabled: false }, // Sunday
+    { day: 0, enabled: false },
     { day: 1, enabled: true, blocks: [{ start: "09:00", end: "17:00" }] },
     { day: 2, enabled: true, blocks: [{ start: "09:00", end: "17:00" }] },
     { day: 3, enabled: true, blocks: [{ start: "09:00", end: "17:00" }] },
     { day: 4, enabled: true, blocks: [{ start: "09:00", end: "17:00" }] },
     { day: 5, enabled: true, blocks: [{ start: "09:00", end: "17:00" }] },
-    { day: 6, enabled: false }, // Saturday
+    { day: 6, enabled: false },
   ]);
   const [dateOverrides, setDateOverrides] = useState([]);
   const [holidaySettings, setHolidaySettings] = useState(null);
@@ -33,7 +33,6 @@ export default function CalendarView({ userId, jobs, refetchJobs }) {
   const [draggedJob, setDraggedJob] = useState(null);
   const [dragOverDate, setDragOverDate] = useState(null);
 
-  // Load weekly hours from database
   useEffect(() => {
     async function loadWeeklyHours() {
       const { data } = await supabase
@@ -43,7 +42,6 @@ export default function CalendarView({ userId, jobs, refetchJobs }) {
         .maybeSingle();
 
       if (data && data.availability) {
-        // Convert day names to day numbers (0-6)
         const dayMap = {
           Sunday: 0,
           Monday: 1,
@@ -69,7 +67,6 @@ export default function CalendarView({ userId, jobs, refetchJobs }) {
     }
   }, [userId]);
 
-  // Load holiday settings for the current month's year
   useEffect(() => {
     async function loadHolidaySettings() {
       const year = currentMonth.getFullYear();
@@ -89,7 +86,6 @@ export default function CalendarView({ userId, jobs, refetchJobs }) {
     }
   }, [userId, currentMonth]);
 
-  // Generate calendar days
   const generateCalendar = () => {
     const year = currentMonth.getFullYear();
     const month = currentMonth.getMonth();
@@ -108,15 +104,12 @@ export default function CalendarView({ userId, jobs, refetchJobs }) {
     return days;
   };
 
-  // Get schedule for a specific date
   const getScheduleForDate = (date) => {
     if (!date) return null;
 
     const dateStr = getDateString(date);
 
-    // 1. Check if date is a blocked holiday
     if (holidaySettings?.blocked_holidays?.includes(dateStr)) {
-      // Check if there are custom hours for this blocked holiday
       if (holidaySettings.custom_hours?.[dateStr]) {
         const { start, end } = holidaySettings.custom_hours[dateStr];
         return { 
@@ -128,7 +121,6 @@ export default function CalendarView({ userId, jobs, refetchJobs }) {
       return { type: "blocked", reason: "Holiday" };
     }
 
-    // 2. Check for date override (manual blocks/custom hours)
     const override = dateOverrides.find((o) => o.date === dateStr);
     if (override) {
       if (override.type === "blocked") return { type: "blocked", reason: override.reason };
@@ -136,7 +128,6 @@ export default function CalendarView({ userId, jobs, refetchJobs }) {
         return { type: "custom", blocks: override.blocks || [{ start: override.start, end: override.end }] };
     }
 
-    // 3. Fall back to weekly schedule
     const dayOfWeek = date.getDay();
     const daySchedule = weeklySchedule.find((d) => d.day === dayOfWeek);
     if (daySchedule?.enabled) {
@@ -146,7 +137,6 @@ export default function CalendarView({ userId, jobs, refetchJobs }) {
     return { type: "unavailable" };
   };
 
-  // Check if date has bookings
   const getJobsForDate = (date) => {
     if (!date) return [];
     return jobs.filter((job) => {
@@ -155,7 +145,6 @@ export default function CalendarView({ userId, jobs, refetchJobs }) {
     });
   };
 
-  // Get date info for styling
   const getDateInfo = (date) => {
     if (!date) return { type: "empty" };
 
@@ -194,7 +183,6 @@ export default function CalendarView({ userId, jobs, refetchJobs }) {
         : true
     );
 
-  // Handle right-click on calendar day
   const handleContextMenu = (e, date) => {
     e.preventDefault();
     if (!date) return;
@@ -207,19 +195,16 @@ export default function CalendarView({ userId, jobs, refetchJobs }) {
     });
   };
 
-  // Handle drag start
   const handleDragStart = (job) => {
     setDraggedJob(job);
   };
 
-  // Handle drag over
   const handleDragOver = (e, date) => {
     e.preventDefault();
     if (!date) return;
     setDragOverDate(date);
   };
 
-  // Handle drop
   const handleDrop = async (date) => {
     if (!draggedJob || !date) return;
 
@@ -227,11 +212,9 @@ export default function CalendarView({ userId, jobs, refetchJobs }) {
     const oldDate = new Date(draggedJob.scheduled_date);
     const time = oldDate.toTimeString().split(" ")[0];
 
-    // Create new datetime
     const [year, month, day] = dateStr.split("-");
     const newDateTime = new Date(`${year}-${month}-${day}T${time}`);
 
-    // TODO: Update job in database
     console.log("Reschedule job", draggedJob.id, "to", newDateTime);
 
     setDraggedJob(null);
@@ -244,12 +227,10 @@ export default function CalendarView({ userId, jobs, refetchJobs }) {
     setDragOverDate(null);
   };
 
-  // Count blocked days (including holidays)
   const blockedDaysCount = 
     dateOverrides.filter((o) => o.type === "blocked").length +
     (holidaySettings?.blocked_holidays?.length || 0);
 
-  // Count custom hours (including holiday custom hours)
   const customHoursCount = 
     dateOverrides.filter((o) => o.type === "custom").length +
     (Object.keys(holidaySettings?.custom_hours || {}).length);
@@ -257,11 +238,11 @@ export default function CalendarView({ userId, jobs, refetchJobs }) {
   return (
     <div className="space-y-6">
       {/* Info Alert */}
-      <div className={theme.alert.info}>
-        <AlertCircle className="flex-shrink-0 mt-0.5" size={20} />
+      <div className="bg-primary-50 border-2 border-primary-300 text-primary-900 p-4 rounded-lg shadow-sm flex items-start gap-3">
+        <AlertCircle className="flex-shrink-0 mt-0.5 text-primary-700" size={20} />
         <div>
           <p className="font-semibold text-sm mb-1">Your Availability Calendar</p>
-          <p className="text-xs">
+          <p className="text-xs text-primary-700">
             Click dates to manage availability. Right-click for quick actions. Drag jobs to
             reschedule. Holidays are automatically applied.
           </p>
@@ -279,45 +260,45 @@ export default function CalendarView({ userId, jobs, refetchJobs }) {
               jobDate.getFullYear() === currentMonth.getFullYear()
             );
           }).length}
-          color="blue"
+          color="primary"
         />
-        <StatBox label="Upcoming" value={upcomingJobs.length} color="green" />
+        <StatBox label="Upcoming" value={upcomingJobs.length} color="success" />
         <StatBox
           label="Blocked Days"
           value={blockedDaysCount}
-          color="orange"
+          color="warning"
         />
         <StatBox
           label="Custom Hours"
           value={customHoursCount}
-          color="slate"
+          color="secondary"
         />
       </div>
 
       {/* Calendar Card */}
-      <div className={`${theme.card.base} ${theme.card.padding}`}>
+      <div className="bg-white rounded-xl border-2 border-secondary-200 shadow-card p-6">
         {/* Calendar Header with Legend */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
-            <h3 className={theme.text.h2}>{monthName}</h3>
+            <h3 className="text-2xl font-bold text-secondary-900">{monthName}</h3>
             <div className="flex gap-2">
               <button
                 onClick={previousMonth}
-                className="p-2 hover:bg-slate-100 rounded-lg transition"
+                className="p-2 hover:bg-secondary-100 rounded-lg transition-all duration-200"
               >
-                <ChevronLeft size={18} className="text-slate-600" />
+                <ChevronLeft size={18} className="text-secondary-600" />
               </button>
               <button
                 onClick={() => setCurrentMonth(new Date())}
-                className="px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition"
+                className="px-3 py-1.5 text-sm font-semibold text-secondary-700 hover:bg-secondary-100 rounded-lg transition-all duration-200"
               >
                 Today
               </button>
               <button
                 onClick={nextMonth}
-                className="p-2 hover:bg-slate-100 rounded-lg transition"
+                className="p-2 hover:bg-secondary-100 rounded-lg transition-all duration-200"
               >
-                <ChevronRight size={18} className="text-slate-600" />
+                <ChevronRight size={18} className="text-secondary-600" />
               </button>
             </div>
           </div>
@@ -326,21 +307,21 @@ export default function CalendarView({ userId, jobs, refetchJobs }) {
           <div className="flex items-start gap-4">
             <div className="flex flex-col gap-2 text-xs">
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-emerald-100 border border-emerald-300 rounded"></div>
-                <span className="text-slate-600">Booked</span>
+                <div className="w-3 h-3 bg-success-100 border border-success-300 rounded"></div>
+                <span className="text-secondary-600 font-medium">Booked</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-red-100 border border-red-300 rounded"></div>
-                <span className="text-slate-600">Blocked</span>
+                <div className="w-3 h-3 bg-error-100 border border-error-300 rounded"></div>
+                <span className="text-secondary-600 font-medium">Blocked</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-amber-100 border border-amber-300 rounded"></div>
-                <span className="text-slate-600">Custom</span>
+                <div className="w-3 h-3 bg-warning-100 border border-warning-300 rounded"></div>
+                <span className="text-secondary-600 font-medium">Custom</span>
               </div>
             </div>
             <button
               onClick={() => setShowBlockModal(true)}
-              className={`${theme.button.secondary} text-sm`}
+              className="border-2 border-secondary-400 text-secondary-700 px-4 py-2 rounded-lg font-semibold hover:bg-secondary-50 active:bg-secondary-100 transition-all inline-flex items-center gap-2 text-sm"
             >
               <Ban size={16} />
               Block Days
@@ -351,7 +332,7 @@ export default function CalendarView({ userId, jobs, refetchJobs }) {
         {/* Day Headers */}
         <div className="grid grid-cols-7 gap-1 mb-1">
           {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-            <div key={day} className="text-center font-semibold text-slate-600 text-xs py-1">
+            <div key={day} className="text-center font-semibold text-secondary-700 text-xs py-1">
               {day}
             </div>
           ))}
@@ -387,10 +368,10 @@ export default function CalendarView({ userId, jobs, refetchJobs }) {
       {/* Upcoming Bookings */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className={theme.text.h2}>Upcoming Bookings ({upcomingJobs.length})</h2>
+          <h2 className="text-2xl font-bold text-secondary-900">Upcoming Bookings ({upcomingJobs.length})</h2>
           <div className="relative w-64">
             <Search
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400"
               size={18}
             />
             <input
@@ -398,18 +379,18 @@ export default function CalendarView({ userId, jobs, refetchJobs }) {
               placeholder="Search bookings..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className={`${theme.input.base} ${theme.input.provider} pl-10`}
+              className="w-full pl-10 border-2 border-secondary-300 rounded-lg px-4 py-3 bg-white text-secondary-900 placeholder:text-secondary-400 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all"
             />
           </div>
         </div>
 
         {upcomingJobs.length === 0 ? (
-          <div className={`${theme.card.base} ${theme.card.padding} text-center py-12`}>
-            <div className="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Calendar className="text-slate-400" size={32} />
+          <div className="bg-white rounded-xl border-2 border-secondary-200 shadow-card p-6 text-center py-12">
+            <div className="bg-secondary-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Calendar className="text-secondary-400" size={32} />
             </div>
-            <p className={`${theme.text.h4} mb-2`}>No Upcoming Bookings</p>
-            <p className={theme.text.body}>
+            <p className="text-lg font-semibold text-secondary-900 mb-2">No Upcoming Bookings</p>
+            <p className="text-secondary-600">
               {searchQuery
                 ? "No bookings match your search"
                 : "Your schedule is clear. Share your booking link to get booked!"}

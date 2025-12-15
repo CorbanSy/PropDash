@@ -1,20 +1,19 @@
 // src/components/ProviderDashboard/Schedule/components/DraggableJob.jsx
 import { Calendar, Clock, GripVertical } from "lucide-react";
-import { theme } from "../../../../styles/theme";
 
 export default function DraggableJob({ job, onDragStart, onDragEnd }) {
   const getStatusColor = (status) => {
     switch (status) {
       case "confirmed":
-        return theme.badge.success;
+        return "bg-success-100 text-success-800 border-success-300";
       case "pending":
-        return theme.badge.warning;
+        return "bg-warning-100 text-warning-800 border-warning-300";
       case "completed":
-        return theme.badge.info;
+        return "bg-primary-100 text-primary-800 border-primary-300";
       case "cancelled":
-        return theme.badge.error;
+        return "bg-error-100 text-error-800 border-error-300";
       default:
-        return theme.badge.neutral;
+        return "bg-secondary-100 text-secondary-800 border-secondary-300";
     }
   };
 
@@ -39,19 +38,19 @@ export default function DraggableJob({ job, onDragStart, onDragEnd }) {
       draggable
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
-      className={`${theme.card.base} ${theme.card.padding} ${theme.card.hover} cursor-move`}
+      className="bg-white rounded-xl border-2 border-secondary-200 shadow-card p-4 hover:shadow-card-hover hover:border-secondary-300 transition-all duration-300 cursor-move"
     >
       <div className="flex items-start gap-3">
         {/* Drag Handle */}
-        <div className="text-slate-400 hover:text-slate-600 cursor-grab active:cursor-grabbing pt-1">
+        <div className="text-secondary-400 hover:text-secondary-600 cursor-grab active:cursor-grabbing pt-1">
           <GripVertical size={20} />
         </div>
 
         {/* Content */}
         <div className="flex-1 flex items-start justify-between">
           <div className="flex-1">
-            <h3 className={`${theme.text.h4} mb-1`}>{job.service_name || "Service"}</h3>
-            <div className="flex items-center gap-4 text-sm text-slate-600 mb-2">
+            <h3 className="text-lg font-semibold text-secondary-900 mb-1">{job.service_name || "Service"}</h3>
+            <div className="flex items-center gap-4 text-sm text-secondary-600 mb-2">
               <span className="flex items-center gap-1.5">
                 <Calendar size={14} />
                 {formatDate(job.scheduled_date)}
@@ -61,11 +60,11 @@ export default function DraggableJob({ job, onDragStart, onDragEnd }) {
                 {formatTime(job.scheduled_date)}
               </span>
             </div>
-            <p className={theme.text.body}>{job.client_name}</p>
+            <p className="text-secondary-700 leading-relaxed">{job.client_name}</p>
           </div>
 
           <div className="text-right">
-            <p className="text-xl font-bold text-slate-900 mb-2">
+            <p className="text-xl font-bold text-secondary-900 mb-2">
               ${(job.price / 100).toFixed(0)}
             </p>
             <span
@@ -80,8 +79,8 @@ export default function DraggableJob({ job, onDragStart, onDragEnd }) {
       </div>
 
       {/* Drag Hint */}
-      <div className="mt-3 pt-3 border-t border-slate-200">
-        <p className="text-xs text-slate-500 italic">
+      <div className="mt-3 pt-3 border-t border-secondary-200">
+        <p className="text-xs text-secondary-500 italic">
           💡 Drag to a calendar date to reschedule
         </p>
       </div>

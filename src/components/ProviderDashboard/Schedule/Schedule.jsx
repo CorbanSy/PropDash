@@ -15,7 +15,6 @@ export default function Schedule() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch jobs
   useEffect(() => {
     async function fetchJobs() {
       const { data } = await supabase
@@ -30,7 +29,6 @@ export default function Schedule() {
     if (user) fetchJobs();
   }, [user]);
 
-  // Refetch jobs function to pass down
   const refetchJobs = async () => {
     const { data } = await supabase
       .from("jobs")
@@ -43,7 +41,7 @@ export default function Schedule() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className={theme.text.body}>Loading schedule...</div>
+        <div className="text-secondary-700">Loading schedule...</div>
       </div>
     );
   }
@@ -52,14 +50,14 @@ export default function Schedule() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className={theme.text.h1}>Schedule & Availability</h1>
-        <p className={`${theme.text.body} mt-1`}>
+        <h1 className="text-3xl font-bold text-secondary-900 tracking-tight">Schedule & Availability</h1>
+        <p className="text-secondary-700 mt-1 leading-relaxed">
           Manage your calendar, set hours, and block dates
         </p>
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex gap-2 border-b border-slate-200">
+      <div className="flex gap-2 border-b border-secondary-200">
         <TabButton
           active={activeTab === "calendar"}
           onClick={() => setActiveTab("calendar")}
@@ -102,8 +100,8 @@ function TabButton({ active, onClick, icon, label }) {
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-2.5 font-semibold transition relative ${
-        active ? "text-blue-700" : "text-slate-600 hover:text-slate-900"
+      className={`px-4 py-2.5 font-semibold transition-all duration-200 relative ${
+        active ? "text-primary-700" : "text-secondary-600 hover:text-secondary-900"
       }`}
     >
       <span className="flex items-center gap-2">
@@ -111,7 +109,7 @@ function TabButton({ active, onClick, icon, label }) {
         {label}
       </span>
       {active && (
-        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-700"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-700"></div>
       )}
     </button>
   );

@@ -8,10 +8,11 @@ import {
   Briefcase,
   Users, 
   Network as NetworkIcon,
-  MessageSquare, // ✅ Add this import
+  MessageSquare,
   Settings,
   LogOut,
   ChevronDown,
+  Wrench,
 } from "lucide-react";
 import { supabase } from "../../lib/supabaseClient";
 import useAuth from "../../hooks/useAuth";
@@ -30,13 +31,19 @@ export default function DashboardLayout() {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen bg-secondary-50">
 
       {/* SIDEBAR */}
-      <aside className="w-64 bg-white border-r border-slate-200 p-4 hidden sm:flex sm:flex-col">
-        <h1 className="text-xl font-bold mb-6 tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-          PropDash
-        </h1>
+      <aside className="w-64 bg-white border-r border-secondary-200 p-4 hidden sm:flex sm:flex-col shadow-sm">
+        {/* Logo */}
+        <div className="flex items-center gap-3 mb-6 px-2">
+          <div className="bg-primary-700 p-2 rounded-lg">
+            <Wrench className="text-white" size={20} />
+          </div>
+          <h1 className="text-xl font-bold tracking-tight text-secondary-900">
+            PropDash
+          </h1>
+        </div>
 
         {/* NAV LINKS */}
         <nav className="space-y-1 flex-1">
@@ -44,35 +51,35 @@ export default function DashboardLayout() {
           <SidebarLink to="/provider/schedule" icon={Calendar} label="Schedule" />
           <SidebarLink to="/provider/jobs" icon={Briefcase} label="Jobs" />
           <SidebarLink to="/provider/quotes" icon={FileText} label="Quotes" />
-          <SidebarLink to="/provider/messages" icon={MessageSquare} label="Messages" /> {/* ✅ Add this */}
+          <SidebarLink to="/provider/messages" icon={MessageSquare} label="Messages" />
           <SidebarLink to="/provider/clients" icon={Users} label="Clients" />
           <SidebarLink to="/provider/network" icon={NetworkIcon} label="Network" />
           <SidebarLink to="/provider/settings" icon={Settings} label="Settings" />
         </nav>
 
         {/* USER MENU AT BOTTOM */}
-        <div className="relative mt-4 pt-4 border-t border-slate-200">
+        <div className="relative mt-4 pt-4 border-t border-secondary-200">
           <button
             onClick={() => setShowUserMenu(!showUserMenu)}
-            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 transition"
+            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-secondary-100 transition-all duration-200"
           >
             {/* Avatar */}
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center text-blue-700 font-bold flex-shrink-0">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center text-primary-700 font-bold flex-shrink-0">
               {user?.email?.charAt(0).toUpperCase() || "U"}
             </div>
             
             {/* User Info */}
             <div className="flex-1 text-left min-w-0">
-              <p className="text-sm font-semibold text-slate-900 truncate">
+              <p className="text-sm font-semibold text-secondary-900 truncate">
                 {user?.email || "User"}
               </p>
-              <p className="text-xs text-slate-600">Provider</p>
+              <p className="text-xs text-secondary-600">Provider</p>
             </div>
             
             {/* Dropdown Icon */}
             <ChevronDown 
               size={16} 
-              className={`text-slate-400 transition-transform ${showUserMenu ? "rotate-180" : ""}`} 
+              className={`text-secondary-400 transition-transform duration-200 ${showUserMenu ? "rotate-180" : ""}`} 
             />
           </button>
 
@@ -86,21 +93,21 @@ export default function DashboardLayout() {
               />
 
               {/* Menu Items */}
-              <div className="absolute bottom-full left-0 right-0 mb-2 bg-white rounded-lg shadow-xl border border-slate-200 py-2 z-50">
+              <div className="absolute bottom-full left-0 right-0 mb-2 bg-white rounded-xl shadow-2xl border border-secondary-200 py-2 z-50">
                 <NavLink
                   to="/provider/settings"
                   onClick={() => setShowUserMenu(false)}
-                  className="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 transition"
+                  className="flex items-center gap-3 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 transition-all duration-200"
                 >
                   <Settings size={16} />
                   Settings
                 </NavLink>
                 
-                <div className="h-px bg-slate-200 my-1"></div>
+                <div className="h-px bg-secondary-200 my-1"></div>
                 
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition"
+                  className="w-full flex items-center gap-3 px-4 py-2 text-sm text-error-600 hover:bg-error-50 transition-all duration-200"
                 >
                   <LogOut size={16} />
                   Log Out
@@ -132,10 +139,10 @@ function SidebarLink({ to, icon: Icon, label, end }) {
       to={to}
       end={end}
       className={({ isActive }) =>
-        `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${
+        `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
           isActive
-            ? "bg-blue-50 text-blue-700 shadow-sm"
-            : "text-slate-600 hover:bg-slate-50"
+            ? "bg-primary-100 text-primary-800 shadow-sm font-semibold"
+            : "text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900"
         }`
       }
     >
@@ -154,22 +161,22 @@ function MobileNav() {
     { to: "/provider", icon: Home, label: "Home" },
     { to: "/provider/jobs", icon: Briefcase, label: "Jobs" },
     { to: "/provider/quotes", icon: FileText, label: "Quotes" },
-    { to: "/provider/messages", icon: MessageSquare, label: "Messages" }, // ✅ Add this
+    { to: "/provider/messages", icon: MessageSquare, label: "Messages" },
     { to: "/provider/clients", icon: Users, label: "Clients" },
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-1 flex justify-around sm:hidden shadow-lg z-50">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-secondary-200 px-2 py-1 flex justify-around sm:hidden shadow-lg z-50">
       {navItems.map((item, i) => (
         <NavLink
           key={i}
           to={item.to}
           end={item.to === "/provider"}
           className={({ isActive }) =>
-            `flex flex-col items-center px-3 py-2 text-[10px] rounded-lg transition min-w-0 ${
+            `flex flex-col items-center px-3 py-2 text-[10px] rounded-lg transition-all duration-200 min-w-0 ${
               isActive 
-                ? "text-blue-600 bg-blue-50" 
-                : "text-slate-500"
+                ? "text-primary-700 bg-primary-50 font-semibold" 
+                : "text-secondary-500 hover:text-secondary-700"
             }`
           }
         >

@@ -8,116 +8,118 @@ export default {
   theme: {
     extend: {
       colors: {
-        // ✨ NEW: Trust-First Professional Theme
+        // ✨ Corporate Professional Theme - Sophisticated & Refined
         
-        // Primary - Trust Blue (main actions, primary buttons, progress)
+        // Primary - Deep Navy (corporate trust, financial services)
         primary: {
-          50: '#EFF6FF',
-          100: '#DBEAFE',
-          200: '#BFDBFE',
-          300: '#93C5FD',
-          400: '#60A5FA',
-          500: '#3B82F6',
-          600: '#2563EB',  // Main primary color
-          700: '#1D4ED8',
-          800: '#1E40AF',
-          900: '#1E3A8A',
+          50: '#F0F4F8',
+          100: '#D9E2EC',
+          200: '#BCCCDC',
+          300: '#9FB3C8',
+          400: '#829AB1',
+          500: '#627D98',
+          600: '#486581',  // Main primary color
+          700: '#334E68',
+          800: '#243B53',
+          900: '#102A43',
         },
 
-        // Secondary - Slate (structure, text, borders)
+        // Secondary - Charcoal Gray (sophisticated neutrals)
         secondary: {
-          50: '#F8FAFC',
-          100: '#F1F5F9',
-          200: '#E2E8F0',
-          300: '#CBD5E1',
-          400: '#94A3B8',
-          500: '#64748B',
-          600: '#475569',
-          700: '#334155',
-          800: '#1E293B',
-          900: '#0F172A',
+          50: '#F7F9FA',
+          100: '#ECEFF1',
+          200: '#CFD8DC',
+          300: '#B0BEC5',
+          400: '#90A4AE',
+          500: '#78909C',
+          600: '#607D8B',  // Main secondary
+          700: '#546E7A',
+          800: '#455A64',
+          900: '#37474F',
         },
 
-        // Success - Emerald (money, earnings, completed)
+        // Accent - Deep Teal (modern, sophisticated growth)
+        accent: {
+          50: '#E0F2F1',
+          100: '#B2DFDB',
+          200: '#80CBC4',
+          300: '#4DB6AC',
+          400: '#26A69A',
+          500: '#009688',
+          600: '#00897B',  // Main accent color
+          700: '#00796B',
+          800: '#00695C',
+          900: '#004D40',
+        },
+
+        // Success - Forest Green (sophisticated money/earnings)
         success: {
-          50: '#ECFDF5',
-          100: '#D1FAE5',
-          200: '#A7F3D0',
-          300: '#6EE7B7',
-          400: '#34D399',
-          500: '#10B981',
-          600: '#059669',  // Main success color
-          700: '#047857',
-          800: '#065F46',
-          900: '#064E3B',
+          50: '#E8F5E9',
+          100: '#C8E6C9',
+          200: '#A5D6A7',
+          300: '#81C784',
+          400: '#66BB6A',
+          500: '#4CAF50',
+          600: '#43A047',  // Main success color
+          700: '#388E3C',
+          800: '#2E7D32',
+          900: '#1B5E20',
         },
 
-        // Warning - Amber (verification, alerts, required actions)
+        // Warning - Burnt Orange (sophisticated alerts)
         warning: {
-          50: '#FFFBEB',
-          100: '#FEF3C7',
-          200: '#FDE68A',
-          300: '#FCD34D',
-          400: '#FBBF24',
-          500: '#F59E0B',  // Main warning color
-          600: '#D97706',
-          700: '#B45309',
-          800: '#92400E',
-          900: '#78350F',
+          50: '#FFF3E0',
+          100: '#FFE0B2',
+          200: '#FFCC80',
+          300: '#FFB74D',
+          400: '#FFA726',
+          500: '#FF9800',
+          600: '#FB8C00',  // Main warning color
+          700: '#F57C00',
+          800: '#EF6C00',
+          900: '#E65100',
         },
 
-        // Error - Red (failures, critical issues)
+        // Error - Deep Red (professional critical)
         error: {
-          50: '#FEF2F2',
-          100: '#FEE2E2',
-          200: '#FECACA',
-          300: '#FCA5A5',
-          400: '#F87171',
-          500: '#EF4444',
-          600: '#DC2626',  // Main error color
-          700: '#B91C1C',
-          800: '#991B1B',
-          900: '#7F1D1D',
+          50: '#FFEBEE',
+          100: '#FFCDD2',
+          200: '#EF9A9A',
+          300: '#E57373',
+          400: '#EF5350',
+          500: '#F44336',
+          600: '#E53935',  // Main error color
+          700: '#D32F2F',
+          800: '#C62828',
+          900: '#B71C1C',
         },
 
-        // VIP - Purple (premium, special status - use sparingly)
-        vip: {
-          50: '#FAF5FF',
-          100: '#F3E8FF',
-          200: '#E9D5FF',
-          300: '#D8B4FE',
-          400: '#C084FC',
-          500: '#A855F7',
-          600: '#9333EA',
-          700: '#7C3AED',  // Main VIP color
-          800: '#6B21A8',
-          900: '#581C87',
+        // Premium - Deep Purple (VIP/premium features - use sparingly)
+        premium: {
+          50: '#F3E5F5',
+          100: '#E1BEE7',
+          200: '#CE93D8',
+          300: '#BA68C8',
+          400: '#AB47BC',
+          500: '#9C27B0',
+          600: '#8E24AA',  // Main premium color
+          700: '#7B1FA2',
+          800: '#6A1B9A',
+          900: '#4A148C',
         },
 
-        // DEPRECATED (keep for backwards compatibility, but migrate away)
-        provider: {
-          50: '#f8fafc',
-          100: '#f1f5f9',
-          200: '#e2e8f0',
-          300: '#cbd5e1',
-          400: '#94a3b8',
-          500: '#64748b',
-          600: '#475569',
-          700: '#334155',
-          800: '#1e293b',
-          900: '#0f172a',
-        },
-        customer: {
-          50: '#f0fdfa',
-          100: '#ccfbf1',
-          200: '#99f6e4',
-          300: '#5eead4',
-          400: '#2dd4bf',
-          500: '#14b8a6',
-          600: '#0d9488',
-          700: '#0f766e',
-          800: '#115e59',
-          900: '#134e4a',
+        // Gold - For premium badges/highlights (use very sparingly)
+        gold: {
+          50: '#FFFBF0',
+          100: '#FFF4D5',
+          200: '#FFEAA7',
+          300: '#FFD97D',
+          400: '#FFC857',
+          500: '#FFB82E',
+          600: '#D4A017',  // Sophisticated gold
+          700: '#B8860B',
+          800: '#9B7006',
+          900: '#7D5A00',
         },
       },
       fontFamily: {
@@ -130,8 +132,9 @@ export default {
         'lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)',
         'xl': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
         '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-        'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-        'card-hover': '0 4px 12px -2px rgba(0, 0, 0, 0.15)',
+        'inner': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+        'card': '0 2px 8px 0 rgba(0, 0, 0, 0.08)',
+        'card-hover': '0 8px 24px 0 rgba(0, 0, 0, 0.12)',
       },
       animation: {
         'float': 'float 20s ease-in-out infinite',

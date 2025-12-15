@@ -15,7 +15,6 @@ export default function Holidays({ userId }) {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
 
-  // Load holidays list
   useEffect(() => {
     const allHolidays = getAllHolidays(selectedYear);
     
@@ -26,7 +25,6 @@ export default function Holidays({ userId }) {
     setHolidays(uniqueHolidays);
   }, [selectedYear]);
 
-  // Load saved settings from database
   useEffect(() => {
     async function loadSettings() {
       setLoading(true);
@@ -42,7 +40,6 @@ export default function Holidays({ userId }) {
         setSelectedHolidays(new Set(data.blocked_holidays || []));
         setCustomHours(data.custom_hours || {});
       } else {
-        // No saved settings for this year
         setSelectedHolidays(new Set());
         setCustomHours({});
       }
@@ -134,18 +131,18 @@ export default function Holidays({ userId }) {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className={theme.text.body}>Loading holiday settings...</div>
+        <div className="text-secondary-700">Loading holiday settings...</div>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <div className={theme.alert.info}>
-        <AlertCircle className="flex-shrink-0 mt-0.5" size={20} />
+      <div className="bg-primary-50 border-2 border-primary-300 text-primary-900 p-4 rounded-lg shadow-sm flex items-start gap-3">
+        <AlertCircle className="flex-shrink-0 mt-0.5 text-primary-700" size={20} />
         <div>
           <p className="font-semibold text-sm mb-1">Manage Holiday Availability</p>
-          <p className="text-xs">
+          <p className="text-xs text-primary-700">
             Select holidays you want to block or set custom hours. These will override your
             weekly schedule.
           </p>
@@ -154,15 +151,15 @@ export default function Holidays({ userId }) {
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
-        <div className={`${theme.statCard.blue} border rounded-xl p-4 text-center`}>
+        <div className="bg-primary-100 border-2 border-primary-300 text-primary-900 rounded-xl p-4 text-center shadow-sm">
           <p className="text-2xl font-bold mb-1">{selectedHolidays.size}</p>
           <p className="text-xs font-semibold opacity-80">Blocked</p>
         </div>
-        <div className={`${theme.statCard.orange} border rounded-xl p-4 text-center`}>
+        <div className="bg-warning-100 border-2 border-warning-300 text-warning-900 rounded-xl p-4 text-center shadow-sm">
           <p className="text-2xl font-bold mb-1">{Object.keys(customHours).length}</p>
           <p className="text-xs font-semibold opacity-80">Custom Hours</p>
         </div>
-        <div className={`${theme.statCard.green} border rounded-xl p-4 text-center`}>
+        <div className="bg-success-100 border-2 border-success-300 text-success-900 rounded-xl p-4 text-center shadow-sm">
           <p className="text-2xl font-bold mb-1">
             {holidays.length - selectedHolidays.size}
           </p>
@@ -170,47 +167,47 @@ export default function Holidays({ userId }) {
         </div>
       </div>
 
-      <div className={`${theme.card.base} ${theme.card.padding}`}>
+      <div className="bg-white rounded-xl border-2 border-secondary-200 shadow-card p-6">
         {/* Controls */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(Number(e.target.value))}
-              className={`${theme.input.base} ${theme.input.provider}`}
+              className="w-full border-2 border-secondary-300 rounded-lg px-4 py-3 bg-white text-secondary-900 placeholder:text-secondary-400 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all"
             >
               <option value={currentYear - 1}>{currentYear - 1}</option>
               <option value={currentYear}>{currentYear}</option>
               <option value={currentYear + 1}>{currentYear + 1}</option>
             </select>
 
-            <div className="flex gap-2 border-l border-slate-200 pl-4">
+            <div className="flex gap-2 border-l border-secondary-200 pl-4">
               <button
                 onClick={() => setFilter("all")}
-                className={`px-3 py-1.5 text-sm rounded-lg font-medium transition ${
+                className={`px-3 py-1.5 text-sm rounded-lg font-semibold transition-all duration-200 ${
                   filter === "all"
-                    ? "bg-blue-100 text-blue-700"
-                    : "text-slate-600 hover:bg-slate-100"
+                    ? "bg-primary-100 text-primary-800"
+                    : "text-secondary-600 hover:bg-secondary-100"
                 }`}
               >
                 All ({holidays.length})
               </button>
               <button
                 onClick={() => setFilter("federal")}
-                className={`px-3 py-1.5 text-sm rounded-lg font-medium transition ${
+                className={`px-3 py-1.5 text-sm rounded-lg font-semibold transition-all duration-200 ${
                   filter === "federal"
-                    ? "bg-blue-100 text-blue-700"
-                    : "text-slate-600 hover:bg-slate-100"
+                    ? "bg-primary-100 text-primary-800"
+                    : "text-secondary-600 hover:bg-secondary-100"
                 }`}
               >
                 Federal ({federalCount})
               </button>
               <button
                 onClick={() => setFilter("popular")}
-                className={`px-3 py-1.5 text-sm rounded-lg font-medium transition ${
+                className={`px-3 py-1.5 text-sm rounded-lg font-semibold transition-all duration-200 ${
                   filter === "popular"
-                    ? "bg-blue-100 text-blue-700"
-                    : "text-slate-600 hover:bg-slate-100"
+                    ? "bg-primary-100 text-primary-800"
+                    : "text-secondary-600 hover:bg-secondary-100"
                 }`}
               >
                 Popular ({popularCount})
@@ -221,11 +218,14 @@ export default function Holidays({ userId }) {
           <div className="flex gap-2">
             <button
               onClick={selectAllFederal}
-              className={`${theme.button.secondary} text-sm`}
+              className="border-2 border-secondary-400 text-secondary-700 px-4 py-2 rounded-lg font-semibold hover:bg-secondary-50 active:bg-secondary-100 transition-all inline-flex items-center gap-2 text-sm"
             >
               Block All Federal
             </button>
-            <button onClick={deselectAll} className={`${theme.button.secondary} text-sm`}>
+            <button 
+              onClick={deselectAll} 
+              className="border-2 border-secondary-400 text-secondary-700 px-4 py-2 rounded-lg font-semibold hover:bg-secondary-50 active:bg-secondary-100 transition-all inline-flex items-center gap-2 text-sm"
+            >
               Clear All
             </button>
           </div>
@@ -265,7 +265,7 @@ export default function Holidays({ userId }) {
         <button
           onClick={handleSave}
           disabled={saving}
-          className={`w-full mt-6 ${theme.button.provider} justify-center`}
+          className="w-full mt-6 bg-primary-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-primary-700 active:bg-primary-800 transition-all shadow-sm hover:shadow-md inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {saving ? "Saving..." : "Save Holiday Settings"}
         </button>
@@ -274,7 +274,6 @@ export default function Holidays({ userId }) {
   );
 }
 
-// Holiday Row Component (unchanged)
 function HolidayRow({
   holiday,
   dayName,
@@ -296,34 +295,34 @@ function HolidayRow({
   };
 
   return (
-    <div className="border border-slate-200 rounded-lg">
+    <div className="border-2 border-secondary-200 rounded-lg hover:border-secondary-300 transition-all duration-200">
       <div className="p-4 flex items-center justify-between">
         <div className="flex items-center gap-4 flex-1">
           <button
             onClick={onToggle}
-            className={`w-6 h-6 rounded border-2 flex items-center justify-center transition ${
+            className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-all duration-200 ${
               isSelected
-                ? "bg-red-100 border-red-400"
-                : "border-slate-300 hover:border-slate-400"
+                ? "bg-error-100 border-error-400"
+                : "border-secondary-300 hover:border-secondary-400"
             }`}
           >
-            {isSelected && <X size={16} className="text-red-700" />}
+            {isSelected && <X size={16} className="text-error-700" />}
           </button>
 
           <div className="flex-1">
             <div className="flex items-center gap-3">
-              <h4 className="font-semibold text-slate-900">{holiday.name}</h4>
+              <h4 className="font-semibold text-secondary-900">{holiday.name}</h4>
               <span
-                className={`text-xs px-2 py-0.5 rounded font-medium ${
+                className={`text-xs px-2 py-0.5 rounded font-semibold ${
                   holiday.type === "federal"
-                    ? "bg-blue-100 text-blue-700"
-                    : "bg-purple-100 text-purple-700"
+                    ? "bg-primary-100 text-primary-700"
+                    : "bg-premium-100 text-premium-700"
                 }`}
               >
                 {holiday.type}
               </span>
             </div>
-            <p className="text-sm text-slate-600 mt-0.5">
+            <p className="text-sm text-secondary-600 mt-0.5">
               {dayName}, {dateStr}
             </p>
           </div>
@@ -331,7 +330,7 @@ function HolidayRow({
 
         <div className="flex items-center gap-2">
           {hasCustomHours && (
-            <div className="text-sm bg-amber-50 text-amber-700 px-3 py-1 rounded border border-amber-200">
+            <div className="text-sm bg-warning-50 text-warning-800 px-3 py-1 rounded border-2 border-warning-200 font-medium">
               Custom: {customHours.start} - {customHours.end}
             </div>
           )}
@@ -339,7 +338,7 @@ function HolidayRow({
           {isSelected && !showCustomHours && (
             <button
               onClick={() => setShowCustomHours(true)}
-              className="text-sm text-blue-600 hover:text-blue-700 font-medium px-3 py-1"
+              className="text-sm text-primary-700 hover:text-primary-800 font-semibold px-3 py-1 hover:underline"
             >
               {hasCustomHours ? "Edit Hours" : "Set Custom Hours"}
             </button>
@@ -349,8 +348,8 @@ function HolidayRow({
 
       {/* Custom Hours Editor */}
       {showCustomHours && (
-        <div className="border-t border-slate-200 p-4 bg-slate-50">
-          <p className="text-sm font-semibold text-slate-700 mb-3">
+        <div className="border-t-2 border-secondary-200 p-4 bg-secondary-50">
+          <p className="text-sm font-semibold text-secondary-900 mb-3">
             Set custom hours for {holiday.name}
           </p>
           <div className="flex items-center gap-3">
@@ -358,24 +357,24 @@ function HolidayRow({
               type="time"
               value={start}
               onChange={(e) => setStart(e.target.value)}
-              className="border-2 border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-600 focus:outline-none"
+              className="border-2 border-secondary-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all"
             />
-            <span className="text-slate-600">to</span>
+            <span className="text-secondary-600 font-medium">to</span>
             <input
               type="time"
               value={end}
               onChange={(e) => setEnd(e.target.value)}
-              className="border-2 border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-600 focus:outline-none"
+              className="border-2 border-secondary-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all"
             />
             <button
               onClick={handleSaveCustomHours}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700"
+              className="bg-primary-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-primary-700 transition-all"
             >
               Save
             </button>
             <button
               onClick={() => setShowCustomHours(false)}
-              className="text-slate-600 px-4 py-2 hover:text-slate-800"
+              className="text-secondary-700 px-4 py-2 hover:text-secondary-900 font-medium transition-all"
             >
               Cancel
             </button>
@@ -385,7 +384,7 @@ function HolidayRow({
                   onClearCustomHours();
                   setShowCustomHours(false);
                 }}
-                className="text-red-600 px-4 py-2 hover:text-red-700"
+                className="text-error-600 px-4 py-2 hover:text-error-700 font-semibold transition-all"
               >
                 Remove
               </button>

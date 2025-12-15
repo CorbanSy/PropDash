@@ -1,6 +1,5 @@
 // src/App.jsx
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
 // Pages
 import Landing from "./pages/Landing";
 import { ProfessionalLogin, ClientLogin } from "./pages/Login";

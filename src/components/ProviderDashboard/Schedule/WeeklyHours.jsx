@@ -50,7 +50,6 @@ export default function WeeklyHours({ userId }) {
   const [loading, setLoading] = useState(true);
   const [conflicts, setConflicts] = useState({});
 
-  // Load saved weekly hours from database
   useEffect(() => {
     async function loadWeeklyHours() {
       setLoading(true);
@@ -64,7 +63,6 @@ export default function WeeklyHours({ userId }) {
       if (data && data.availability) {
         setAvailability(data.availability);
       } else {
-        // No saved hours, use defaults
         setAvailability(DEFAULT_AVAILABILITY);
       }
 
@@ -94,7 +92,6 @@ export default function WeeklyHours({ userId }) {
     const updated = [...availability];
     const lastBlock = updated[dayIndex].blocks[updated[dayIndex].blocks.length - 1];
     
-    // Default new block starts 2 hours after last block ends
     const [hours] = lastBlock.end.split(":").map(Number);
     const newStart = `${String(Math.min(hours + 2, 22)).padStart(2, "0")}:00`;
     const newEnd = `${String(Math.min(hours + 4, 23)).padStart(2, "0")}:00`;
@@ -108,7 +105,6 @@ export default function WeeklyHours({ userId }) {
     const updated = [...availability];
     updated[dayIndex].blocks = updated[dayIndex].blocks.filter((_, i) => i !== blockIndex);
     
-    // If no blocks left, add a default one
     if (updated[dayIndex].blocks.length === 0) {
       updated[dayIndex].blocks.push({ start: "09:00", end: "17:00" });
     }
@@ -126,7 +122,6 @@ export default function WeeklyHours({ userId }) {
 
     const dayConflicts = [];
 
-    // Check each block for validation errors
     day.blocks.forEach((block, blockIndex) => {
       const errors = validateTimeBlock(block.start, block.end);
       if (errors.length > 0) {
@@ -138,7 +133,6 @@ export default function WeeklyHours({ userId }) {
       }
     });
 
-    // Check for overlapping blocks
     const overlaps = checkTimeBlockOverlap(day.blocks);
     if (overlaps.length > 0) {
       dayConflicts.push({
@@ -193,26 +187,26 @@ export default function WeeklyHours({ userId }) {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className={theme.text.body}>Loading weekly schedule...</div>
+        <div className="text-secondary-700">Loading weekly schedule...</div>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <div className={theme.alert.info}>
-        <AlertCircle className="flex-shrink-0 mt-0.5" size={20} />
+      <div className="bg-primary-50 border-2 border-primary-300 text-primary-900 p-4 rounded-lg shadow-sm flex items-start gap-3">
+        <AlertCircle className="flex-shrink-0 mt-0.5 text-primary-700" size={20} />
         <div>
           <p className="font-semibold text-sm mb-1">Set Your Regular Hours</p>
-          <p className="text-xs">
+          <p className="text-xs text-primary-700">
             These hours repeat every week. You can add multiple time blocks per day for
             split shifts or breaks.
           </p>
         </div>
       </div>
 
-      <div className={`${theme.card.base} ${theme.card.padding}`}>
-        <h3 className={`${theme.text.h3} mb-6`}>Weekly Schedule</h3>
+      <div className="bg-white rounded-xl border-2 border-secondary-200 shadow-card p-6">
+        <h3 className="text-xl font-semibold text-secondary-900 mb-6">Weekly Schedule</h3>
         <div className="space-y-6">
           {availability.map((day, dayIndex) => (
             <div key={day.day} className="space-y-3">
@@ -223,11 +217,11 @@ export default function WeeklyHours({ userId }) {
                     type="checkbox"
                     checked={day.enabled}
                     onChange={() => toggleDay(dayIndex)}
-                    className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                    className="w-4 h-4 text-primary-600 rounded focus:ring-2 focus:ring-primary-500"
                   />
                   <span
                     className={`font-semibold ${
-                      day.enabled ? "text-slate-900" : "text-slate-400"
+                      day.enabled ? "text-secondary-900" : "text-secondary-400"
                     }`}
                   >
                     {day.day}
@@ -237,7 +231,7 @@ export default function WeeklyHours({ userId }) {
                 {day.enabled && (
                   <button
                     onClick={() => addTimeBlock(dayIndex)}
-                    className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+                    className="text-sm text-primary-700 hover:text-primary-800 font-semibold flex items-center gap-1 hover:underline transition"
                   >
                     <Plus size={16} />
                     Add Time Block
@@ -256,21 +250,21 @@ export default function WeeklyHours({ userId }) {
                         onChange={(e) =>
                           updateTimeBlock(dayIndex, blockIndex, "start", e.target.value)
                         }
-                        className={`${theme.input.base} ${theme.input.provider}`}
+                        className="border-2 border-secondary-300 rounded-lg px-4 py-3 bg-white text-secondary-900 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all"
                       />
-                      <span className={theme.text.body}>to</span>
+                      <span className="text-secondary-700 leading-relaxed">to</span>
                       <input
                         type="time"
                         value={block.end}
                         onChange={(e) =>
                           updateTimeBlock(dayIndex, blockIndex, "end", e.target.value)
                         }
-                        className={`${theme.input.base} ${theme.input.provider}`}
+                        className="border-2 border-secondary-300 rounded-lg px-4 py-3 bg-white text-secondary-900 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all"
                       />
                       {day.blocks.length > 1 && (
                         <button
                           onClick={() => removeTimeBlock(dayIndex, blockIndex)}
-                          className="text-red-600 hover:text-red-700 p-2"
+                          className="text-error-600 hover:text-error-700 p-2 transition"
                         >
                           <Trash2 size={18} />
                         </button>
@@ -280,7 +274,7 @@ export default function WeeklyHours({ userId }) {
                 </div>
               ) : (
                 <div className="pl-6">
-                  <span className="text-slate-400 text-sm">Unavailable</span>
+                  <span className="text-secondary-400 text-sm">Unavailable</span>
                 </div>
               )}
 
@@ -293,7 +287,7 @@ export default function WeeklyHours({ userId }) {
 
               {/* Divider */}
               {dayIndex < availability.length - 1 && (
-                <div className="border-b border-slate-200 pt-3"></div>
+                <div className="border-b border-secondary-200 pt-3"></div>
               )}
             </div>
           ))}
@@ -302,7 +296,7 @@ export default function WeeklyHours({ userId }) {
         <button
           onClick={handleSave}
           disabled={saving || hasAnyConflicts()}
-          className={`w-full mt-6 ${theme.button.provider} justify-center ${
+          className={`w-full mt-6 bg-primary-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-primary-700 active:bg-primary-800 transition-all shadow-sm hover:shadow-md inline-flex items-center justify-center gap-2 ${
             (saving || hasAnyConflicts()) ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >

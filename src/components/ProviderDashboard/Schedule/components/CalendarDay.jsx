@@ -45,15 +45,15 @@ export default function CalendarDay({
   };
 
   const styles = {
-    past: "bg-slate-50 text-slate-300 cursor-not-allowed",
-    unavailable: "bg-slate-100 text-slate-400 hover:bg-slate-150 cursor-pointer",
+    past: "bg-secondary-50 text-secondary-300 cursor-not-allowed",
+    unavailable: "bg-secondary-100 text-secondary-400 hover:bg-secondary-150 cursor-pointer",
     available:
-      "bg-blue-50 text-blue-700 hover:bg-blue-100 cursor-pointer border border-blue-200",
+      "bg-primary-50 text-primary-700 hover:bg-primary-100 cursor-pointer border border-primary-200",
     booked:
-      "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 cursor-pointer border border-emerald-300",
-    blocked: "bg-red-50 text-red-700 hover:bg-red-100 cursor-pointer border border-red-300",
+      "bg-success-50 text-success-700 hover:bg-success-100 cursor-pointer border border-success-300",
+    blocked: "bg-error-50 text-error-700 hover:bg-error-100 cursor-pointer border border-error-300",
     custom:
-      "bg-amber-50 text-amber-700 hover:bg-amber-100 cursor-pointer border border-amber-300",
+      "bg-warning-50 text-warning-700 hover:bg-warning-100 cursor-pointer border border-warning-300",
   };
 
   const isToday = date.toDateString() === new Date().toDateString();
@@ -66,10 +66,10 @@ export default function CalendarDay({
       onDrop={onDrop}
       disabled={dateInfo.type === "past"}
       className={`
-        h-16 p-1 rounded transition relative flex flex-col items-center justify-center
+        h-16 p-1 rounded-lg transition-all duration-200 relative flex flex-col items-center justify-center
         ${styles[dateInfo.type]}
-        ${isToday ? "ring-2 ring-blue-600" : ""}
-        ${isDragOver ? "ring-2 ring-green-500 bg-green-50" : ""}
+        ${isToday ? "ring-2 ring-primary-600" : ""}
+        ${isDragOver ? "ring-2 ring-success-500 bg-success-50" : ""}
       `}
     >
       <span className="text-sm font-semibold mb-0.5">{date.getDate()}</span>

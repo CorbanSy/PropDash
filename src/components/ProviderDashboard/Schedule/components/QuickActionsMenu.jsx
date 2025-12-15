@@ -66,7 +66,6 @@ export default function QuickActionsMenu({
       label: "Remove Override",
       icon: <CheckCircle2 size={16} />,
       onClick: () => {
-        // This would need to be passed in as a prop
         onClose();
       },
       show: dateInfo.type === "blocked" || dateInfo.type === "custom",
@@ -81,16 +80,16 @@ export default function QuickActionsMenu({
       {/* Menu */}
       <div
         ref={menuRef}
-        className="fixed z-50 bg-white rounded-lg shadow-2xl border border-slate-200 py-2 min-w-[200px]"
+        className="fixed z-50 bg-white rounded-lg shadow-2xl border-2 border-secondary-200 py-2 min-w-[200px]"
         style={{
           left: `${x}px`,
           top: `${y}px`,
         }}
       >
         {/* Header */}
-        <div className="px-4 py-2 border-b border-slate-200">
-          <p className="font-semibold text-slate-900 text-sm">{formatDate}</p>
-          <p className="text-xs text-slate-500 capitalize">{dateInfo.type}</p>
+        <div className="px-4 py-2 border-b border-secondary-200">
+          <p className="font-semibold text-secondary-900 text-sm">{formatDate}</p>
+          <p className="text-xs text-secondary-500 capitalize">{dateInfo.type}</p>
         </div>
 
         {/* Actions */}
@@ -101,10 +100,10 @@ export default function QuickActionsMenu({
               <button
                 key={index}
                 onClick={action.onClick}
-                className={`w-full px-4 py-2 text-left text-sm flex items-center gap-3 transition ${
+                className={`w-full px-4 py-2 text-left text-sm flex items-center gap-3 transition-all duration-200 ${
                   action.danger
-                    ? "text-red-600 hover:bg-red-50"
-                    : "text-slate-700 hover:bg-slate-100"
+                    ? "text-error-600 hover:bg-error-50"
+                    : "text-secondary-700 hover:bg-secondary-100"
                 }`}
               >
                 {action.icon}
@@ -115,8 +114,8 @@ export default function QuickActionsMenu({
 
         {/* Jobs Count */}
         {dateInfo.jobs && dateInfo.jobs.length > 0 && (
-          <div className="px-4 py-2 border-t border-slate-200">
-            <p className="text-xs text-slate-600">
+          <div className="px-4 py-2 border-t border-secondary-200">
+            <p className="text-xs text-secondary-600">
               {dateInfo.jobs.length} {dateInfo.jobs.length === 1 ? "booking" : "bookings"} on
               this day
             </p>

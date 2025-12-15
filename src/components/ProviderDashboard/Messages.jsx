@@ -1,4 +1,4 @@
-//propdash-mvp\src\components\ProviderDashboard\Messages.jsx
+// src/components/ProviderDashboard/Messages.jsx
 import { useState, useEffect, useRef } from "react";
 import {
   MessageSquare,
@@ -20,7 +20,7 @@ import { useLocation } from 'react-router-dom';
 
 export default function Messages() {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState("customers"); // "customers" or "professionals"
+  const [activeTab, setActiveTab] = useState("customers");
   const [customerConversations, setCustomerConversations] = useState([]);
   const [professionalConversations, setProfessionalConversations] = useState([]);
   const [selectedConversation, setSelectedConversation] = useState(null);
@@ -37,21 +37,17 @@ export default function Messages() {
   const openTab = location.state?.openTab;
   const messagesEndRef = useRef(null);
 
-  // Get current conversations based on active tab
   const currentConversations = activeTab === "customers" 
     ? customerConversations 
     : professionalConversations;
 
-  // Handle tab switching from navigation
   useEffect(() => {
     if (openTab && (openTab === "customers" || openTab === "professionals")) {
       setActiveTab(openTab);
     }
   }, [openTab]);
 
-  // Handle conversation selection from navigation
   useEffect(() => {
-    // If customerId is provided, find and open that customer conversation
     if (customerId && customerConversations.length > 0) {
       const conversation = customerConversations.find(c => c.customer_id === customerId);
       if (conversation) {
@@ -59,7 +55,6 @@ export default function Messages() {
         setSelectedConversation(conversation);
       }
     }
-    // If professionalId is provided, find and open that professional conversation
     else if ((professionalId || conversationId) && professionalConversations.length > 0) {
       const conversation = professionalConversations.find(
         c => c.otherPartyId === professionalId || c.id === conversationId
@@ -71,13 +66,11 @@ export default function Messages() {
     }
   }, [customerId, professionalId, conversationId, customerConversations, professionalConversations]);
   
-  // Fetch all conversations (both customer and professional)
   useEffect(() => {
     async function fetchAllConversations() {
       if (!user) return;
 
       try {
-        // 1. Fetch customer-provider conversations
         const { data: convData, error: convError } = await supabase
           .from("conversations")
           .select("*")
@@ -89,25 +82,20 @@ export default function Messages() {
         }
 
         if (convData && convData.length > 0) {
-          // Get unique customer IDs
           const customerIds = [...new Set(convData.map(c => c.customer_id))];
           
-          // Fetch customer details
           const { data: customerData } = await supabase
             .from("customers")
             .select("id, full_name, email, phone")
             .in("id", customerIds);
 
-          // Get unique job IDs
           const jobIds = convData.map(c => c.job_id).filter(Boolean);
           
-          // Fetch job details
           const { data: jobData } = await supabase
             .from("jobs")
             .select("id, service_name, status")
             .in("id", jobIds);
 
-          // Combine the data
           const enrichedConversations = convData.map(conv => ({
             ...conv,
             type: "customer",
@@ -122,14 +110,12 @@ export default function Messages() {
           setCustomerConversations([]);
         }
 
-        // 2. Fetch provider-provider conversations (where current user is provider1)
         const { data: providerConv1, error: provError1 } = await supabase
           .from("provider_conversations")
           .select("*")
           .eq("provider1_id", user.id)
           .order("last_message_at", { ascending: false });
 
-        // 3. Fetch provider-provider conversations (where current user is provider2)
         const { data: providerConv2, error: provError2 } = await supabase
           .from("provider_conversations")
           .select("*")
@@ -139,26 +125,21 @@ export default function Messages() {
         if (provError1) console.error("Error fetching provider conversations 1:", provError1);
         if (provError2) console.error("Error fetching provider conversations 2:", provError2);
 
-        // Combine both provider conversation arrays
         const allProviderConvs = [...(providerConv1 || []), ...(providerConv2 || [])];
 
         if (allProviderConvs.length > 0) {
-          // Get unique provider IDs (excluding current user)
           const providerIds = new Set();
           allProviderConvs.forEach(conv => {
             if (conv.provider1_id !== user.id) providerIds.add(conv.provider1_id);
             if (conv.provider2_id !== user.id) providerIds.add(conv.provider2_id);
           });
 
-          // Fetch provider details
           const { data: providerData } = await supabase
             .from("providers")
             .select("id, business_name, phone, is_online, verification_status")
             .in("id", Array.from(providerIds));
 
-          // Enrich provider conversations
           const enrichedProviderConversations = allProviderConvs.map(conv => {
-            // Determine which provider is the "other" person
             const otherProviderId = conv.provider1_id === user.id 
               ? conv.provider2_id 
               : conv.provider1_id;
@@ -174,7 +155,6 @@ export default function Messages() {
             };
           });
 
-          // Sort by last_message_at
           enrichedProviderConversations.sort((a, b) => 
             new Date(b.last_message_at) - new Date(a.last_message_at)
           );
@@ -194,7 +174,6 @@ export default function Messages() {
     fetchAllConversations();
   }, [user]);
 
-  // Fetch messages for selected conversation
   useEffect(() => {
     async function fetchMessages() {
       if (!selectedConversation) return;
@@ -207,7 +186,6 @@ export default function Messages() {
 
       if (data) {
         setMessages(data);
-        // Mark messages as read
         await supabase
           .from("messages")
           .update({ is_read: true })
@@ -219,12 +197,10 @@ export default function Messages() {
     fetchMessages();
   }, [selectedConversation, user]);
 
-  // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Send message
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!newMessage.trim() || !selectedConversation) return;
@@ -239,7 +215,6 @@ export default function Messages() {
     });
 
     if (!error) {
-      // Update the appropriate conversation table based on type
       const tableName = selectedConversation.type === "customer" 
         ? "conversations" 
         : "provider_conversations";
@@ -249,7 +224,6 @@ export default function Messages() {
         .update({ last_message_at: new Date().toISOString() })
         .eq("id", selectedConversation.id);
 
-      // Add message to local state
       const newMsg = {
         id: crypto.randomUUID(),
         conversation_id: selectedConversation.id,
@@ -273,7 +247,7 @@ export default function Messages() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className={theme.text.body}>Loading messages...</div>
+        <div className="text-secondary-700">Loading messages...</div>
       </div>
     );
   }
@@ -282,36 +256,36 @@ export default function Messages() {
     <div className="h-[calc(100vh-8rem)]">
       {/* Header */}
       <div className="mb-6">
-        <h1 className={theme.text.h1}>Messages</h1>
-        <p className={`${theme.text.body} mt-1`}>
+        <h1 className="text-3xl font-bold text-secondary-900 tracking-tight">Messages</h1>
+        <p className="text-secondary-700 mt-1 leading-relaxed">
           Chat with customers and other professionals
         </p>
       </div>
 
       {/* Messages Layout */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm h-[calc(100%-5rem)] flex flex-col">
+      <div className="bg-white rounded-xl border-2 border-secondary-200 shadow-card h-[calc(100%-5rem)] flex flex-col">
         {/* Tabs */}
-        <div className="border-b border-slate-200 px-4 flex gap-4">
+        <div className="border-b border-secondary-200 px-4 flex gap-4">
           <button
             onClick={() => {
               setActiveTab("customers");
               setSelectedConversation(null);
             }}
-            className={`flex items-center gap-2 px-4 py-3 font-semibold transition relative ${
+            className={`flex items-center gap-2 px-4 py-3 font-semibold transition-all duration-200 relative ${
               activeTab === "customers"
-                ? "text-blue-700"
-                : "text-slate-600 hover:text-slate-900"
+                ? "text-accent-700"
+                : "text-secondary-600 hover:text-secondary-900"
             }`}
           >
             <User size={18} />
             <span>Customers</span>
             {customerConversations.length > 0 && (
-              <span className="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full">
+              <span className="bg-accent-100 text-accent-700 text-xs px-2 py-0.5 rounded-full font-bold">
                 {customerConversations.length}
               </span>
             )}
             {activeTab === "customers" && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-700"></div>
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-700"></div>
             )}
           </button>
           
@@ -320,21 +294,21 @@ export default function Messages() {
               setActiveTab("professionals");
               setSelectedConversation(null);
             }}
-            className={`flex items-center gap-2 px-4 py-3 font-semibold transition relative ${
+            className={`flex items-center gap-2 px-4 py-3 font-semibold transition-all duration-200 relative ${
               activeTab === "professionals"
-                ? "text-blue-700"
-                : "text-slate-600 hover:text-slate-900"
+                ? "text-premium-700"
+                : "text-secondary-600 hover:text-secondary-900"
             }`}
           >
             <Users size={18} />
             <span>Professionals</span>
             {professionalConversations.length > 0 && (
-              <span className="bg-purple-100 text-purple-700 text-xs px-2 py-0.5 rounded-full">
+              <span className="bg-premium-100 text-premium-700 text-xs px-2 py-0.5 rounded-full font-bold">
                 {professionalConversations.length}
               </span>
             )}
             {activeTab === "professionals" && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-700"></div>
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-premium-700"></div>
             )}
           </button>
         </div>
@@ -343,15 +317,15 @@ export default function Messages() {
         <div className="flex-1 flex overflow-hidden">
           {/* Conversations List */}
           <div
-            className={`w-full md:w-80 border-r border-slate-200 flex flex-col ${
+            className={`w-full md:w-80 border-r border-secondary-200 flex flex-col ${
               selectedConversation ? "hidden md:flex" : "flex"
             }`}
           >
             {/* Search */}
-            <div className="p-4 border-b border-slate-200">
+            <div className="p-4 border-b border-secondary-200">
               <div className="relative">
                 <Search
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400"
                   size={18}
                 />
                 <input
@@ -359,7 +333,7 @@ export default function Messages() {
                   placeholder={`Search ${activeTab}...`}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className={`w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm`}
+                  className="w-full pl-10 pr-4 py-2 border-2 border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none text-sm transition-all"
                 />
               </div>
             </div>
@@ -369,19 +343,19 @@ export default function Messages() {
               {filteredConversations.length === 0 ? (
                 <div className="p-8 text-center">
                   <div className={`${
-                    activeTab === "customers" ? "bg-blue-100" : "bg-purple-100"
+                    activeTab === "customers" ? "bg-accent-100" : "bg-premium-100"
                   } w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3`}>
                     {activeTab === "customers" ? (
-                      <User className={activeTab === "customers" ? "text-blue-600" : "text-purple-600"} size={24} />
+                      <User className="text-accent-700" size={24} />
                     ) : (
-                      <Users className="text-purple-600" size={24} />
+                      <Users className="text-premium-700" size={24} />
                     )}
                   </div>
-                  <p className="text-sm text-slate-600">
+                  <p className="text-sm text-secondary-600">
                     No {activeTab} conversations yet
                   </p>
                   {activeTab === "professionals" && (
-                    <p className="text-xs text-slate-500 mt-2">
+                    <p className="text-xs text-secondary-500 mt-2">
                       Visit the Network page to connect with professionals
                     </p>
                   )}
@@ -404,44 +378,44 @@ export default function Messages() {
           {selectedConversation ? (
             <div className="flex-1 flex flex-col">
               {/* Thread Header */}
-              <div className="p-4 border-b border-slate-200 flex items-center justify-between">
+              <div className="p-4 border-b border-secondary-200 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => setSelectedConversation(null)}
-                    className="md:hidden text-slate-600 hover:text-slate-900"
+                    className="md:hidden text-secondary-600 hover:text-secondary-900 transition"
                   >
                     <ArrowLeft size={20} />
                   </button>
                   <div className={`${
                     selectedConversation.type === "customer" 
-                      ? "bg-blue-100" 
-                      : "bg-purple-100"
+                      ? "bg-accent-100" 
+                      : "bg-premium-100"
                   } p-2.5 rounded-full`}>
                     {selectedConversation.type === "customer" ? (
-                      <User className="text-blue-600" size={20} />
+                      <User className="text-accent-700" size={20} />
                     ) : (
-                      <Briefcase className="text-purple-600" size={20} />
+                      <Briefcase className="text-premium-700" size={20} />
                     )}
                   </div>
                   <div>
-                    <h3 className={`${theme.text.h4} flex items-center gap-2`}>
+                    <h3 className="text-lg font-semibold text-secondary-900 flex items-center gap-2">
                       {selectedConversation.otherPartyName}
                       {selectedConversation.type === "professional" && 
                        selectedConversation.provider?.is_online && (
-                        <span className="flex items-center gap-1 text-xs text-green-600 font-normal">
-                          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        <span className="flex items-center gap-1 text-xs text-success-600 font-normal">
+                          <div className="w-2 h-2 bg-success-500 rounded-full animate-pulse"></div>
                           Online
                         </span>
                       )}
                     </h3>
-                    <p className="text-xs text-slate-600">
+                    <p className="text-xs text-secondary-600">
                       {selectedConversation.type === "customer" 
                         ? (selectedConversation.jobs?.service_name || "General inquiry")
                         : "Professional Connection"}
                     </p>
                   </div>
                 </div>
-                <button className="text-slate-600 hover:text-slate-900">
+                <button className="text-secondary-600 hover:text-secondary-900 transition">
                   <MoreVertical size={20} />
                 </button>
               </div>
@@ -451,13 +425,13 @@ export default function Messages() {
                 {messages.length === 0 ? (
                   <div className="flex items-center justify-center h-full">
                     <div className="text-center">
-                      <div className="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <MessageSquare className="text-slate-400" size={32} />
+                      <div className="bg-secondary-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <MessageSquare className="text-secondary-400" size={32} />
                       </div>
-                      <p className={`${theme.text.h4} mb-2`}>
+                      <p className="text-lg font-semibold text-secondary-900 mb-2">
                         No messages yet
                       </p>
-                      <p className={`${theme.text.body} text-sm`}>
+                      <p className="text-secondary-600 text-sm">
                         Start the conversation!
                       </p>
                     </div>
@@ -480,12 +454,12 @@ export default function Messages() {
               {/* Message Input */}
               <form
                 onSubmit={handleSendMessage}
-                className="p-4 border-t border-slate-200"
+                className="p-4 border-t border-secondary-200"
               >
                 <div className="flex gap-2">
                   <button
                     type="button"
-                    className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition"
+                    className="p-2 text-secondary-600 hover:text-secondary-900 hover:bg-secondary-100 rounded-lg transition"
                   >
                     <Paperclip size={20} />
                   </button>
@@ -494,12 +468,12 @@ export default function Messages() {
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     placeholder="Type your message..."
-                    className={`${theme.input.base} ${theme.input.provider} flex-1`}
+                    className="flex-1 w-full border-2 border-secondary-300 rounded-lg px-4 py-3 bg-white text-secondary-900 placeholder:text-secondary-400 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 focus:outline-none transition-all"
                   />
                   <button
                     type="submit"
                     disabled={!newMessage.trim() || sending}
-                    className={`${theme.button.provider} flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed`}
+                    className="bg-primary-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-primary-700 active:bg-primary-800 transition-all shadow-sm hover:shadow-md flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Send size={18} />
                     Send
@@ -508,15 +482,15 @@ export default function Messages() {
               </form>
             </div>
           ) : (
-            <div className="hidden md:flex flex-1 items-center justify-center bg-slate-50">
+            <div className="hidden md:flex flex-1 items-center justify-center bg-secondary-50">
               <div className="text-center">
-                <div className="bg-slate-200 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <MessageSquare className="text-slate-400" size={40} />
+                <div className="bg-secondary-200 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <MessageSquare className="text-secondary-400" size={40} />
                 </div>
-                <h3 className={`${theme.text.h3} mb-2`}>
+                <h3 className="text-xl font-semibold text-secondary-900 mb-2">
                   No conversation selected
                 </h3>
-                <p className={`${theme.text.body} text-sm`}>
+                <p className="text-secondary-600 text-sm">
                   Choose a conversation to start messaging
                 </p>
               </div>
@@ -552,45 +526,45 @@ function ConversationItem({ conversation, isSelected, onClick, type }) {
   return (
     <button
       onClick={onClick}
-      className={`w-full p-4 border-b border-slate-200 hover:bg-slate-50 transition text-left ${
+      className={`w-full p-4 border-b border-secondary-200 hover:bg-secondary-50 transition-all duration-200 text-left ${
         isSelected 
-          ? `${isCustomer ? "bg-blue-50 border-l-4 border-l-blue-600" : "bg-purple-50 border-l-4 border-l-purple-600"}` 
+          ? `${isCustomer ? "bg-accent-50 border-l-4 border-l-accent-700" : "bg-premium-50 border-l-4 border-l-premium-700"}` 
           : ""
       }`}
     >
       <div className="flex items-start gap-3">
         <div className={`${
-          isCustomer ? "bg-blue-100" : "bg-purple-100"
+          isCustomer ? "bg-accent-100" : "bg-premium-100"
         } p-2 rounded-full flex-shrink-0`}>
           {isCustomer ? (
-            <User className="text-blue-600" size={18} />
+            <User className="text-accent-700" size={18} />
           ) : (
-            <Briefcase className="text-purple-600" size={18} />
+            <Briefcase className="text-premium-700" size={18} />
           )}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-1">
-            <h4 className="font-semibold text-slate-900 text-sm truncate flex items-center gap-2">
+            <h4 className="font-semibold text-secondary-900 text-sm truncate flex items-center gap-2">
               {conversation.otherPartyName}
               {!isCustomer && conversation.provider?.is_online && (
-                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                <span className="w-2 h-2 bg-success-500 rounded-full animate-pulse"></span>
               )}
             </h4>
-            <span className="text-xs text-slate-500 flex-shrink-0 ml-2">
+            <span className="text-xs text-secondary-500 flex-shrink-0 ml-2">
               {formatTime(conversation.last_message_at)}
             </span>
           </div>
           {isCustomer ? (
             <>
-              <p className="text-xs text-slate-600 mb-1 truncate">
+              <p className="text-xs text-secondary-600 mb-1 truncate">
                 {conversation.jobs?.service_name || "General inquiry"}
               </p>
               <div className="flex items-center gap-2">
                 <span
-                  className={`text-xs px-2 py-0.5 rounded-full ${
+                  className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
                     conversation.jobs?.status === "confirmed"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-slate-100 text-slate-700"
+                      ? "bg-success-100 text-success-700"
+                      : "bg-secondary-100 text-secondary-700"
                   }`}
                 >
                   {conversation.jobs?.status || "New"}
@@ -599,11 +573,11 @@ function ConversationItem({ conversation, isSelected, onClick, type }) {
             </>
           ) : (
             <>
-              <p className="text-xs text-slate-600 mb-1">
+              <p className="text-xs text-secondary-600 mb-1">
                 Professional Connection
               </p>
               {conversation.provider?.verification_status === "verified" && (
-                <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700">
+                <span className="text-xs px-2 py-0.5 rounded-full bg-success-100 text-success-700 font-semibold">
                   Verified
                 </span>
               )}
@@ -625,16 +599,16 @@ function MessageBubble({ message, isOwn, conversationType }) {
   };
 
   const bubbleColor = isOwn 
-    ? (conversationType === "customer" ? "bg-blue-600" : "bg-purple-600")
-    : "bg-slate-100";
+    ? (conversationType === "customer" ? "bg-accent-700" : "bg-premium-700")
+    : "bg-secondary-100";
 
   const iconBgColor = isOwn
-    ? (conversationType === "customer" ? "bg-blue-100" : "bg-purple-100")
-    : "bg-slate-100";
+    ? (conversationType === "customer" ? "bg-accent-100" : "bg-premium-100")
+    : "bg-secondary-100";
 
   const iconColor = isOwn
-    ? (conversationType === "customer" ? "text-blue-600" : "text-purple-600")
-    : "text-slate-600";
+    ? (conversationType === "customer" ? "text-accent-700" : "text-premium-700")
+    : "text-secondary-600";
 
   return (
     <div className={`flex ${isOwn ? "justify-end" : "justify-start"}`}>
@@ -651,13 +625,13 @@ function MessageBubble({ message, isOwn, conversationType }) {
             className={`rounded-2xl px-4 py-2 ${
               isOwn
                 ? `${bubbleColor} text-white ${conversationType === "customer" ? "rounded-tr-sm" : "rounded-tr-sm"}`
-                : "bg-slate-100 text-slate-900 rounded-tl-sm"
+                : "bg-secondary-100 text-secondary-900 rounded-tl-sm"
             }`}
           >
             <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.message}</p>
           </div>
           <div
-            className={`flex items-center gap-1 mt-1 text-xs text-slate-500 ${
+            className={`flex items-center gap-1 mt-1 text-xs text-secondary-500 ${
               isOwn ? "justify-end" : "justify-start"
             }`}
           >
@@ -666,7 +640,7 @@ function MessageBubble({ message, isOwn, conversationType }) {
             {isOwn && (
               <CheckCheck
                 size={14}
-                className={message.is_read ? (conversationType === "customer" ? "text-blue-600" : "text-purple-600") : ""}
+                className={message.is_read ? (conversationType === "customer" ? "text-accent-700" : "text-premium-700") : ""}
               />
             )}
           </div>
