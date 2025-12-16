@@ -1,5 +1,5 @@
 // src/components/ProviderDashboard/DashboardLayout.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { 
   Home, 
@@ -21,6 +21,74 @@ export default function DashboardLayout() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [availableJobsCount, setAvailableJobsCount] = useState(0);
+
+  // Fetch available jobs count
+  const fetchAvailableJobsCount = async () => {
+    if (!user) return;
+
+    try {
+      const { data: providerData } = await supabase
+        .from("providers")
+        .select("service_categories")
+        .eq("id", user.id)
+        .single();
+
+      if (!providerData?.service_categories?.length) {
+        setAvailableJobsCount(0);
+        return;
+      }
+
+      const { count } = await supabase
+        .from("jobs")
+        .select("*", { count: "exact", head: true })
+        .in("status", ["pending_dispatch", "dispatching", "unassigned"])
+        .is("provider_id", null)
+        .in("category", providerData.service_categories);
+
+      setAvailableJobsCount(count || 0);
+    } catch (error) {
+      console.error("Error fetching available jobs count:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAvailableJobsCount();
+
+    // Listen for custom event when job is accepted
+    const handleJobAccepted = () => {
+      console.log("Job accepted event received, refreshing badge count...");
+      setTimeout(() => {
+        fetchAvailableJobsCount();
+      }, 1000);
+    };
+
+    window.addEventListener("jobAccepted", handleJobAccepted);
+
+    // Set up real-time subscription for jobs changes
+    const channel = supabase
+      .channel("available-jobs-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "jobs",
+        },
+        (payload) => {
+          console.log("Job change detected:", payload);
+          setTimeout(() => {
+            fetchAvailableJobsCount();
+          }, 500);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      window.removeEventListener("jobAccepted", handleJobAccepted);
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
 
   const handleLogout = async () => {
     const confirmed = window.confirm("Are you sure you want to log out?");
@@ -49,7 +117,12 @@ export default function DashboardLayout() {
         <nav className="space-y-1 flex-1">
           <SidebarLink to="/provider" icon={Home} label="Home" end />
           <SidebarLink to="/provider/schedule" icon={Calendar} label="Schedule" />
-          <SidebarLink to="/provider/jobs" icon={Briefcase} label="Jobs" />
+          <SidebarLink 
+            to="/provider/jobs" 
+            icon={Briefcase} 
+            label="Jobs" 
+            badge={availableJobsCount > 0 ? availableJobsCount : null}
+          />
           <SidebarLink to="/provider/quotes" icon={FileText} label="Quotes" />
           <SidebarLink to="/provider/messages" icon={MessageSquare} label="Messages" />
           <SidebarLink to="/provider/clients" icon={Users} label="Clients" />
@@ -124,7 +197,7 @@ export default function DashboardLayout() {
       </main>
 
       {/* BOTTOM NAV (Mobile Only) */}
-      <MobileNav />
+      <MobileNav availableJobsCount={availableJobsCount} />
     </div>
   );
 }
@@ -133,13 +206,13 @@ export default function DashboardLayout() {
 /* Reusable Sidebar Nav Component */
 /* ----------------------------- */
 
-function SidebarLink({ to, icon: Icon, label, end }) {
+function SidebarLink({ to, icon: Icon, label, end, badge }) {
   return (
     <NavLink
       to={to}
       end={end}
       className={({ isActive }) =>
-        `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+        `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 relative ${
           isActive
             ? "bg-primary-100 text-primary-800 shadow-sm font-semibold"
             : "text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900"
@@ -148,6 +221,11 @@ function SidebarLink({ to, icon: Icon, label, end }) {
     >
       <Icon size={20} />
       <span>{label}</span>
+      {badge && (
+        <span className="ml-auto bg-accent-600 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center animate-pulse">
+          {badge}
+        </span>
+      )}
     </NavLink>
   );
 }
@@ -156,10 +234,10 @@ function SidebarLink({ to, icon: Icon, label, end }) {
 /* Mobile Bottom Navigation Bar   */
 /* ----------------------------- */
 
-function MobileNav() {
+function MobileNav({ availableJobsCount }) {
   const navItems = [
     { to: "/provider", icon: Home, label: "Home" },
-    { to: "/provider/jobs", icon: Briefcase, label: "Jobs" },
+    { to: "/provider/jobs", icon: Briefcase, label: "Jobs", badge: availableJobsCount > 0 ? availableJobsCount : null },
     { to: "/provider/quotes", icon: FileText, label: "Quotes" },
     { to: "/provider/messages", icon: MessageSquare, label: "Messages" },
     { to: "/provider/clients", icon: Users, label: "Clients" },
@@ -173,14 +251,21 @@ function MobileNav() {
           to={item.to}
           end={item.to === "/provider"}
           className={({ isActive }) =>
-            `flex flex-col items-center px-3 py-2 text-[10px] rounded-lg transition-all duration-200 min-w-0 ${
+            `flex flex-col items-center px-3 py-2 text-[10px] rounded-lg transition-all duration-200 min-w-0 relative ${
               isActive 
                 ? "text-primary-700 bg-primary-50 font-semibold" 
                 : "text-secondary-500 hover:text-secondary-700"
             }`
           }
         >
-          <item.icon size={20} className="mb-0.5" />
+          <div className="relative">
+            <item.icon size={20} className="mb-0.5" />
+            {item.badge && (
+              <span className="absolute -top-1 -right-1 bg-accent-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full min-w-[16px] text-center leading-none animate-pulse">
+                {item.badge}
+              </span>
+            )}
+          </div>
           <span className="truncate w-full text-center">{item.label}</span>
         </NavLink>
       ))}

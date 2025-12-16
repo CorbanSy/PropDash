@@ -40,9 +40,18 @@ export default function AvailableJobCard({ job, customers, onAccept }) {
         return;
       }
 
+      // Wait for database to fully update
       await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Refresh jobs list
       await onAccept();
+
+      // ✅ Dispatch custom event to refresh badge count
+      window.dispatchEvent(new Event("jobAccepted"));
+
+      // Show success message
       alert("Job accepted! Switching to 'My Jobs' tab...");
+      
     } catch (err) {
       console.error("Exception accepting job:", err);
       alert("Failed to accept job");

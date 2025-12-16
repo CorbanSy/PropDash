@@ -50,52 +50,62 @@ export default function Jobs() {
   }, [user]);
 
   const fetchJobsAndCustomers = async () => {
-    if (!user) return;
+  if (!user) return;
 
-    try {
-      const { data: assignedJobsData } = await supabase
-        .from("jobs")
-        .select("*")
-        .eq("provider_id", user.id)
-        .order("scheduled_date", { ascending: false });
+  try {
+    const { data: assignedJobsData } = await supabase
+      .from("jobs")
+      .select("*")
+      .eq("provider_id", user.id)
+      .order("scheduled_date", { ascending: false });
 
-      const { data: providerData } = await supabase
-        .from("providers")
-        .select("service_categories")
-        .eq("id", user.id)
-        .single();
+    console.log("✅ User ID:", user.id);
 
-      let availableJobsQuery = supabase
-        .from("jobs")
-        .select("*")
-        .in("status", ["pending_dispatch", "dispatching", "unassigned"])
-        .is("provider_id", null);
+    const { data: providerData } = await supabase
+      .from("providers")
+      .select("service_categories")
+      .eq("id", user.id)
+      .single();
 
-      if (providerData?.service_categories?.length > 0) {
-        availableJobsQuery = availableJobsQuery.in(
-          "category",
-          providerData.service_categories
-        );
-      }
+    console.log("✅ Provider Data:", providerData);
+    console.log("✅ Service Categories:", providerData?.service_categories);
 
-      const { data: availableJobsData } = await availableJobsQuery.order(
-        "created_at",
-        { ascending: false }
+    let availableJobsQuery = supabase
+      .from("jobs")
+      .select("*")
+      .in("status", ["pending_dispatch", "dispatching", "unassigned"])
+      .is("provider_id", null);
+
+    if (providerData?.service_categories?.length > 0) {
+      availableJobsQuery = availableJobsQuery.in(
+        "category",
+        providerData.service_categories
       );
-
-      const { data: customersData } = await supabase
-        .from("customers")
-        .select("*");
-
-      if (assignedJobsData) setJobs(assignedJobsData);
-      if (availableJobsData) setAvailableJobs(availableJobsData);
-      if (customersData) setCustomers(customersData);
-    } catch (error) {
-      console.error("Error fetching jobs:", error);
-    } finally {
-      setLoading(false);
+      console.log("✅ Filtering by categories:", providerData.service_categories);
     }
-  };
+
+    const { data: availableJobsData, error: availableJobsError } = await availableJobsQuery.order(
+      "created_at",
+      { ascending: false }
+    );
+
+    console.log("✅ Available Jobs Query Error:", availableJobsError);
+    console.log("✅ Available Jobs Data:", availableJobsData);
+    console.log("✅ Number of available jobs:", availableJobsData?.length);
+
+    const { data: customersData } = await supabase
+      .from("customers")
+      .select("*");
+
+    if (assignedJobsData) setJobs(assignedJobsData);
+    if (availableJobsData) setAvailableJobs(availableJobsData);
+    if (customersData) setCustomers(customersData);
+  } catch (error) {
+    console.error("❌ Error fetching jobs:", error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const filterJobsList = (jobsList) => {
     return jobsList
