@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/QuoteBuilder/QuoteEditor.jsx
+//levlpro-mvp\src\components\ProviderDashboard\QuoteBuilder\QuoteEditor.jsx
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {

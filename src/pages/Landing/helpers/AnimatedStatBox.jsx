@@ -1,4 +1,4 @@
-// src/pages/Landing/helpers/AnimatedStatBox.jsx
+// levlpro-mvp\src\pages\Landing\helpers\AnimatedStatBox.jsx
 export default function AnimatedStatBox({ value, label, delay }) {
   return (
     <div

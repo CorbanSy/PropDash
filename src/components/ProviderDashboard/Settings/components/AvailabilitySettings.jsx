@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Settings/components/AvailabilitySettings.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Settings\components\AvailabilitySettings.jsx
 import { useState, useEffect } from "react";
 import { Clock, Save, Calendar, X, Plus } from "lucide-react";
 import { supabase } from "../../../../lib/supabaseClient";

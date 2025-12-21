@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Network/utils/commissionRules.js
+//levlpro-mvp\src\components\ProviderDashboard\Network\utils\commissionRules.js
 
 /**
  * Default commission structure

@@ -1,4 +1,4 @@
-// src/pages/Register/ClientRegister.jsx
+//levlpro-mvp\src\pages\Register\ClientRegister.jsx
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
@@ -112,7 +112,7 @@ export default function ClientRegister() {
               <Home className="text-white" size={32} />
             </div>
             <div>
-              <h1 className="text-white text-3xl font-bold tracking-tight group-hover:text-slate-100 transition">PropDash</h1>
+              <h1 className="text-white text-3xl font-bold tracking-tight group-hover:text-slate-100 transition">LevlPro</h1>
               <p className="text-slate-100 text-sm font-medium">Property Services Platform</p>
             </div>
           </Link>
@@ -172,7 +172,7 @@ export default function ClientRegister() {
               <Home className="text-white" size={28} />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-secondary-900 group-hover:text-secondary-700 transition">PropDash</h1>
+              <h1 className="text-2xl font-bold text-secondary-900 group-hover:text-secondary-700 transition">LevlPro</h1>
               <p className="text-xs text-secondary-500">Property Services</p>
             </div>
           </Link>

@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Schedule/ScheduleSettings.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Schedule\ScheduleSettings.jsx
 import { useState } from "react";
 import { AlertCircle, Car } from "lucide-react";
 import { theme } from "../../../styles/theme";

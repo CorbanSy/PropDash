@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Settings/components/ProfilePhotoUpload.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Settings\components\ProfilePhotoUpload.jsx
 import { useState, useRef, useEffect } from "react"; // ✅ Add useEffect
 import { Camera, Upload, X, User } from "lucide-react";
 import { supabase } from "../../../../lib/supabaseClient";

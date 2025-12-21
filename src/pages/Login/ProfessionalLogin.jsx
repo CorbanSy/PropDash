@@ -1,4 +1,4 @@
-// src/pages/Login/ProfessionalLogin.jsx
+//levlpro-mvp\src\pages\Login\ProfessionalLogin.jsx
 import { Link } from "react-router-dom";
 import { 
   Wrench, 
@@ -29,7 +29,7 @@ export default function ProfessionalLogin() {
               <Wrench className="text-white" size={32} />
             </div>
             <div>
-              <h1 className="text-white text-3xl font-bold tracking-tight group-hover:text-slate-100 transition">PropDash</h1>
+              <h1 className="text-white text-3xl font-bold tracking-tight group-hover:text-slate-100 transition">LevlPro</h1>
               <p className="text-slate-100 text-sm font-medium">Business Management Platform</p>
             </div>
           </Link>
@@ -72,7 +72,7 @@ export default function ProfessionalLogin() {
         <div className="relative z-10">
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-sm hover:bg-white/15 transition-all duration-300">
             <p className="text-white text-sm italic mb-2 leading-relaxed">
-              "PropDash transformed our operations. The automated compliance tracking alone saves us countless hours each month."
+              "LevlPro transformed our operations. The automated compliance tracking alone saves us countless hours each month."
             </p>
             <p className="text-slate-100 text-xs font-medium">
               — Marcus Rodriguez, Licensed Contractor
@@ -90,7 +90,7 @@ export default function ProfessionalLogin() {
               <Wrench className="text-white" size={28} />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-secondary-900 group-hover:text-secondary-700 transition">PropDash</h1>
+              <h1 className="text-2xl font-bold text-secondary-900 group-hover:text-secondary-700 transition">LevlPro</h1>
               <p className="text-xs text-secondary-500">Business Management</p>
             </div>
           </Link>

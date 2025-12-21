@@ -1,4 +1,4 @@
-//propdash-mvp\src\hooks\useAuth.js
+//levlpro-mvp\src\hooks\useAuth.js
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 

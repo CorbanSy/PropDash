@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Schedule/WeeklyHours.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Schedule\WeeklyHours.jsx
 import { useState, useEffect } from "react";
 import { AlertCircle, Plus, Trash2 } from "lucide-react";
 import { theme } from "../../../styles/theme";

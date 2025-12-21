@@ -1,4 +1,4 @@
-// src/lib/ai.js
+//levlpro-mvp\src\lib\ai.js
 export async function generateQuoteFromDescription(description) {
   if (!description) throw new Error("Description is empty.");
 

@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/QuoteBuilder/components/AIPhotoAnalysis.jsx
+//levlpro-mvp\src\components\ProviderDashboard\QuoteBuilder\components\AIPhotoAnalysis.jsx
 import { useState } from "react";
 import { X, Sparkles, CheckCircle2, AlertCircle, Loader } from "lucide-react";
 import { theme } from "../../../../styles/theme";

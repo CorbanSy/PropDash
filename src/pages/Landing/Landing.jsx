@@ -1,4 +1,4 @@
-// src/pages/Landing/Landing.jsx
+//levlpro-mvp\src\pages\Landing\Landing.jsx
 import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import MobileMenu from "./components/MobileMenu";

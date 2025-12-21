@@ -1,4 +1,4 @@
-// src/utils/ProtectedRoute.jsx
+//levlpro-mvp\src\utils\ProtectedRoute.jsx
 import { Navigate, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 

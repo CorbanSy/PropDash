@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Settings/components/ServiceAreas.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Settings\components\ServiceAreas.jsx
 import { useState, useEffect } from "react";
 import { MapPin, Save, Plus, X, Navigation } from "lucide-react";
 import { supabase } from "../../../../lib/supabaseClient";

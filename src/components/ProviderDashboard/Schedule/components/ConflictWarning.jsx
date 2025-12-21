@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Schedule/components/ConflictWarning.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Schedule\components\ConflictWarning.jsx
 import { AlertTriangle } from "lucide-react";
 
 export default function ConflictWarning({ conflicts }) {

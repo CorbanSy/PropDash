@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Schedule/components/BlockDaysModal.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Schedule\components\BlockDaysModal.jsx
 import { useState } from "react";
 import { X, AlertCircle } from "lucide-react";
 import { theme } from "../../../../styles/theme";

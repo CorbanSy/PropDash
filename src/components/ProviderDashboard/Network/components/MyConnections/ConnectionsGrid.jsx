@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Network/components/MyConnections/ConnectionsGrid.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Network\components\MyConnections\ConnectionsGrid.jsx
 import { Search } from "lucide-react";
 import { theme } from "../../../../../styles/theme";
 import PartnerCard from "../PartnerCard";

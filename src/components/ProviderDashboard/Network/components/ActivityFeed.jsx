@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Network/components/ActivityFeed.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Network\components\ActivityFeed.jsx
 import {
   UserPlus,
   CheckCircle2,

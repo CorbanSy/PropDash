@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/QuoteBuilder/components/PricingSettings.jsx
+//levlpro-mvp\src\components\ProviderDashboard\QuoteBuilder\components\PricingSettings.jsx
 import { X, Info } from "lucide-react";
 import { theme } from "../../../../styles/theme";
 

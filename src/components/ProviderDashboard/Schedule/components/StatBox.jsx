@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Schedule/components/StatBox.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Schedule\components\StatBox.jsx
 export default function StatBox({ label, value, color }) {
   const colorClasses = {
     primary: "bg-primary-100 border-primary-300 text-primary-900",

@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Network/components/MyConnections/ConnectionsStats.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Network\components\MyConnections\ConnectionsStats.jsx
 import { Users, UserCheck, Award, Send, DollarSign } from "lucide-react";
 
 export default function ConnectionsStats({ stats }) {

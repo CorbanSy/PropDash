@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Network/components/Shared/NetworkHeader.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Network\components\Shared\NetworkHeader.jsx
 import { Users, Share2, UserPlus, Briefcase } from "lucide-react";
 import { theme } from "../../../../../styles/theme";
 

@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/DashboardLayout.jsx
+//levlpro-mvp\src\components\ProviderDashboard\DashboardLayout.jsx
 import { useState, useEffect } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { 
@@ -109,7 +109,7 @@ export default function DashboardLayout() {
             <Wrench className="text-white" size={20} />
           </div>
           <h1 className="text-xl font-bold tracking-tight text-secondary-900">
-            PropDash
+            LevlPro
           </h1>
         </div>
 

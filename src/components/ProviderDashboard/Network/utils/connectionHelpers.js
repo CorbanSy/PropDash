@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Network/utils/connectionHelpers.js
+//levlpro-mvp\src\components\ProviderDashboard\Network\utils\connectionHelpers.js
 import { supabase } from "../../../../lib/supabaseClient";
 
 /**

@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Network/components/StatCard.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Network\components\StatCard.jsx
 import { theme } from "../../../../styles/theme";
 
 export default function StatCard({ icon, label, value, color, trend }) {

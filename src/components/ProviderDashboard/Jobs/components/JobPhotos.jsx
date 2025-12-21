@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Jobs/components/JobPhotos.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Jobs\components\JobPhotos.jsx
 import { useState, useEffect } from "react";
 import { Upload, X, Image as ImageIcon, Trash2 } from "lucide-react";
 import { theme } from "../../../../styles/theme";

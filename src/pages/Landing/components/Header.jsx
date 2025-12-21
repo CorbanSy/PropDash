@@ -1,4 +1,4 @@
-// src/pages/Landing/components/Header.jsx
+//levlpro-mvp\src\pages\Landing\components\Header.jsx
 import { Link } from "react-router-dom";
 import { Wrench, Home, ChevronDown } from "lucide-react";
 
@@ -23,7 +23,7 @@ export default function Header({
           </div>
         </div>
         <h1 className="text-2xl font-bold text-secondary-900 transition-colors duration-300 hover:text-primary-700 cursor-default">
-          PropDash
+          LevlPro
         </h1>
       </div>
 

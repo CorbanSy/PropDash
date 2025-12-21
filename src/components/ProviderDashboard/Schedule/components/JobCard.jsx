@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Schedule/components/JobCard.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Schedule\components\JobCard.jsx
 import { Calendar, Clock } from "lucide-react";
 
 export default function JobCard({ job }) {

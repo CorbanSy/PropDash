@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/QuoteBuilder/utils/templates.js
+//levlpro-mvp\src\components\ProviderDashboard\QuoteBuilder\utils\templates.js
 
 export const quoteTemplates = {
   handyman: {

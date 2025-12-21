@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Network/Partners.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Network\Partners.jsx
 import { useState } from "react";
 import {
   Search,

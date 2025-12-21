@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Network/components/PartnerAgreement.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Network\components\PartnerAgreement.jsx
 import { useState } from "react";
 import { X, FileText, CheckCircle2, Download, Shield } from "lucide-react";
 import { theme } from "../../../../styles/theme";

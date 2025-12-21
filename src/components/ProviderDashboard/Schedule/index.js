@@ -1,2 +1,2 @@
-// src/components/ProviderDashboard/Schedule/index.js
+//levlpro-mvp\src\components\ProviderDashboard\Schedule\index.js
 export { default } from "./Schedule";

@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/QuoteBuilder/components/AttachmentUploader.jsx
+//levlpro-mvp\src\components\ProviderDashboard\QuoteBuilder\components\AttachmentUploader.jsx
 import { useState } from "react";
 import { Upload, X, Image, FileText, Video, Paperclip } from "lucide-react";
 import { theme } from "../../../../styles/theme";

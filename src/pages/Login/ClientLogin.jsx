@@ -1,4 +1,5 @@
-// src/pages/Login/ClientLogin.jsx
+//levlpro-mvp\src\pages\Login\ClientLogin.jsx
+
 import { Link } from "react-router-dom";
 import { 
   Home, 
@@ -28,7 +29,7 @@ export default function ClientLogin() {
               <Home className="text-white" size={32} />
             </div>
             <div>
-              <h1 className="text-white text-3xl font-bold tracking-tight group-hover:text-slate-100 transition">PropDash</h1>
+              <h1 className="text-white text-3xl font-bold tracking-tight group-hover:text-slate-100 transition">LevlPro</h1>
               <p className="text-slate-100 text-sm font-medium">Property Services Platform</p>
             </div>
           </Link>
@@ -71,7 +72,7 @@ export default function ClientLogin() {
         <div className="relative z-10">
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-sm hover:bg-white/15 transition-all duration-300">
             <p className="text-white text-sm italic mb-2 leading-relaxed">
-              "PropDash connected me with a licensed contractor who delivered exceptional work. The platform made everything seamless."
+              "LevlPro connected me with a licensed contractor who delivered exceptional work. The platform made everything seamless."
             </p>
             <p className="text-slate-100 text-xs font-medium">
               — Sarah Thompson, Property Manager

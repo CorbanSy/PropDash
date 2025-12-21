@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Jobs/utils/jobCalculations.js
+//levlpro-mvp\src\components\ProviderDashboard\Jobs\utils\jobCalculations.js
 
 /**
  * Calculate total revenue from jobs

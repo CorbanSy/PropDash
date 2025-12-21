@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Settings/components/PhoneVerification.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Settings\components\PhoneVerification.jsx
 import { useState } from "react";
 import { Smartphone, CheckCircle2, Send, AlertCircle } from "lucide-react";
 import { supabase } from "../../../../lib/supabaseClient";

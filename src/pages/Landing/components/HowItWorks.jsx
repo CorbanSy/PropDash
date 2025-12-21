@@ -1,4 +1,4 @@
-// src/pages/Landing/components/HowItWorks.jsx
+//levlpro-mvp\src\pages\Landing\components\HowItWorks.jsx
 import { Link } from "react-router-dom";
 import { Home, Wrench, ArrowRight } from "lucide-react";
 import ProcessStep from "../helpers/ProcessStep";

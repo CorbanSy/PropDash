@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Network/components/InviteModal.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Network\components\InviteModal.jsx
 import { useState } from "react";
 import { X, Send, Sparkles, User, Mail, Phone, Briefcase } from "lucide-react";
 import { theme } from "../../../../styles/theme";

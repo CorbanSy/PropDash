@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Network/components/Shared/NetworkStats.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Network\components\Shared\NetworkStats.jsx
 import {
   Users,
   UserCheck,

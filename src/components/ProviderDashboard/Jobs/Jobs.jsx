@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Jobs/Jobs.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Jobs\Jobs.jsx
 import { useState, useEffect } from "react";
 import {
   Briefcase,

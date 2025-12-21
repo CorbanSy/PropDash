@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Jobs/components/AvailableJobCard.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Jobs\components\AvailableJobCard.jsx
 import { useState } from "react";
 import {
   MapPin,

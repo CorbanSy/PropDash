@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Settings/components/ServicesOffered.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Settings\components\ServicesOffered.jsx
 import { useState, useEffect } from "react";
 import { Briefcase, Save, CheckCircle2 } from "lucide-react";
 import { supabase } from "../../../../lib/supabaseClient";

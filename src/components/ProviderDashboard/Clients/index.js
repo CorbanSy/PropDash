@@ -1,2 +1,2 @@
-// src/components/ProviderDashboard/Clients/index.js
+//levlpro-mvp\src\components\ProviderDashboard\Clients\index.js
 export { default } from "./Clients";

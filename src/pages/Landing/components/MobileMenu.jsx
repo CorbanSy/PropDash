@@ -1,4 +1,4 @@
-// src/pages/Landing/components/MobileMenu.jsx
+//levlpro-mvp\src\pages\Landing\components\MobileMenu.jsx
 import { Link } from "react-router-dom";
 import { Wrench, Home } from "lucide-react";
 
@@ -14,7 +14,7 @@ export default function MobileMenu({ showMobileMenu, setShowMobileMenu }) {
             <div className="bg-primary-700 p-2.5 rounded-lg">
               <Wrench className="w-5 h-5 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-secondary-900">PropDash</h1>
+            <h1 className="text-2xl font-bold text-secondary-900">LevlPro</h1>
           </div>
           <button
             onClick={() => setShowMobileMenu(false)}

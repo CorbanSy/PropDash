@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Network/components/SmartInviteGenerator.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Network\components\SmartInviteGenerator.jsx
 import { useState } from "react";
 import { QrCode, Copy, Mail, MessageSquare, Download, CheckCircle2, Sparkles } from "lucide-react";
 import { theme } from "../../../../styles/theme";
@@ -39,7 +39,7 @@ export default function SmartInviteGenerator({ userId, referralLink, onClose }) 
   const downloadQR = () => {
     if (!qrCodeUrl) return;
     const link = document.createElement("a");
-    link.download = "propdash-referral-qr.png";
+    link.download = "levlpro-referral-qr.png";
     link.href = qrCodeUrl;
     link.click();
   };
@@ -51,14 +51,14 @@ export default function SmartInviteGenerator({ userId, referralLink, onClose }) 
 
 I'm building a trusted network of service professionals and I'd love for you to join.
 
-PropDash helps us manage jobs, get paid faster, and grow our businesses together. Plus, we can refer jobs to each other and both earn extra income.
+LevlPro helps us manage jobs, get paid faster, and grow our businesses together. Plus, we can refer jobs to each other and both earn extra income.
 
 Join my network here: ${referralLink}
 
 Looking forward to working together!`,
       casual: `Hey!
 
-I've been using PropDash to run my business and it's been a game changer. 
+I've been using LevlPro to run my business and it's been a game changer. 
 
 Thought you might want to check it out - we can connect our networks and refer jobs to each other. Easy extra money!
 
@@ -67,7 +67,7 @@ Here's my invite link: ${referralLink}
 Let me know if you have questions!`,
       friendly: `Hi friend!
 
-I wanted to invite you to join my network on PropDash! 🎉
+I wanted to invite you to join my network on LevlPro! 🎉
 
 It's this awesome platform where we can manage our businesses and refer jobs to each other. When you complete a job I refer, I earn a commission, and vice versa. Win-win!
 
@@ -231,7 +231,7 @@ Can't wait to work with you!`,
         <div className="grid grid-cols-2 gap-3">
           <button
             onClick={() => {
-              window.location.href = `mailto:?subject=Join my network on PropDash&body=${encodeURIComponent(message)}`;
+              window.location.href = `mailto:?subject=Join my network on LevlPro&body=${encodeURIComponent(message)}`;
             }}
             className="flex items-center justify-center gap-2 p-4 bg-blue-50 border-2 border-blue-200 rounded-lg hover:bg-blue-100 transition text-blue-700 font-medium"
           >

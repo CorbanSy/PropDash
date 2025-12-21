@@ -1,4 +1,4 @@
-// src/pages/Landing/components/Stats.jsx
+// levlpro-mvp\src\pages\Landing\components\Stats.jsx
 import AnimatedStatBox from "../helpers/AnimatedStatBox";
 
 export default function Stats() {

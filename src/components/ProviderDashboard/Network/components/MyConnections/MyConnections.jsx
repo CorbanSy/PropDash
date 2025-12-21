@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Network/components/MyConnections/MyConnections.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Network\components\MyConnections\MyConnections.jsx
 import { useState } from "react";
 import { UserCheck } from "lucide-react";
 import { supabase } from "../../../../../lib/supabaseClient";

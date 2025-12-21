@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Schedule/Schedule.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Schedule\Schedule.jsx
 import { useState, useEffect } from "react";
 import { Calendar, Clock, Settings, PartyPopper } from "lucide-react";
 import { supabase } from "../../../lib/supabaseClient";

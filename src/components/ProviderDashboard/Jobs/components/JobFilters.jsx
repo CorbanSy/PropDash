@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Jobs/components/JobFilters.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Jobs\components\JobFilters.jsx
 import { theme } from "../../../../styles/theme";
 
 export default function JobFilters({ filters, setFilters, jobs }) {

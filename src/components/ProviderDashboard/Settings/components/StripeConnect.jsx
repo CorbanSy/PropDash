@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Settings/components/StripeConnect.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Settings\components\StripeConnect.jsx
 import { useState } from "react";
 import { CreditCard, ExternalLink, DollarSign, TrendingUp, CheckCircle2 } from "lucide-react";
 import { supabase } from "../../../../lib/supabaseClient";

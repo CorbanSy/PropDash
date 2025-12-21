@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Jobs/components/JobStatusManager.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Jobs\components\JobStatusManager.jsx
 import { useState } from "react";
 import { CheckCircle2, Clock, AlertCircle, Play, Pause } from "lucide-react";
 import { theme } from "../../../../styles/theme";

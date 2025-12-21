@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Settings/components/Security.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Settings\components\Security.jsx
 import { useState } from "react";
 import {
   Lock,

@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/QuoteBuilder/components/TemplateSelector.jsx
+//levlpro-mvp\src\components\ProviderDashboard\QuoteBuilder\components\TemplateSelector.jsx
 import { X, FileText, Check } from "lucide-react";
 import { theme } from "../../../../styles/theme";
 import { getTemplateList, getTemplate } from "../utils/templates";

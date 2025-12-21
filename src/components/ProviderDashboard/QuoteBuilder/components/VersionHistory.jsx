@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/QuoteBuilder/components/VersionHistory.jsx
+//levlpro-mvp\src\components\ProviderDashboard\QuoteBuilder\components\VersionHistory.jsx
 import { X, Clock, Eye, FileText, ChevronRight } from "lucide-react";
 import { theme } from "../../../../styles/theme";
 import { formatCurrency } from "../utils/quoteCalculations";

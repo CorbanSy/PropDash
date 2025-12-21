@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Network/components/PartnerCard.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Network\components\PartnerCard.jsx
 import {
   Star,
   MapPin,

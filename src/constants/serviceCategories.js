@@ -1,4 +1,4 @@
-// src/constants/serviceCategories.js
+//levlpro-mvp\src\constants\serviceCategories.js
 import {
   Wrench,
   Home,

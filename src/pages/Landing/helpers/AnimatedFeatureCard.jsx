@@ -1,4 +1,4 @@
-// src/pages/Landing/helpers/AnimatedFeatureCard.jsx
+// levlpro-mvp\src\pages\Landing\helpers\AnimatedFeatureCard.jsx
 export default function AnimatedFeatureCard({
   icon,
   bgColor,

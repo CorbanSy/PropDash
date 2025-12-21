@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Schedule/components/CalendarDay.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Schedule\components\CalendarDay.jsx
 import { Ban } from "lucide-react";
 import { formatTime } from "../utils/timeUtils";
 

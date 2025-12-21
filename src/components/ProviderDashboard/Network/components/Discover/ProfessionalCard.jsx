@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Network/components/Discover/ProfessionalCard.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Network\components\Discover\ProfessionalCard.jsx
 import { useState } from "react";
 import {
   UserPlus,

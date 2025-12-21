@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Network/components/Invites/ReceivedInviteCard.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Network\components\Invites\ReceivedInviteCard.jsx
 import { useState } from "react";
 import { Check, X, CheckCircle } from "lucide-react";
 import { theme } from "../../../../../styles/theme";

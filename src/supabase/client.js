@@ -1,4 +1,4 @@
-//propdash-mvp\src\supabase\client.js
+//levlpro-mvp\src\supabase\client.js
 import { createClient } from "@supabase/supabase-js";
 
 export const supabase = createClient(

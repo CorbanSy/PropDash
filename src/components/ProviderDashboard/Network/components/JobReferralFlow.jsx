@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Network/components/JobReferralFlow.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Network\components\JobReferralFlow.jsx
 import { useState } from "react";
 import { X, User, Briefcase, Calendar, DollarSign, MapPin, MessageSquare, Send, Zap, Star, AlertCircle } from "lucide-react";
 import { theme } from "../../../../styles/theme";

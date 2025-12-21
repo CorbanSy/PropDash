@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Jobs/components/JobStats.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Jobs\components\JobStats.jsx
 import { DollarSign, Briefcase, AlertCircle, Calendar } from "lucide-react";
 import { theme } from "../../../../styles/theme";
 import {

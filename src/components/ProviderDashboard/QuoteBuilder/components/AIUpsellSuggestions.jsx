@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/QuoteBuilder/components/AIUpsellSuggestions.jsx
+//levlpro-mvp\src\components\ProviderDashboard\QuoteBuilder\components\AIUpsellSuggestions.jsx
 import { Sparkles, Plus, X } from "lucide-react";
 import { theme } from "../../../../styles/theme";
 

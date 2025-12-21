@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Schedule/components/QuickActionsMenu.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Schedule\components\QuickActionsMenu.jsx
 import { useEffect, useRef } from "react";
 import { Eye, Ban, Clock, CheckCircle2 } from "lucide-react";
 

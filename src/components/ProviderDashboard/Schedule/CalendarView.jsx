@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Schedule/CalendarView.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Schedule\CalendarView.jsx
 import { useState, useEffect } from "react";
 import { AlertCircle, ChevronLeft, ChevronRight, Ban, Search, Calendar } from "lucide-react";
 import { theme } from "../../../styles/theme";

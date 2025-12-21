@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Jobs/components/JobCalendarView.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Jobs\components\JobCalendarView.jsx
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import { theme } from "../../../../styles/theme";

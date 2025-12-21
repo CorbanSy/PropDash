@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/QuoteBuilder/components/ServiceCatalog.jsx
+//levlpro-mvp\src\components\ProviderDashboard\QuoteBuilder\components\ServiceCatalog.jsx
 import { useState, useEffect } from "react";
 import { Plus, Edit2, Trash2, Search, X } from "lucide-react";
 import { theme } from "../../../../styles/theme";

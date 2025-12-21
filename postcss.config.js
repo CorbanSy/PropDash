@@ -1,4 +1,4 @@
-//propdash-mvp\postcss.config.js
+//levlpro-mvp\postcss.config.js
 export default {
   plugins: {
     tailwindcss: {},

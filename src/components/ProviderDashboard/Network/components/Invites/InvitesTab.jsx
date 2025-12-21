@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Network/components/Invites/InvitesTab.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Network\components\Invites\InvitesTab.jsx
 import { useState } from "react";
 import { Bell, Clock } from "lucide-react";
 import ReceivedInviteCard from "./ReceivedInviteCard";

@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Network/components/Modals/ConnectionInviteModal.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Network\components\Modals\ConnectionInviteModal.jsx
 import { useState } from "react";
 import { UserPlus, X, Send } from "lucide-react";
 

@@ -1,4 +1,4 @@
-// src/pages/Register/components/BenefitItem.jsx
+//levlpro-mvp\src\pages\Register\components\BenefitItem.jsx
 
 export default function BenefitItem({ icon, title, description }) {
   return (

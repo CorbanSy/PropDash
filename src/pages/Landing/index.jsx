@@ -1,2 +1,2 @@
-// src/pages/Landing/index.jsx
+//levlpro-mvp\src\pages\Landing\index.jsx
 export { default } from './Landing';

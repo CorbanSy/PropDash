@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Network/components/Discover/DiscoverTab.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Network\components\Discover\DiscoverTab.jsx
 import { useState, useEffect, useMemo } from "react";
 import { Users, Search } from "lucide-react";
 import { theme } from "../../../../../styles/theme";

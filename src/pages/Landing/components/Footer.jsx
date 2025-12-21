@@ -1,4 +1,4 @@
-// src/pages/Landing/components/Footer.jsx
+//levlpro-mvp\src\pages\Landing\components\Footer.jsx
 import { Link } from "react-router-dom";
 import { Wrench } from "lucide-react";
 
@@ -16,7 +16,7 @@ export default function Footer() {
                   <Wrench className="w-6 h-6 text-white" />
                 </div>
               </div>
-              <h3 className="text-2xl font-bold">PropDash</h3>
+              <h3 className="text-2xl font-bold">LevlPro</h3>
             </div>
             <p className="text-secondary-400 text-base leading-relaxed max-w-md">
               Professional property services platform connecting licensed service
@@ -105,7 +105,7 @@ export default function Footer() {
 
         <div className="border-t border-secondary-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-secondary-400">
-            © {new Date().getFullYear()} PropDash. All rights reserved.
+            © {new Date().getFullYear()} LevlPro. All rights reserved.
           </p>
           <div className="flex items-center gap-6 text-sm text-secondary-400">
             <a href="#" className="hover:text-white transition-colors duration-200">

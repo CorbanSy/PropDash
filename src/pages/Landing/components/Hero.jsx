@@ -1,4 +1,4 @@
-// src/pages/Landing/components/Hero.jsx
+//levlpro-mvp\src\pages\Landing\components\Hero.jsx
 import { Link } from "react-router-dom";
 import {
   CheckCircle2,

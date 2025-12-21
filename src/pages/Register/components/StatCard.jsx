@@ -1,4 +1,4 @@
-// src/pages/Register/components/StatCard.jsx
+//levlpro-mvp\src\pages\Register\components\StatCard.jsx
 
 export default function StatCard({ number, label }) {
   return (

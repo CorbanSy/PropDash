@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/BookingList.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Jobs\BookingList.jsx
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { Calendar, Clock, User, Loader2 } from "lucide-react";

@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Jobs/JobDetails.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Jobs\JobDetails.jsx
 import { useState } from "react";
 import { X, Briefcase, Edit, Trash2 } from "lucide-react";
 import { theme } from "../../../styles/theme";

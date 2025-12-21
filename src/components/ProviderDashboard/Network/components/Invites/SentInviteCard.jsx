@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Network/components/Invites/SentInviteCard.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Network\components\Invites\SentInviteCard.jsx
 import { useState } from "react";
 import { X, Clock } from "lucide-react";
 import { theme } from "../../../../../styles/theme";

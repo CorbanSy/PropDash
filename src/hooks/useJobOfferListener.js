@@ -1,4 +1,4 @@
-// src/hooks/useJobOfferListener.js
+//levlpro-mvp\src\hooks\useJobOfferListener.js
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 

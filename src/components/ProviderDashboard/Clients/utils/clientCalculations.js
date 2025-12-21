@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Clients/utils/clientCalculations.js
+//levlpro-mvp\src\components\ProviderDashboard\Clients\utils\clientCalculations.js
 
 /**
  * Calculate Client Lifetime Value

@@ -1,4 +1,4 @@
-// src/pages/Landing/components/CTA.jsx
+//levlpro-mvp\src\pages\Landing\components\CTA.jsx
 import { Link } from "react-router-dom";
 import { Home, Wrench, Search, TrendingUp, Check } from "lucide-react";
 
@@ -14,7 +14,7 @@ export default function CTA() {
         </h2>
         <p className="text-xl text-primary-100 mb-12 leading-relaxed max-w-3xl mx-auto">
           Join thousands of property owners and service professionals using
-          PropDash to simplify property management and grow their businesses.
+          LevlPro to simplify property management and grow their businesses.
         </p>
 
         <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">

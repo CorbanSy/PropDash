@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Jobs/utils/jobHelpers.js
+//levlpro-mvp\src\components\ProviderDashboard\Jobs\utils\jobHelpers.js
 
 /**
  * Get status badge configuration

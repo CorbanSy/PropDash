@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Settings/components/AIQuotePreferences.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Settings\components\AIQuotePreferences.jsx
 import { useState, useEffect } from "react";
 import { Settings as SettingsIcon, Save, Zap, DollarSign, TrendingUp } from "lucide-react";
 import { supabase } from "../../../../lib/supabaseClient";

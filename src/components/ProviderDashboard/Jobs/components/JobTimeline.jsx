@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Jobs/components/JobTimeline.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Jobs\components\JobTimeline.jsx
 import { Calendar, Clock, CheckCircle2, DollarSign, FileText } from "lucide-react";
 import { theme } from "../../../../styles/theme";
 

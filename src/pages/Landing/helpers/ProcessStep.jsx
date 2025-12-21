@@ -1,4 +1,4 @@
-// src/pages/Landing/helpers/ProcessStep.jsx
+//levlpro-mvp\src\pages\Landing\helpers\ProcessStep.jsx
 export default function ProcessStep({ number, title, description }) {
   return (
     <div className="flex items-start gap-4 group">

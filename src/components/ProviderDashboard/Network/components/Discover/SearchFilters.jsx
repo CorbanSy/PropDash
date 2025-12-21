@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Network/components/Discover/SearchFilters.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Network\components\Discover\SearchFilters.jsx
 import { Search } from "lucide-react";
 import { theme } from "../../../../../styles/theme";
 

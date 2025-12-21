@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Jobs/components/JobCard.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Jobs\components\JobCard.jsx
 import { Calendar, Clock, DollarSign, User, MapPin, AlertCircle, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { theme } from "../../../../styles/theme";

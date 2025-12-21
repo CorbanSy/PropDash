@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/QuoteBuilder/components/LineItemEditor.jsx
+//levlpro-mvp\src\components\ProviderDashboard\QuoteBuilder\components\LineItemEditor.jsx
 import { useState } from "react";
 import { GripVertical, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import { theme } from "../../../../styles/theme";

@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Jobs/components/PaymentTracker.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Jobs\components\PaymentTracker.jsx
 import { useState } from "react";
 import { DollarSign, CheckCircle2, Clock, CreditCard, Calendar } from "lucide-react";
 import { theme } from "../../../../styles/theme";

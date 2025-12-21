@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Schedule/components/DraggableJob.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Schedule\components\DraggableJob.jsx
 import { Calendar, Clock, GripVertical } from "lucide-react";
 
 export default function DraggableJob({ job, onDragStart, onDragEnd }) {

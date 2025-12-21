@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Clients/ClientProfile.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Clients\ClientProfile.jsx
 import { useState } from "react";
 import {
   X,

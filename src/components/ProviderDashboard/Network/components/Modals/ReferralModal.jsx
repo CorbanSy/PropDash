@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Network/components/MyConnections/ReferralModal.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Network\components\Modals\ReferralModal.jsx
 import { useState, useEffect } from "react";
 import { Send, X, Briefcase, Calendar, DollarSign, MapPin, AlertCircle, User } from "lucide-react";
 import { supabase } from "../../../../../lib/supabaseClient";

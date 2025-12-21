@@ -1,4 +1,4 @@
-// src/pages/Landing/components/Testimonials.jsx
+//levlpro-mvp\src\pages\Landing\components\Testimonials.jsx
 import { Star } from "lucide-react";
 
 export default function Testimonials() {
@@ -27,7 +27,7 @@ export default function Testimonials() {
               ))}
             </div>
             <blockquote className="text-lg font-medium text-secondary-800 mb-8 leading-relaxed">
-              "PropDash connected me with a licensed plumber within an hour of
+              "LevlPro connected me with a licensed plumber within an hour of
               posting my request. Professional service, transparent pricing, and
               excellent results. Exactly what I needed."
             </blockquote>
@@ -56,7 +56,7 @@ export default function Testimonials() {
               ))}
             </div>
             <blockquote className="text-lg font-medium text-secondary-800 mb-8 leading-relaxed">
-              "PropDash has transformed my business. Quality leads, professional
+              "LevlPro has transformed my business. Quality leads, professional
               tools, and reliable income. The AI quote builder alone saves me
               hours every week."
             </blockquote>

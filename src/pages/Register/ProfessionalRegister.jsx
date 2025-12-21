@@ -1,4 +1,4 @@
-// src/pages/Register/ProfessionalRegister.jsx
+//levlpro-mvp\src\pages\Register\ProfessionalRegister.jsx
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { 
@@ -123,7 +123,7 @@ export default function ProfessionalRegister() {
               <Wrench className="text-white" size={32} />
             </div>
             <div>
-              <h1 className="text-white text-3xl font-bold tracking-tight group-hover:text-slate-100 transition">PropDash</h1>
+              <h1 className="text-white text-3xl font-bold tracking-tight group-hover:text-slate-100 transition">LevlPro</h1>
               <p className="text-slate-100 text-sm font-medium">Business Management Platform</p>
             </div>
           </Link>
@@ -138,7 +138,7 @@ export default function ProfessionalRegister() {
               </span>
             </h2>
             <p className="text-slate-100 text-lg leading-relaxed">
-              Join hundreds of service professionals who trust PropDash to manage their operations.
+              Join hundreds of service professionals who trust LevlPro to manage their operations.
             </p>
           </div>
 
@@ -186,7 +186,7 @@ export default function ProfessionalRegister() {
               <Wrench className="text-white" size={28} />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-secondary-900 group-hover:text-secondary-700 transition">PropDash</h1>
+              <h1 className="text-2xl font-bold text-secondary-900 group-hover:text-secondary-700 transition">LevlPro</h1>
               <p className="text-xs text-secondary-500">Business Management</p>
             </div>
           </Link>
