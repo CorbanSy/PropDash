@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import { supabase } from "../../../lib/supabaseClient";
 import useAuth from "../../../hooks/useAuth";
+import { theme } from "../../../styles/theme";
 import ProfilePhotoUpload from "./components/ProfilePhotoUpload";
 import PhoneVerification from "./components/PhoneVerification";
 import ServiceAreas from "./components/ServiceAreas";
@@ -262,8 +263,8 @@ export default function Settings() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Settings</h1>
-          <p className="text-slate-600 mt-1">
+          <h1 className={theme.text.h1}>Settings</h1>
+          <p className={`${theme.text.body} mt-1`}>
             Manage your account and preferences
           </p>
         </div>
@@ -271,13 +272,13 @@ export default function Settings() {
 
       {/* Success/Error Messages */}
       {success && (
-        <div className="bg-green-50 border border-green-200 text-green-800 p-4 rounded-xl flex items-center gap-3">
+        <div className={`${theme.alert.success} flex items-center gap-3`}>
           <CheckCircle2 size={20} />
           <span className="font-medium">{success}</span>
         </div>
       )}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-xl flex items-center gap-3">
+        <div className={`${theme.alert.error} flex items-center gap-3`}>
           <AlertTriangle size={20} />
           <span className="font-medium">{error}</span>
         </div>
@@ -455,8 +456,8 @@ function TabButton({ active, onClick, icon, label }) {
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-3 font-medium transition relative whitespace-nowrap ${
-        active ? "text-blue-600" : "text-slate-600 hover:text-slate-900"
+      className={`px-4 py-3 font-semibold transition relative whitespace-nowrap ${
+        active ? "text-primary-700" : "text-secondary-600 hover:text-secondary-900"
       }`}
     >
       <span className="flex items-center gap-2">
@@ -464,7 +465,7 @@ function TabButton({ active, onClick, icon, label }) {
         {label}
       </span>
       {active && (
-        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-700"></div>
       )}
     </button>
   );
@@ -498,19 +499,19 @@ function ProfileTab({
       />
 
       {/* Business Information */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div className={`${theme.card.base} ${theme.card.padding}`}>
         <div className="flex items-center gap-3 mb-6">
-          <div className="bg-blue-100 p-2.5 rounded-lg">
-            <Building2 className="text-blue-600" size={20} />
+          <div className="bg-primary-100 p-2.5 rounded-lg">
+            <Building2 className="text-primary-600" size={20} />
           </div>
-          <h3 className="text-lg font-semibold text-slate-900">
+          <h3 className={theme.text.h4}>
             Business Information
           </h3>
         </div>
 
         <div className="space-y-5">
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className={`${theme.text.label} block mb-2`}>
               Business Name
             </label>
             <input
@@ -522,18 +523,18 @@ function ProfileTab({
                   business_name: e.target.value,
                 })
               }
-              className="w-full border-2 border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+              className={`${theme.input.base} ${theme.input.focus}`}
               placeholder="John's Handyman Services"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className={`${theme.text.label} block mb-2`}>
               Base Hourly Rate (in cents)
             </label>
             <div className="relative">
               <DollarSign
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400"
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-secondary-400"
                 size={18}
               />
               <input
@@ -546,11 +547,11 @@ function ProfileTab({
                     base_rate: parseInt(e.target.value) || 0,
                   })
                 }
-                className="w-full border-2 border-slate-300 rounded-xl pl-11 pr-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+                className={`${theme.input.base} ${theme.input.focus} pl-11`}
                 placeholder="8500 (= $85.00/hr)"
               />
             </div>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className={`${theme.text.caption} mt-1`}>
               Enter rate in cents (e.g., 8500 = $85.00/hr)
             </p>
           </div>
@@ -558,12 +559,12 @@ function ProfileTab({
       </div>
 
       {/* Booking Link */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div className={`${theme.card.base} ${theme.card.padding}`}>
         <div className="flex items-center gap-3 mb-4">
-          <div className="bg-green-100 p-2.5 rounded-lg">
-            <ExternalLink className="text-green-600" size={20} />
+          <div className="bg-success-100 p-2.5 rounded-lg">
+            <ExternalLink className="text-success-600" size={20} />
           </div>
-          <h3 className="text-lg font-semibold text-slate-900">
+          <h3 className={theme.text.h4}>
             Your Booking Link
           </h3>
         </div>
@@ -573,11 +574,11 @@ function ProfileTab({
             type="text"
             value={`${window.location.origin}/book/${user.id}`}
             readOnly
-            className="flex-1 border-2 border-slate-300 rounded-xl px-4 py-3 bg-slate-50 text-slate-600"
+            className={`${theme.input.base} ${theme.input.disabled} flex-1`}
           />
           <button
             onClick={copyBookingLink}
-            className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition flex items-center gap-2"
+            className={theme.button.primary}
           >
             <Copy size={18} />
             Copy
@@ -589,7 +590,7 @@ function ProfileTab({
       <button
         onClick={handleSaveProfile}
         disabled={saving}
-        className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/30"
+        className={`${theme.button.primary} w-full py-4 disabled:opacity-50 justify-center`}
       >
         {saving ? (
           <>
@@ -619,19 +620,19 @@ function SecurityTab({
   return (
     <div className="space-y-6">
       {/* Change Password */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div className={`${theme.card.base} ${theme.card.padding}`}>
         <div className="flex items-center gap-3 mb-6">
-          <div className="bg-red-100 p-2.5 rounded-lg">
-            <Lock className="text-red-600" size={20} />
+          <div className="bg-error-100 p-2.5 rounded-lg">
+            <Lock className="text-error-600" size={20} />
           </div>
-          <h3 className="text-lg font-semibold text-slate-900">
+          <h3 className={theme.text.h4}>
             Change Password
           </h3>
         </div>
 
         <form onSubmit={handleChangePassword} className="space-y-5">
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className={`${theme.text.label} block mb-2`}>
               New Password
             </label>
             <div className="relative">
@@ -644,14 +645,14 @@ function SecurityTab({
                     newPassword: e.target.value,
                   })
                 }
-                className="w-full border-2 border-slate-300 rounded-xl px-4 py-3 pr-12 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+                className={`${theme.input.base} ${theme.input.focus} pr-12`}
                 placeholder="••••••••"
                 minLength={6}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-secondary-400 hover:text-secondary-600"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -659,7 +660,7 @@ function SecurityTab({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className={`${theme.text.label} block mb-2`}>
               Confirm New Password
             </label>
             <input
@@ -671,7 +672,7 @@ function SecurityTab({
                   confirmPassword: e.target.value,
                 })
               }
-              className="w-full border-2 border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+              className={`${theme.input.base} ${theme.input.focus}`}
               placeholder="••••••••"
               minLength={6}
             />
@@ -679,7 +680,7 @@ function SecurityTab({
 
           <button
             type="submit"
-            className="w-full bg-slate-900 text-white py-3 rounded-xl font-semibold hover:bg-slate-800 transition"
+            className={`${theme.button.primary} w-full justify-center`}
           >
             Update Password
           </button>
@@ -687,14 +688,14 @@ function SecurityTab({
       </div>
 
       {/* Logout */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div className={`${theme.card.base} ${theme.card.padding}`}>
         <div className="flex items-center gap-3 mb-4">
-          <div className="bg-red-100 p-2.5 rounded-lg">
-            <LogOut className="text-red-600" size={20} />
+          <div className="bg-error-100 p-2.5 rounded-lg">
+            <LogOut className="text-error-600" size={20} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-slate-900">Log Out</h3>
-            <p className="text-sm text-slate-600">
+            <h3 className={theme.text.h4}>Log Out</h3>
+            <p className={theme.text.muted}>
               Sign out of your account on this device
             </p>
           </div>
@@ -702,7 +703,7 @@ function SecurityTab({
 
         <button
           onClick={handleLogout}
-          className="w-full border-2 border-red-300 text-red-600 py-3 rounded-xl font-semibold hover:bg-red-50 transition flex items-center justify-center gap-2"
+          className={`${theme.button.dangerOutline} w-full justify-center`}
         >
           <LogOut size={20} />
           Log Out
