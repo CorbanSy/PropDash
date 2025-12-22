@@ -1,4 +1,3 @@
-//levlpro-mvp\src\components\ProviderDashboard\Network\components\Discover\SearchFilters.jsx
 import { Search } from "lucide-react";
 import { theme } from "../../../../../styles/theme";
 
@@ -15,7 +14,7 @@ export default function SearchFilters({
         {/* Search */}
         <div className="flex-1 relative">
           <Search
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400"
             size={18}
           />
           <input
@@ -23,7 +22,7 @@ export default function SearchFilters({
             placeholder="Search by name or service..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className={`${theme.input.base} ${theme.input.focus} pl-10`}
           />
         </div>
 
@@ -31,7 +30,7 @@ export default function SearchFilters({
         <select
           value={selectedService}
           onChange={(e) => setSelectedService(e.target.value)}
-          className="border-2 border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          className={`${theme.input.base} ${theme.input.focus}`}
         >
           <option value="all">All Services</option>
           {serviceCategories

@@ -1,4 +1,3 @@
-//levlpro-mvp\src\components\ProviderDashboard\Network\components\MyConnections\MyConnections.jsx
 import { useState } from "react";
 import { UserCheck } from "lucide-react";
 import { supabase } from "../../../../../lib/supabaseClient";
@@ -119,7 +118,7 @@ export default function MyConnections({ connections, currentUserId, onRefresh })
     return (
       <div className={`${theme.card.base} ${theme.card.padding} text-center py-12`}>
         <div className="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-          <UserCheck className="text-slate-400" size={32} />
+          <UserCheck className="text-secondary-400" size={32} />
         </div>
         <h3 className={`${theme.text.h3} mb-2`}>No Connections Yet</h3>
         <p className={theme.text.body}>

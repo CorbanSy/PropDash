@@ -1,4 +1,3 @@
-//levlpro-mvp\src\components\ProviderDashboard\Network\components\JobReferralFlow.jsx
 import { useState } from "react";
 import { X, User, Briefcase, Calendar, DollarSign, MapPin, MessageSquare, Send, Zap, Star, AlertCircle } from "lucide-react";
 import { theme } from "../../../../styles/theme";
@@ -169,24 +168,24 @@ Please review this job in your dashboard and accept or decline.`;
               Transfer this job to a trusted partner in your network
             </p>
           </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition">
+          <button onClick={onClose} className="text-secondary-400 hover:text-secondary-600 transition">
             <X size={24} />
           </button>
         </div>
 
         <div className="p-6 space-y-6">
           {/* Job Summary */}
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-lg p-5">
+          <div className="bg-gradient-to-r from-primary-50 to-purple-50 border-2 border-primary-200 rounded-lg p-5">
             <div className="flex items-start gap-3 mb-4">
-              <div className="bg-blue-600 p-2 rounded-lg">
+              <div className="bg-primary-600 p-2 rounded-lg">
                 <Briefcase className="text-white" size={20} />
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-slate-900 text-lg mb-1">
+                <h3 className={`${theme.text.h4} mb-1`}>
                   {job.service_category || "Service Request"}
                 </h3>
                 {job.description && (
-                  <p className="text-sm text-slate-700 mb-3">{job.description}</p>
+                  <p className={`${theme.text.caption} text-secondary-700 mb-3`}>{job.description}</p>
                 )}
               </div>
             </div>
@@ -194,52 +193,52 @@ Please review this job in your dashboard and accept or decline.`;
             <div className="grid grid-cols-2 gap-4 text-sm">
               {job.client?.name && (
                 <div>
-                  <p className="text-slate-600 mb-1 flex items-center gap-1">
+                  <p className={`${theme.text.caption} mb-1 flex items-center gap-1`}>
                     <User size={12} />
                     Client
                   </p>
-                  <p className="font-semibold text-slate-900">{job.client.name}</p>
+                  <p className="font-semibold text-secondary-900">{job.client.name}</p>
                 </div>
               )}
               {job.preferred_date && (
                 <div>
-                  <p className="text-slate-600 mb-1 flex items-center gap-1">
+                  <p className={`${theme.text.caption} mb-1 flex items-center gap-1`}>
                     <Calendar size={12} />
                     Preferred Date
                   </p>
-                  <p className="font-semibold text-slate-900">
+                  <p className="font-semibold text-secondary-900">
                     {new Date(job.preferred_date).toLocaleDateString()}
                   </p>
                 </div>
               )}
               {job.budget && (
                 <div>
-                  <p className="text-slate-600 mb-1 flex items-center gap-1">
+                  <p className={`${theme.text.caption} mb-1 flex items-center gap-1`}>
                     <DollarSign size={12} />
                     Budget
                   </p>
-                  <p className="font-semibold text-slate-900">
+                  <p className="font-semibold text-secondary-900">
                     ${(job.budget / 100).toFixed(0)}
                   </p>
                 </div>
               )}
               {job.location && (
                 <div>
-                  <p className="text-slate-600 mb-1 flex items-center gap-1">
+                  <p className={`${theme.text.caption} mb-1 flex items-center gap-1`}>
                     <MapPin size={12} />
                     Location
                   </p>
-                  <p className="font-semibold text-slate-900">{job.location}</p>
+                  <p className="font-semibold text-secondary-900">{job.location}</p>
                 </div>
               )}
             </div>
           </div>
 
           {/* Important Notice */}
-          <div className="bg-amber-50 border-2 border-amber-200 rounded-lg p-4">
+          <div className="bg-warning-50 border-2 border-warning-200 rounded-lg p-4">
             <div className="flex items-start gap-3">
-              <AlertCircle className="text-amber-600 flex-shrink-0 mt-0.5" size={20} />
-              <div className="text-sm text-amber-800">
+              <AlertCircle className="text-warning-600 flex-shrink-0 mt-0.5" size={20} />
+              <div className="text-sm text-warning-800">
                 <p className="font-semibold mb-1">Important:</p>
                 <ul className="list-disc list-inside space-y-1">
                   <li>This job will be transferred to the selected partner</li>
@@ -256,7 +255,7 @@ Please review this job in your dashboard and accept or decline.`;
             <div className="space-y-4">
               <div>
                 <h3 className={`${theme.text.h3} mb-2`}>Select Connection</h3>
-                <p className="text-sm text-slate-600">
+                <p className={theme.text.caption}>
                   {matchedConnections.length > 0
                     ? `${matchedConnections.length} connection(s) match this service`
                     : "No connections match this service"}
@@ -268,7 +267,7 @@ Please review this job in your dashboard and accept or decline.`;
                   <p className={theme.text.body}>
                     No connections found for {job.service_category}
                   </p>
-                  <p className="text-sm text-slate-500 mt-2">
+                  <p className={`${theme.text.caption} mt-2`}>
                     Connect with professionals in this service area first
                   </p>
                 </div>
@@ -298,13 +297,13 @@ Please review this job in your dashboard and accept or decline.`;
                         onClick={() => setSelectedPartner(transformedPartner)}
                         className={`w-full text-left p-4 rounded-lg border-2 transition ${
                           selectedPartner?.id === transformedPartner.id
-                            ? "border-blue-500 bg-blue-50"
-                            : "border-slate-200 hover:border-blue-200"
+                            ? "border-primary-500 bg-primary-50"
+                            : "border-slate-200 hover:border-primary-200"
                         }`}
                       >
                         <div className="flex items-start gap-3">
                           {/* Profile Photo */}
-                          <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg flex-shrink-0 overflow-hidden">
+                          <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg flex-shrink-0 overflow-hidden">
                             {partner.profile_photo ? (
                               <img
                                 src={partner.profile_photo}
@@ -318,25 +317,25 @@ Please review this job in your dashboard and accept or decline.`;
 
                           <div className="flex-1">
                             <div className="flex items-center justify-between mb-2">
-                              <h4 className="font-semibold text-slate-900">
+                              <h4 className={`${theme.text.h5}`}>
                                 {partner.business_name || "Professional"}
                               </h4>
                               <div className="flex items-center gap-2">
                                 {partner.verification_status === "verified" && (
-                                  <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full font-semibold">
+                                  <span className="text-xs px-2 py-1 bg-success-100 text-success-700 rounded-full font-semibold">
                                     Verified
                                   </span>
                                 )}
                                 {partner.is_online && (
-                                  <div className="flex items-center gap-1 text-xs text-green-700">
-                                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                  <div className="flex items-center gap-1 text-xs text-success-700">
+                                    <div className="w-2 h-2 bg-success-500 rounded-full animate-pulse"></div>
                                     Online
                                   </div>
                                 )}
                               </div>
                             </div>
 
-                            <div className="flex items-center gap-4 text-xs text-slate-600">
+                            <div className={`flex items-center gap-4 ${theme.text.caption}`}>
                               <div className="flex items-center gap-1">
                                 <Star size={12} className="text-yellow-500 fill-yellow-500" />
                                 <span>{transformedPartner.rating.toFixed(1)}</span>
@@ -360,7 +359,7 @@ Please review this job in your dashboard and accept or decline.`;
                                   .map((service, idx) => (
                                     <span
                                       key={idx}
-                                      className="text-xs px-2 py-0.5 bg-slate-100 text-slate-700 rounded"
+                                      className="text-xs px-2 py-0.5 bg-slate-100 text-secondary-700 rounded"
                                     >
                                       {service}
                                     </span>
@@ -378,7 +377,7 @@ Please review this job in your dashboard and accept or decline.`;
               <button
                 onClick={() => setStep(2)}
                 disabled={!selectedPartner}
-                className={`w-full ${theme.button.provider} justify-center ${
+                className={`${theme.button.primary} w-full justify-center ${
                   !selectedPartner ? "opacity-50 cursor-not-allowed" : ""
                 }`}
               >
@@ -395,10 +394,10 @@ Please review this job in your dashboard and accept or decline.`;
               </div>
 
               {/* Selected Partner */}
-              <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-5">
-                <h4 className="font-semibold text-blue-900 mb-4">Referring To</h4>
+              <div className="bg-primary-50 border-2 border-primary-200 rounded-lg p-5">
+                <h4 className="font-semibold text-primary-900 mb-4">Referring To</h4>
                 <div className="flex items-center gap-3">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl overflow-hidden">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl overflow-hidden">
                     {selectedPartner.avatar_url ? (
                       <img
                         src={selectedPartner.avatar_url}
@@ -410,10 +409,10 @@ Please review this job in your dashboard and accept or decline.`;
                     )}
                   </div>
                   <div>
-                    <p className="font-bold text-slate-900 text-lg">
+                    <p className={`${theme.text.h4}`}>
                       {selectedPartner.business_name}
                     </p>
-                    <div className="flex items-center gap-3 text-sm text-slate-600">
+                    <div className={`flex items-center gap-3 ${theme.text.caption}`}>
                       <span className="flex items-center gap-1">
                         <Star size={12} className="text-yellow-500 fill-yellow-500" />
                         {selectedPartner.rating}
@@ -444,12 +443,12 @@ Please review this job in your dashboard and accept or decline.`;
               {/* Custom Message */}
               <div>
                 <label className={theme.text.label}>
-                  Message to Partner <span className="text-slate-500">(Optional)</span>
+                  Message to Partner <span className="text-secondary-500">(Optional)</span>
                 </label>
                 <textarea
                   value={customMessage}
                   onChange={(e) => setCustomMessage(e.target.value)}
-                  className={`${theme.input.base} ${theme.input.provider} mt-2`}
+                  className={`${theme.input.base} ${theme.input.focus} mt-2`}
                   rows={4}
                   placeholder="Add any special notes about this job, client preferences, or important details..."
                 />
@@ -458,14 +457,14 @@ Please review this job in your dashboard and accept or decline.`;
               <div className="flex gap-3">
                 <button
                   onClick={() => setStep(1)}
-                  className={`flex-1 ${theme.button.secondary} justify-center`}
+                  className={`${theme.button.secondary} flex-1 justify-center`}
                 >
                   Back
                 </button>
                 <button
                   onClick={handleSubmit}
                   disabled={loading}
-                  className={`flex-1 ${theme.button.provider} justify-center ${
+                  className={`${theme.button.primary} flex-1 justify-center ${
                     loading ? "opacity-50 cursor-not-allowed" : ""
                   }`}
                 >

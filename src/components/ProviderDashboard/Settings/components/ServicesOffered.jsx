@@ -1,8 +1,8 @@
-//levlpro-mvp\src\components\ProviderDashboard\Settings\components\ServicesOffered.jsx
 import { useState, useEffect } from "react";
 import { Briefcase, Save, CheckCircle2 } from "lucide-react";
 import { supabase } from "../../../../lib/supabaseClient";
 import { SERVICES_BY_CATEGORY } from "../../../../constants/serviceCategories";
+import { theme } from "../../../../styles/theme";
 
 export default function ServicesOffered({ providerData, onUpdate }) {
   const [saving, setSaving] = useState(false);
@@ -79,30 +79,30 @@ export default function ServicesOffered({ providerData, onUpdate }) {
     <div className="space-y-6">
       {/* Success Message */}
       {success && (
-        <div className="bg-green-50 border border-green-200 text-green-800 p-4 rounded-xl flex items-center gap-2">
+        <div className={`${theme.alert.success} flex items-center gap-3`}>
           <CheckCircle2 size={20} />
-          {success}
+          <span className="font-medium">{success}</span>
         </div>
       )}
 
       {/* Header */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div className={`${theme.card.base} ${theme.card.padding}`}>
         <div className="flex items-center gap-3 mb-4">
           <div className="bg-indigo-100 p-2.5 rounded-lg">
             <Briefcase className="text-indigo-600" size={20} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-slate-900">
+            <h3 className={theme.text.h4}>
               Services You Offer
             </h3>
-            <p className="text-sm text-slate-600">
+            <p className={`${theme.text.muted} text-sm`}>
               Select all services you provide to receive relevant job offers
             </p>
           </div>
         </div>
 
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <p className="text-sm text-blue-900">
+        <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
+          <p className="text-sm text-primary-900">
             <strong>💡 Important:</strong> Only jobs matching your selected services will be dispatched to you.
           </p>
         </div>
@@ -118,16 +118,16 @@ export default function ServicesOffered({ providerData, onUpdate }) {
           return (
             <div
               key={category}
-              className="bg-white rounded-xl shadow-sm border border-slate-200 p-6"
+              className={`${theme.card.base} ${theme.card.padding}`}
             >
               {/* Category Header */}
               <div className="flex items-center justify-between mb-4">
-                <h4 className="font-semibold text-slate-900 text-lg capitalize">
+                <h4 className={`${theme.text.h4} capitalize`}>
                   {category}
                 </h4>
                 <button
                   onClick={() => selectAllInCategory(category)}
-                  className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                  className="text-sm text-primary-600 hover:text-primary-700 font-medium"
                 >
                   {allSelected ? "Deselect All" : "Select All"}
                 </button>
@@ -144,7 +144,7 @@ export default function ServicesOffered({ providerData, onUpdate }) {
                       onClick={() => toggleService(service.id)}
                       className={`p-4 rounded-lg border-2 transition text-left ${
                         isSelected
-                          ? "border-blue-400 bg-blue-50"
+                          ? "border-primary-400 bg-primary-50"
                           : "border-slate-200 hover:border-slate-300"
                       }`}
                     >
@@ -152,7 +152,7 @@ export default function ServicesOffered({ providerData, onUpdate }) {
                         <div
                           className={`w-5 h-5 rounded border-2 flex items-center justify-center transition ${
                             isSelected
-                              ? "bg-blue-600 border-blue-600"
+                              ? "bg-primary-600 border-primary-600"
                               : "border-slate-300"
                           }`}
                         >
@@ -162,7 +162,7 @@ export default function ServicesOffered({ providerData, onUpdate }) {
                         </div>
                         <span
                           className={`font-medium text-sm ${
-                            isSelected ? "text-blue-900" : "text-slate-900"
+                            isSelected ? "text-primary-900" : "text-secondary-900"
                           }`}
                         >
                           {service.name}
@@ -179,7 +179,7 @@ export default function ServicesOffered({ providerData, onUpdate }) {
 
       {/* Selected Count */}
       <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-        <p className="text-sm text-slate-700">
+        <p className="text-sm text-secondary-700">
           <strong>{selectedServices.length}</strong> service
           {selectedServices.length !== 1 ? "s" : ""} selected
         </p>
@@ -189,10 +189,19 @@ export default function ServicesOffered({ providerData, onUpdate }) {
       <button
         onClick={handleSave}
         disabled={saving}
-        className="w-full bg-blue-600 text-white py-4 rounded-xl font-semibold hover:bg-blue-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
+        className={`${theme.button.primary} w-full py-4 disabled:opacity-50 justify-center`}
       >
-        <Save size={20} />
-        {saving ? "Saving..." : "Save Services"}
+        {saving ? (
+          <>
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            Saving...
+          </>
+        ) : (
+          <>
+            <Save size={20} />
+            Save Services
+          </>
+        )}
       </button>
     </div>
   );

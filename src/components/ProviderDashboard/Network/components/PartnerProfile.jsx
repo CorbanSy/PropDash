@@ -41,7 +41,7 @@ export default function PartnerProfile({ partner, userId, onClose, onRefresh }) 
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
       <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto my-8">
         {/* Header */}
-        <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 flex items-start justify-between z-10">
+        <div className="sticky top-0 bg-gradient-to-r from-primary-600 to-purple-600 text-white p-6 flex items-start justify-between z-10">
           <div className="flex items-center gap-4">
             <img
               src={partner.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${partner.id}`}
@@ -50,7 +50,7 @@ export default function PartnerProfile({ partner, userId, onClose, onRefresh }) 
             />
             <div>
               <h2 className="text-2xl font-bold mb-1">{partner.business_name}</h2>
-              <p className="text-blue-100">{partner.trade}</p>
+              <p className="text-primary-100">{partner.trade}</p>
               {partner.verified && (
                 <div className="flex items-center gap-1 mt-2 text-sm">
                   <Award size={16} />
@@ -73,7 +73,7 @@ export default function PartnerProfile({ partner, userId, onClose, onRefresh }) 
               value={partner.rating ? partner.rating.toFixed(1) : "N/A"}
             />
             <StatBox
-              icon={<Briefcase className="text-blue-600" size={20} />}
+              icon={<Briefcase className="text-primary-600" size={20} />}
               label="Jobs Completed"
               value={partner.jobsCompleted || 0}
             />
@@ -86,24 +86,24 @@ export default function PartnerProfile({ partner, userId, onClose, onRefresh }) 
 
           {/* Contact Information */}
           <div className="bg-slate-50 rounded-lg p-5">
-            <h3 className="font-semibold text-slate-900 mb-4">Contact Information</h3>
+            <h3 className={`${theme.text.h4} mb-4`}>Contact Information</h3>
             <div className="space-y-3">
               {partner.phone && (
-                <div className="flex items-center gap-3 text-sm">
-                  <Phone size={16} className="text-slate-400" />
-                  <span className="text-slate-700">{partner.phone}</span>
+                <div className={`flex items-center gap-3 ${theme.text.caption}`}>
+                  <Phone size={16} className="text-secondary-400" />
+                  <span className="text-secondary-700">{partner.phone}</span>
                 </div>
               )}
               {partner.email && (
-                <div className="flex items-center gap-3 text-sm">
-                  <Mail size={16} className="text-slate-400" />
-                  <span className="text-slate-700">{partner.email}</span>
+                <div className={`flex items-center gap-3 ${theme.text.caption}`}>
+                  <Mail size={16} className="text-secondary-400" />
+                  <span className="text-secondary-700">{partner.email}</span>
                 </div>
               )}
               {partner.location && (
-                <div className="flex items-center gap-3 text-sm">
-                  <MapPin size={16} className="text-slate-400" />
-                  <span className="text-slate-700">
+                <div className={`flex items-center gap-3 ${theme.text.caption}`}>
+                  <MapPin size={16} className="text-secondary-400" />
+                  <span className="text-secondary-700">
                     {partner.location.city || "Location not set"}
                   </span>
                 </div>
@@ -114,12 +114,12 @@ export default function PartnerProfile({ partner, userId, onClose, onRefresh }) 
           {/* Specialties */}
           {partner.specialties && partner.specialties.length > 0 && (
             <div>
-              <h3 className="font-semibold text-slate-900 mb-3">Specialties</h3>
+              <h3 className={`${theme.text.h4} mb-3`}>Specialties</h3>
               <div className="flex flex-wrap gap-2">
                 {partner.specialties.map((specialty, idx) => (
                   <span
                     key={idx}
-                    className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium"
+                    className="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm font-medium"
                   >
                     {specialty}
                   </span>
@@ -150,12 +150,12 @@ export default function PartnerProfile({ partner, userId, onClose, onRefresh }) 
           </div>
 
           {/* Danger Zone */}
-          <div className="border-2 border-red-200 rounded-lg p-5 bg-red-50">
+          <div className="border-2 border-error-200 rounded-lg p-5 bg-error-50">
             <div className="flex items-start gap-3 mb-4">
-              <AlertTriangle className="text-red-600 flex-shrink-0 mt-0.5" size={20} />
+              <AlertTriangle className="text-error-600 flex-shrink-0 mt-0.5" size={20} />
               <div>
-                <h3 className="font-semibold text-red-900 mb-1">Remove Connection</h3>
-                <p className="text-sm text-red-700">
+                <h3 className="font-semibold text-error-900 mb-1">Remove Connection</h3>
+                <p className="text-sm text-error-700">
                   This will permanently remove {partner.business_name} from your network. 
                   You can reconnect later by sending a new connection request.
                 </p>
@@ -165,27 +165,27 @@ export default function PartnerProfile({ partner, userId, onClose, onRefresh }) 
             {!showRemoveConfirm ? (
               <button
                 onClick={() => setShowRemoveConfirm(true)}
-                className="w-full px-4 py-2.5 border-2 border-red-400 text-red-700 rounded-lg font-semibold hover:bg-red-100 transition flex items-center justify-center gap-2"
+                className={theme.button.dangerOutline}
               >
                 <Trash2 size={18} />
                 Remove Connection
               </button>
             ) : (
               <div className="space-y-3">
-                <p className="text-sm font-semibold text-red-900">
+                <p className="text-sm font-semibold text-error-900">
                   Are you sure? This action cannot be undone.
                 </p>
                 <div className="flex gap-3">
                   <button
                     onClick={() => setShowRemoveConfirm(false)}
-                    className="flex-1 px-4 py-2.5 border-2 border-slate-300 text-slate-700 rounded-lg font-semibold hover:bg-slate-50 transition"
+                    className={`${theme.button.secondary} flex-1`}
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleRemoveConnection}
                     disabled={removing}
-                    className={`flex-1 px-4 py-2.5 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition flex items-center justify-center gap-2 ${
+                    className={`${theme.button.danger} flex-1 justify-center ${
                       removing ? "opacity-50 cursor-not-allowed" : ""
                     }`}
                   >
@@ -215,8 +215,8 @@ function StatBox({ icon, label, value }) {
   return (
     <div className="bg-white border-2 border-slate-200 rounded-lg p-4 text-center">
       <div className="flex justify-center mb-2">{icon}</div>
-      <p className="text-xs text-slate-600 mb-1">{label}</p>
-      <p className="text-xl font-bold text-slate-900">{value}</p>
+      <p className={`${theme.text.caption} mb-1`}>{label}</p>
+      <p className="text-xl font-bold text-secondary-900">{value}</p>
     </div>
   );
 }

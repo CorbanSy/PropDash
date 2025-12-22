@@ -105,7 +105,7 @@ Can't wait to work with you!`,
           <select
             value={inviteData.trade}
             onChange={(e) => setInviteData({ ...inviteData, trade: e.target.value })}
-            className={`${theme.input.base} ${theme.input.provider} mt-2`}
+            className={`${theme.input.base} ${theme.input.focus} mt-2`}
           >
             <option value="">Any Trade</option>
             <option value="Plumbing">Plumbing</option>
@@ -126,8 +126,8 @@ Can't wait to work with you!`,
               onClick={() => setInviteData({ ...inviteData, tone: "professional" })}
               className={`flex-1 py-2 px-4 rounded-lg border-2 font-medium transition ${
                 inviteData.tone === "professional"
-                  ? "border-blue-400 bg-blue-50 text-blue-700"
-                  : "border-slate-200 text-slate-600 hover:border-slate-300"
+                  ? "border-primary-400 bg-primary-50 text-primary-700"
+                  : "border-slate-200 text-secondary-600 hover:border-slate-300"
               }`}
             >
               Professional
@@ -136,8 +136,8 @@ Can't wait to work with you!`,
               onClick={() => setInviteData({ ...inviteData, tone: "casual" })}
               className={`flex-1 py-2 px-4 rounded-lg border-2 font-medium transition ${
                 inviteData.tone === "casual"
-                  ? "border-blue-400 bg-blue-50 text-blue-700"
-                  : "border-slate-200 text-slate-600 hover:border-slate-300"
+                  ? "border-primary-400 bg-primary-50 text-primary-700"
+                  : "border-slate-200 text-secondary-600 hover:border-slate-300"
               }`}
             >
               Casual
@@ -146,8 +146,8 @@ Can't wait to work with you!`,
               onClick={() => setInviteData({ ...inviteData, tone: "friendly" })}
               className={`flex-1 py-2 px-4 rounded-lg border-2 font-medium transition ${
                 inviteData.tone === "friendly"
-                  ? "border-blue-400 bg-blue-50 text-blue-700"
-                  : "border-slate-200 text-slate-600 hover:border-slate-300"
+                  ? "border-primary-400 bg-primary-50 text-primary-700"
+                  : "border-slate-200 text-secondary-600 hover:border-slate-300"
               }`}
             >
               Friendly
@@ -160,7 +160,7 @@ Can't wait to work with you!`,
           <textarea
             value={inviteData.personalMessage}
             onChange={(e) => setInviteData({ ...inviteData, personalMessage: e.target.value })}
-            className={`${theme.input.base} ${theme.input.provider} mt-2`}
+            className={`${theme.input.base} ${theme.input.focus} mt-2`}
             rows={3}
             placeholder="Add a personal touch to your invite..."
           />
@@ -173,13 +173,13 @@ Can't wait to work with you!`,
           <label className={`${theme.text.label} mb-0`}>Generated Invite Message</label>
           <button
             onClick={() => handleCopy(message)}
-            className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+            className={`${theme.text.caption} text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1`}
           >
             {copied ? <CheckCircle2 size={14} /> : <Copy size={14} />}
             {copied ? "Copied!" : "Copy"}
           </button>
         </div>
-        <div className="bg-white border border-slate-200 rounded p-4 text-sm text-slate-700 whitespace-pre-wrap">
+        <div className={`bg-white border border-slate-200 rounded p-4 ${theme.text.caption} text-secondary-700 whitespace-pre-wrap`}>
           {message}
         </div>
       </div>
@@ -217,7 +217,7 @@ Can't wait to work with you!`,
         ) : (
           <button
             onClick={generateQR}
-            className={`w-full ${theme.button.provider} justify-center`}
+            className={`${theme.button.primary} w-full justify-center`}
           >
             <QrCode size={18} />
             Generate QR Code
@@ -227,13 +227,13 @@ Can't wait to work with you!`,
 
       {/* Quick Share Options */}
       <div>
-        <h4 className="font-semibold text-slate-900 mb-3">Quick Share</h4>
+        <h4 className={`${theme.text.h5} mb-3`}>Quick Share</h4>
         <div className="grid grid-cols-2 gap-3">
           <button
             onClick={() => {
               window.location.href = `mailto:?subject=Join my network on LevlPro&body=${encodeURIComponent(message)}`;
             }}
-            className="flex items-center justify-center gap-2 p-4 bg-blue-50 border-2 border-blue-200 rounded-lg hover:bg-blue-100 transition text-blue-700 font-medium"
+            className="flex items-center justify-center gap-2 p-4 bg-primary-50 border-2 border-primary-200 rounded-lg hover:bg-primary-100 transition text-primary-700 font-medium"
           >
             <Mail size={20} />
             Email
@@ -242,7 +242,7 @@ Can't wait to work with you!`,
             onClick={() => {
               window.location.href = `sms:?body=${encodeURIComponent(message)}`;
             }}
-            className="flex items-center justify-center gap-2 p-4 bg-green-50 border-2 border-green-200 rounded-lg hover:bg-green-100 transition text-green-700 font-medium"
+            className="flex items-center justify-center gap-2 p-4 bg-success-50 border-2 border-success-200 rounded-lg hover:bg-success-100 transition text-success-700 font-medium"
           >
             <MessageSquare size={20} />
             Text

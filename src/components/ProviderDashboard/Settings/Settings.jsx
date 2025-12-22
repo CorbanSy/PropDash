@@ -1,4 +1,4 @@
-//levlpro-mvp\src\components\ProviderDashboard\Settings\Settings.jsx
+// src/components/ProviderDashboard/Settings/Settings.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import { supabase } from "../../../lib/supabaseClient";
 import useAuth from "../../../hooks/useAuth";
+import { theme } from "../../../styles/theme";
 import ProfilePhotoUpload from "./components/ProfilePhotoUpload";
 import PhoneVerification from "./components/PhoneVerification";
 import ServiceAreas from "./components/ServiceAreas";
@@ -211,7 +212,7 @@ export default function Settings() {
     const confirmed = window.confirm("Are you sure you want to log out?");
     if (confirmed) {
       await supabase.auth.signOut();
-      navigate("/login/professional"); // ✅ Fixed route
+      navigate("/login/professional");
     }
   };
 
@@ -225,13 +226,18 @@ export default function Settings() {
 
   const refreshProviderData = () => {
     if (user) {
+      console.log("🔄 Refreshing provider data...");
       supabase
         .from("providers")
         .select("*")
         .eq("id", user.id)
-        .maybeSingle() // ✅ Changed to maybeSingle
+        .maybeSingle()
         .then(({ data }) => {
-          if (data) setProviderData(data);
+          if (data) {
+            console.log("✅ Provider data refreshed:", data);
+            console.log("📸 Profile photo URL:", data.profile_photo);
+            setProviderData(data);
+          }
         });
     }
   };
@@ -257,8 +263,8 @@ export default function Settings() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Settings</h1>
-          <p className="text-slate-600 mt-1">
+          <h1 className={theme.text.h1}>Settings</h1>
+          <p className={`${theme.text.body} mt-1`}>
             Manage your account and preferences
           </p>
         </div>
@@ -266,33 +272,40 @@ export default function Settings() {
 
       {/* Success/Error Messages */}
       {success && (
-        <div className="bg-green-50 border border-green-200 text-green-800 p-4 rounded-xl flex items-center gap-3">
+        <div className={`${theme.alert.success} flex items-center gap-3`}>
           <CheckCircle2 size={20} />
           <span className="font-medium">{success}</span>
         </div>
       )}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-xl flex items-center gap-3">
+        <div className={`${theme.alert.error} flex items-center gap-3`}>
           <AlertTriangle size={20} />
           <span className="font-medium">{error}</span>
         </div>
       )}
 
       {/* Account Overview Card */}
-      <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-600 p-8 rounded-2xl text-white shadow-xl relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 right-10 w-40 h-40 bg-white rounded-full blur-3xl"></div>
-          <div className="absolute bottom-10 left-10 w-60 h-60 bg-white rounded-full blur-3xl"></div>
-        </div>
-        <div className="relative z-10 flex items-start justify-between">
+      <div className="relative overflow-hidden rounded-2xl shadow-xl">
+        {/* Gradient Background - Professional Theme */}
+        <div className="absolute inset-0 bg-gradient-to-r from-primary-700 via-primary-800 to-primary-900" />
+
+        {/* Subtle Glow */}
+        <div className="absolute top-12 right-12 w-48 h-48 bg-white/10 rounded-full blur-3xl" />
+
+        <div className="relative z-10 p-8 text-white flex items-start justify-between">
           <div className="flex items-center gap-4">
             {/* Profile Photo */}
             <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm border-2 border-white/30 overflow-hidden">
-              {providerData.profile_photo ? (
+              {providerData.profile_photo && providerData.profile_photo.startsWith('http') ? (
                 <img
-                  src={providerData.profile_photo}
+                  key={providerData.profile_photo}
+                  src={`${providerData.profile_photo}?t=${Date.now()}`}
                   alt="Profile"
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    console.error("❌ Failed to load profile photo:", providerData.profile_photo);
+                    e.target.style.display = 'none';
+                  }}
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
@@ -302,21 +315,21 @@ export default function Settings() {
             </div>
 
             <div>
-              <p className="text-blue-100 text-sm font-medium mb-2">Account</p>
+              <p className="text-primary-100 text-sm font-medium mb-2">Account</p>
               <h2 className="text-2xl font-bold mb-1">
                 {providerData.business_name || user.email?.split('@')[0] || "Provider"}
               </h2>
-              <p className="text-blue-100 text-sm mb-2">{user.email}</p>
-              
+              <p className="text-primary-100 text-sm mb-2">{user.email}</p>
+
               {/* Verification Badges */}
               <div className="flex items-center gap-2">
                 {providerData.phone_verified && (
-                  <span className="text-xs bg-white/20 backdrop-blur-sm px-2 py-1 rounded border border-white/30">
+                  <span className="text-xs bg-success-100 text-success-800 px-2 py-1 rounded font-medium">
                     ✓ Phone Verified
                   </span>
                 )}
                 {providerData.verification_status === "verified" && (
-                  <span className="text-xs bg-white/20 backdrop-blur-sm px-2 py-1 rounded border border-white/30">
+                  <span className="text-xs bg-success-100 text-success-800 px-2 py-1 rounded font-medium">
                     ✓ License Verified
                   </span>
                 )}
@@ -445,8 +458,8 @@ function TabButton({ active, onClick, icon, label }) {
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-3 font-medium transition relative whitespace-nowrap ${
-        active ? "text-blue-600" : "text-slate-600 hover:text-slate-900"
+      className={`px-4 py-3 font-semibold transition relative whitespace-nowrap ${
+        active ? "text-primary-700" : "text-secondary-600 hover:text-secondary-900"
       }`}
     >
       <span className="flex items-center gap-2">
@@ -454,7 +467,7 @@ function TabButton({ active, onClick, icon, label }) {
         {label}
       </span>
       {active && (
-        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-700"></div>
       )}
     </button>
   );
@@ -488,19 +501,19 @@ function ProfileTab({
       />
 
       {/* Business Information */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div className={`${theme.card.base} ${theme.card.padding}`}>
         <div className="flex items-center gap-3 mb-6">
-          <div className="bg-blue-100 p-2.5 rounded-lg">
-            <Building2 className="text-blue-600" size={20} />
+          <div className="bg-primary-100 p-2.5 rounded-lg">
+            <Building2 className="text-primary-600" size={20} />
           </div>
-          <h3 className="text-lg font-semibold text-slate-900">
+          <h3 className={theme.text.h4}>
             Business Information
           </h3>
         </div>
 
         <div className="space-y-5">
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className={`${theme.text.label} block mb-2`}>
               Business Name
             </label>
             <input
@@ -512,18 +525,18 @@ function ProfileTab({
                   business_name: e.target.value,
                 })
               }
-              className="w-full border-2 border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+              className={`${theme.input.base} ${theme.input.focus}`}
               placeholder="John's Handyman Services"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className={`${theme.text.label} block mb-2`}>
               Base Hourly Rate (in cents)
             </label>
             <div className="relative">
               <DollarSign
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400"
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-secondary-400"
                 size={18}
               />
               <input
@@ -536,11 +549,11 @@ function ProfileTab({
                     base_rate: parseInt(e.target.value) || 0,
                   })
                 }
-                className="w-full border-2 border-slate-300 rounded-xl pl-11 pr-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+                className={`${theme.input.base} ${theme.input.focus} pl-11`}
                 placeholder="8500 (= $85.00/hr)"
               />
             </div>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className={`${theme.text.caption} mt-1`}>
               Enter rate in cents (e.g., 8500 = $85.00/hr)
             </p>
           </div>
@@ -548,12 +561,12 @@ function ProfileTab({
       </div>
 
       {/* Booking Link */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div className={`${theme.card.base} ${theme.card.padding}`}>
         <div className="flex items-center gap-3 mb-4">
-          <div className="bg-green-100 p-2.5 rounded-lg">
-            <ExternalLink className="text-green-600" size={20} />
+          <div className="bg-success-100 p-2.5 rounded-lg">
+            <ExternalLink className="text-success-600" size={20} />
           </div>
-          <h3 className="text-lg font-semibold text-slate-900">
+          <h3 className={theme.text.h4}>
             Your Booking Link
           </h3>
         </div>
@@ -563,11 +576,11 @@ function ProfileTab({
             type="text"
             value={`${window.location.origin}/book/${user.id}`}
             readOnly
-            className="flex-1 border-2 border-slate-300 rounded-xl px-4 py-3 bg-slate-50 text-slate-600"
+            className={`${theme.input.base} ${theme.input.disabled} flex-1`}
           />
           <button
             onClick={copyBookingLink}
-            className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition flex items-center gap-2"
+            className={theme.button.primary}
           >
             <Copy size={18} />
             Copy
@@ -579,7 +592,7 @@ function ProfileTab({
       <button
         onClick={handleSaveProfile}
         disabled={saving}
-        className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/30"
+        className={`${theme.button.primary} w-full py-4 disabled:opacity-50 justify-center`}
       >
         {saving ? (
           <>
@@ -609,19 +622,19 @@ function SecurityTab({
   return (
     <div className="space-y-6">
       {/* Change Password */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div className={`${theme.card.base} ${theme.card.padding}`}>
         <div className="flex items-center gap-3 mb-6">
-          <div className="bg-red-100 p-2.5 rounded-lg">
-            <Lock className="text-red-600" size={20} />
+          <div className="bg-error-100 p-2.5 rounded-lg">
+            <Lock className="text-error-600" size={20} />
           </div>
-          <h3 className="text-lg font-semibold text-slate-900">
+          <h3 className={theme.text.h4}>
             Change Password
           </h3>
         </div>
 
         <form onSubmit={handleChangePassword} className="space-y-5">
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className={`${theme.text.label} block mb-2`}>
               New Password
             </label>
             <div className="relative">
@@ -634,14 +647,14 @@ function SecurityTab({
                     newPassword: e.target.value,
                   })
                 }
-                className="w-full border-2 border-slate-300 rounded-xl px-4 py-3 pr-12 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+                className={`${theme.input.base} ${theme.input.focus} pr-12`}
                 placeholder="••••••••"
                 minLength={6}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-secondary-400 hover:text-secondary-600"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -649,7 +662,7 @@ function SecurityTab({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className={`${theme.text.label} block mb-2`}>
               Confirm New Password
             </label>
             <input
@@ -661,7 +674,7 @@ function SecurityTab({
                   confirmPassword: e.target.value,
                 })
               }
-              className="w-full border-2 border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+              className={`${theme.input.base} ${theme.input.focus}`}
               placeholder="••••••••"
               minLength={6}
             />
@@ -669,7 +682,7 @@ function SecurityTab({
 
           <button
             type="submit"
-            className="w-full bg-slate-900 text-white py-3 rounded-xl font-semibold hover:bg-slate-800 transition"
+            className={`${theme.button.primary} w-full justify-center`}
           >
             Update Password
           </button>
@@ -677,14 +690,14 @@ function SecurityTab({
       </div>
 
       {/* Logout */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div className={`${theme.card.base} ${theme.card.padding}`}>
         <div className="flex items-center gap-3 mb-4">
-          <div className="bg-red-100 p-2.5 rounded-lg">
-            <LogOut className="text-red-600" size={20} />
+          <div className="bg-error-100 p-2.5 rounded-lg">
+            <LogOut className="text-error-600" size={20} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-slate-900">Log Out</h3>
-            <p className="text-sm text-slate-600">
+            <h3 className={theme.text.h4}>Log Out</h3>
+            <p className={theme.text.muted}>
               Sign out of your account on this device
             </p>
           </div>
@@ -692,7 +705,7 @@ function SecurityTab({
 
         <button
           onClick={handleLogout}
-          className="w-full border-2 border-red-300 text-red-600 py-3 rounded-xl font-semibold hover:bg-red-50 transition flex items-center justify-center gap-2"
+          className={`${theme.button.dangerOutline} w-full justify-center`}
         >
           <LogOut size={20} />
           Log Out

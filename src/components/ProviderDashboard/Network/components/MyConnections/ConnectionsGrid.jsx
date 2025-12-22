@@ -1,4 +1,3 @@
-//levlpro-mvp\src\components\ProviderDashboard\Network\components\MyConnections\ConnectionsGrid.jsx
 import { Search } from "lucide-react";
 import { theme } from "../../../../../styles/theme";
 import PartnerCard from "../PartnerCard";
@@ -15,7 +14,7 @@ export default function ConnectionsGrid({
     return (
       <div className={`${theme.card.base} ${theme.card.padding} text-center py-12`}>
         <div className="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Search className="text-slate-400" size={32} />
+          <Search className="text-secondary-400" size={32} />
         </div>
         <h3 className={`${theme.text.h3} mb-2`}>No Matches Found</h3>
         <p className={theme.text.body}>Try adjusting your search or filters</p>

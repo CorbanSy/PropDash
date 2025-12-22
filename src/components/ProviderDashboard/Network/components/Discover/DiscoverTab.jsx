@@ -1,4 +1,3 @@
-//levlpro-mvp\src\components\ProviderDashboard\Network\components\Discover\DiscoverTab.jsx
 import { useState, useEffect, useMemo } from "react";
 import { Users, Search } from "lucide-react";
 import { theme } from "../../../../../styles/theme";
@@ -132,7 +131,7 @@ export default function DiscoverTab({
       {filteredProfessionals.length === 0 ? (
         <div className={`${theme.card.base} ${theme.card.padding} text-center py-12`}>
           <div className="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Users className="text-slate-400" size={32} />
+            <Users className="text-secondary-400" size={32} />
           </div>
           <p className={`${theme.text.h4} mb-2`}>No Professionals Found</p>
           <p className={theme.text.body}>

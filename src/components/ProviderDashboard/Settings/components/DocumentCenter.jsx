@@ -1,4 +1,3 @@
-//levlpro-mvp\src\components\ProviderDashboard\Settings\components\DocumentCenter.jsx
 import { useState, useEffect } from "react";
 import { 
   FileText, 
@@ -13,6 +12,7 @@ import {
 } from "lucide-react";
 import { supabase } from "../../../../lib/supabaseClient";
 import { uploadFile, deleteFile, createSignedUrl } from "../utils/settingsHelpers";
+import { theme } from "../../../../styles/theme";
 
 const DOCUMENT_TYPES = [
   {
@@ -199,17 +199,17 @@ export default function DocumentCenter({ providerData, onUpdate }) {
       approved: {
         icon: <CheckCircle2 size={16} />,
         text: "Approved",
-        color: "bg-green-100 text-green-700 border-green-200",
+        color: "bg-success-100 text-success-700 border-success-200",
       },
       pending: {
         icon: <Clock size={16} />,
         text: "Pending Review",
-        color: "bg-amber-100 text-amber-700 border-amber-200",
+        color: "bg-warning-100 text-warning-700 border-warning-200",
       },
       rejected: {
         icon: <XCircle size={16} />,
         text: "Rejected",
-        color: "bg-red-100 text-red-700 border-red-200",
+        color: "bg-error-100 text-error-700 border-error-200",
       },
     };
 
@@ -226,66 +226,66 @@ export default function DocumentCenter({ providerData, onUpdate }) {
     <div className="space-y-6">
       {/* Success/Error Messages */}
       {success && (
-        <div className="bg-green-50 border border-green-200 text-green-800 p-4 rounded-xl flex items-center gap-3">
+        <div className={`${theme.alert.success} flex items-center gap-3`}>
           <CheckCircle2 size={20} />
           <span className="font-medium">{success}</span>
         </div>
       )}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-xl flex items-center gap-3">
+        <div className={`${theme.alert.error} flex items-center gap-3`}>
           <AlertTriangle size={20} />
           <span className="font-medium">{error}</span>
         </div>
       )}
 
       {/* Header */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div className={`${theme.card.base} ${theme.card.padding}`}>
         <div className="flex items-center gap-3 mb-4">
-          <div className="bg-green-100 p-2.5 rounded-lg">
-            <FileText className="text-green-600" size={20} />
+          <div className="bg-success-100 p-2.5 rounded-lg">
+            <FileText className="text-success-600" size={20} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-slate-900">
+            <h3 className={theme.text.h4}>
               Document Center
             </h3>
-            <p className="text-sm text-slate-600">
+            <p className={`${theme.text.muted} text-sm`}>
               Upload and manage verification documents
             </p>
           </div>
         </div>
 
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <p className="text-sm text-blue-900">
+        <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
+          <p className="text-sm text-primary-900">
             <strong>🔒 Secure & Private:</strong> All documents are encrypted and only reviewed by our verification team. We never share your documents.
           </p>
         </div>
       </div>
 
-      {/* Verification Progress - MOVED TO TOP */}
-      <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-6">
+      {/* Verification Progress */}
+      <div className="bg-gradient-to-br from-success-50 to-emerald-50 border-2 border-success-200 rounded-xl p-6">
         <div className="flex items-start justify-between mb-4">
           <div>
-            <h4 className="text-lg font-semibold text-slate-900 mb-1">
+            <h4 className={`${theme.text.h4} mb-1`}>
               Verification Progress
             </h4>
-            <p className="text-sm text-slate-600">
+            <p className={`${theme.text.caption}`}>
               {approvedRequired === requiredDocs.length 
                 ? "✅ All required documents verified!" 
                 : `${uploadedRequired} of ${requiredDocs.length} required documents uploaded`}
             </p>
           </div>
           <div className="text-right">
-            <div className="text-3xl font-bold text-green-600">
+            <div className="text-3xl font-bold text-success-600">
               {Math.round(progressPercentage)}%
             </div>
-            <div className="text-xs text-slate-600">Complete</div>
+            <div className={`${theme.text.caption}`}>Complete</div>
           </div>
         </div>
 
         {/* Progress Bar */}
         <div className="w-full bg-slate-200 rounded-full h-3 mb-4">
           <div
-            className="bg-gradient-to-r from-green-500 to-emerald-500 h-3 rounded-full transition-all duration-500"
+            className="bg-gradient-to-r from-success-500 to-emerald-500 h-3 rounded-full transition-all duration-500"
             style={{ width: `${progressPercentage}%` }}
           ></div>
         </div>
@@ -304,16 +304,16 @@ export default function DocumentCenter({ providerData, onUpdate }) {
                 key={docType.id}
                 className="flex items-center justify-between text-sm bg-white rounded-lg p-3 border border-slate-200"
               >
-                <span className="text-slate-700 font-medium">{docType.name}</span>
+                <span className="text-secondary-700 font-medium">{docType.name}</span>
                 <span
                   className={`font-semibold flex items-center gap-1 ${
                     approved
-                      ? "text-green-600"
+                      ? "text-success-600"
                       : rejected
-                      ? "text-red-600"
+                      ? "text-error-600"
                       : pending
-                      ? "text-amber-600"
-                      : "text-slate-400"
+                      ? "text-warning-600"
+                      : "text-secondary-400"
                   }`}
                 >
                   {approved && <CheckCircle2 size={16} />}
@@ -329,7 +329,7 @@ export default function DocumentCenter({ providerData, onUpdate }) {
 
       {/* Document Upload Cards */}
       <div>
-        <h4 className="text-lg font-semibold text-slate-900 mb-4">Upload Documents</h4>
+        <h4 className={`${theme.text.h4} mb-4`}>Upload Documents</h4>
         <div className="space-y-4">
           {DOCUMENT_TYPES.map((docType) => {
             const doc = documents[docType.id];
@@ -338,21 +338,21 @@ export default function DocumentCenter({ providerData, onUpdate }) {
             return (
               <div
                 key={docType.id}
-                className="bg-white rounded-xl shadow-sm border border-slate-200 p-6"
+                className={`${theme.card.base} ${theme.card.padding}`}
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <h4 className="font-semibold text-slate-900">
+                      <h4 className={`${theme.text.h5}`}>
                         {docType.name}
                       </h4>
                       {docType.required && (
-                        <span className="text-xs px-2 py-0.5 bg-red-100 text-red-700 rounded font-semibold">
+                        <span className="text-xs px-2 py-0.5 bg-error-100 text-error-700 rounded font-semibold">
                           Required
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-slate-600">{docType.description}</p>
+                    <p className={`${theme.text.caption}`}>{docType.description}</p>
                   </div>
 
                   {doc && status && (
@@ -371,10 +371,10 @@ export default function DocumentCenter({ providerData, onUpdate }) {
                     <div className="bg-slate-50 rounded-lg p-4">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm font-medium text-slate-900 mb-1">
+                          <p className="text-sm font-medium text-secondary-900 mb-1">
                             {doc.file_path.split("/").pop()}
                           </p>
-                          <p className="text-xs text-slate-600">
+                          <p className={`${theme.text.caption}`}>
                             Uploaded{" "}
                             {new Date(doc.uploaded_at).toLocaleDateString()}
                           </p>
@@ -382,14 +382,14 @@ export default function DocumentCenter({ providerData, onUpdate }) {
                         <div className="flex gap-2">
                           <button
                             onClick={() => handleDownload(doc)}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                            className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition"
                             title="View document"
                           >
                             <Eye size={18} />
                           </button>
                           <button
                             onClick={() => handleDelete(docType.id)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
+                            className="p-2 text-error-600 hover:bg-error-50 rounded-lg transition"
                             title="Delete document"
                           >
                             <Trash2 size={18} />
@@ -399,11 +399,11 @@ export default function DocumentCenter({ providerData, onUpdate }) {
                     </div>
 
                     {doc.status === "rejected" && doc.rejection_reason && (
-                      <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                        <p className="text-sm font-semibold text-red-900 mb-1">
+                      <div className="bg-error-50 border border-error-200 rounded-lg p-3">
+                        <p className="text-sm font-semibold text-error-900 mb-1">
                           Rejection Reason:
                         </p>
-                        <p className="text-sm text-red-800">
+                        <p className="text-sm text-error-800">
                           {doc.rejection_reason}
                         </p>
                       </div>
@@ -420,14 +420,12 @@ export default function DocumentCenter({ providerData, onUpdate }) {
                         disabled={uploading === docType.id}
                         className="hidden"
                       />
-                      <span className={`inline-block w-full text-center px-4 py-2 border-2 rounded-lg font-medium transition cursor-pointer ${
-                        uploading === docType.id
-                          ? "border-slate-300 text-slate-400 cursor-not-allowed"
-                          : "border-slate-300 text-slate-700 hover:bg-slate-50"
+                      <span className={`${theme.button.secondaryOutline} inline-block w-full text-center disabled:opacity-50 ${
+                        uploading === docType.id ? "cursor-not-allowed" : "cursor-pointer"
                       }`}>
                         {uploading === docType.id ? (
                           <span className="flex items-center justify-center gap-2">
-                            <div className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin"></div>
+                            <div className="w-4 h-4 border-2 border-secondary-400 border-t-transparent rounded-full animate-spin"></div>
                             Uploading...
                           </span>
                         ) : (
@@ -446,10 +444,8 @@ export default function DocumentCenter({ providerData, onUpdate }) {
                       disabled={uploading === docType.id}
                       className="hidden"
                     />
-                    <span className={`inline-flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg font-semibold transition cursor-pointer ${
-                      uploading === docType.id
-                        ? "bg-blue-400 text-white cursor-not-allowed"
-                        : "bg-blue-600 text-white hover:bg-blue-700"
+                    <span className={`${theme.button.primary} inline-flex w-full justify-center disabled:opacity-50 ${
+                      uploading === docType.id ? "cursor-not-allowed" : "cursor-pointer"
                     }`}>
                       {uploading === docType.id ? (
                         <>
@@ -466,7 +462,7 @@ export default function DocumentCenter({ providerData, onUpdate }) {
                   </label>
                 )}
 
-                <p className="text-xs text-slate-500 mt-2">
+                <p className={`${theme.text.caption} mt-2`}>
                   Accepted formats: PDF, JPG, PNG, HEIC (max 10MB)
                 </p>
               </div>

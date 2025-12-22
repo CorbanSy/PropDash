@@ -1,6 +1,5 @@
-//levlpro-mvp\src\components\ProviderDashboard\Network\components\CommissionLedger.jsx
 import { useState, useEffect } from "react";
-import { DollarSign, CheckCircle2, Clock, Calendar, User, Briefcase, Download } from "lucide-react";
+import { DollarSign, CheckCircle2, Clock, Calendar, User, Briefcase, Download, X } from "lucide-react";
 import { theme } from "../../../../styles/theme";
 import { supabase } from "../../../../lib/supabaseClient";
 
@@ -60,7 +59,7 @@ export default function CommissionLedger({ userId }) {
       const processedData = data.map(referral => ({
         ...referral,
         calculated_commission: referral.commission_amount || 
-          (referral.original_job?. price? 
+          (referral.original_job?.price ? 
             Math.round(referral.original_job.price * referral.commission_rate) : 
             0)
       }));
@@ -123,8 +122,8 @@ export default function CommissionLedger({ userId }) {
   if (loading) {
     return (
       <div className={`${theme.card.base} ${theme.card.padding} text-center py-12`}>
-        <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-        <p className="text-sm text-slate-600 mt-3">Loading commissions...</p>
+        <div className="w-8 h-8 border-2 border-primary-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+        <p className={`${theme.text.caption} mt-3`}>Loading commissions...</p>
       </div>
     );
   }
@@ -133,7 +132,7 @@ export default function CommissionLedger({ userId }) {
     return (
       <div className={`${theme.card.base} ${theme.card.padding} text-center py-12`}>
         <div className="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-          <DollarSign className="text-slate-400" size={32} />
+          <DollarSign className="text-secondary-400" size={32} />
         </div>
         <p className={`${theme.text.h4} mb-2`}>No Commission Records</p>
         <p className={theme.text.body}>
@@ -147,12 +146,12 @@ export default function CommissionLedger({ userId }) {
     <div className="space-y-6">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-xl p-5">
+        <div className="bg-gradient-to-br from-primary-50 to-primary-100 border-2 border-primary-200 rounded-xl p-5">
           <div className="flex items-center gap-2 mb-2">
-            <Briefcase className="text-blue-600" size={20} />
-            <p className="text-sm font-medium text-blue-900">Total Referrals</p>
+            <Briefcase className="text-primary-600" size={20} />
+            <p className="text-sm font-medium text-primary-900">Total Referrals</p>
           </div>
-          <p className="text-3xl font-bold text-blue-900">{stats.total}</p>
+          <p className="text-3xl font-bold text-primary-900">{stats.total}</p>
         </div>
 
         <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 border-2 border-emerald-200 rounded-xl p-5">
@@ -163,12 +162,12 @@ export default function CommissionLedger({ userId }) {
           <p className="text-3xl font-bold text-emerald-900">{formatCurrency(stats.totalEarned)}</p>
         </div>
 
-        <div className="bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-200 rounded-xl p-5">
+        <div className="bg-gradient-to-br from-warning-50 to-warning-100 border-2 border-warning-200 rounded-xl p-5">
           <div className="flex items-center gap-2 mb-2">
-            <Clock className="text-amber-600" size={20} />
-            <p className="text-sm font-medium text-amber-900">Pending</p>
+            <Clock className="text-warning-600" size={20} />
+            <p className="text-sm font-medium text-warning-900">Pending</p>
           </div>
-          <p className="text-3xl font-bold text-amber-900">{formatCurrency(stats.totalPending)}</p>
+          <p className="text-3xl font-bold text-warning-900">{formatCurrency(stats.totalPending)}</p>
         </div>
 
         <div className="bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-200 rounded-xl p-5">
@@ -186,7 +185,7 @@ export default function CommissionLedger({ userId }) {
           <h3 className={theme.text.h3}>Commission History</h3>
           <button
             onClick={exportToCSV}
-            className="flex items-center gap-2 px-4 py-2 border-2 border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition text-sm font-semibold"
+            className={theme.button.secondaryOutline}
           >
             <Download size={16} />
             Export CSV
@@ -222,20 +221,20 @@ export default function CommissionLedger({ userId }) {
           <table className="w-full">
             <thead>
               <tr className="border-b-2 border-slate-200">
-                <th className="text-left py-3 px-4 text-sm font-semibold text-slate-700">Date</th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-slate-700">Customer</th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-slate-700">Service</th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-slate-700">Partner</th>
-                <th className="text-right py-3 px-4 text-sm font-semibold text-slate-700">Job Total</th>
-                <th className="text-right py-3 px-4 text-sm font-semibold text-slate-700">Rate</th>
-                <th className="text-right py-3 px-4 text-sm font-semibold text-slate-700">Commission</th>
-                <th className="text-center py-3 px-4 text-sm font-semibold text-slate-700">Status</th>
+                <th className={`text-left py-3 px-4 ${theme.text.label}`}>Date</th>
+                <th className={`text-left py-3 px-4 ${theme.text.label}`}>Customer</th>
+                <th className={`text-left py-3 px-4 ${theme.text.label}`}>Service</th>
+                <th className={`text-left py-3 px-4 ${theme.text.label}`}>Partner</th>
+                <th className={`text-right py-3 px-4 ${theme.text.label}`}>Job Total</th>
+                <th className={`text-right py-3 px-4 ${theme.text.label}`}>Rate</th>
+                <th className={`text-right py-3 px-4 ${theme.text.label}`}>Commission</th>
+                <th className={`text-center py-3 px-4 ${theme.text.label}`}>Status</th>
               </tr>
             </thead>
             <tbody>
               {referrals.map((referral) => (
                 <tr key={referral.id} className="border-b border-slate-100 hover:bg-slate-50 transition">
-                  <td className="py-4 px-4 text-sm text-slate-600">
+                  <td className={`py-4 px-4 ${theme.text.caption}`}>
                     {new Date(referral.created_at).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
@@ -244,27 +243,27 @@ export default function CommissionLedger({ userId }) {
                   </td>
                   <td className="py-4 px-4">
                     <div className="flex items-center gap-2">
-                      <User size={14} className="text-slate-400" />
-                      <span className="text-sm font-medium text-slate-900">
+                      <User size={14} className="text-secondary-400" />
+                      <span className="text-sm font-medium text-secondary-900">
                         {referral.customer?.full_name || "Unknown"}
                       </span>
                     </div>
                   </td>
                   <td className="py-4 px-4">
                     <div className="flex items-center gap-2">
-                      <Briefcase size={14} className="text-slate-400" />
-                      <span className="text-sm text-slate-700">
+                      <Briefcase size={14} className="text-secondary-400" />
+                      <span className={`${theme.text.caption} text-secondary-700`}>
                         {referral.original_job?.service_category || "N/A"}
                       </span>
                     </div>
                   </td>
-                  <td className="py-4 px-4 text-sm text-slate-700">
+                  <td className={`py-4 px-4 ${theme.text.caption} text-secondary-700`}>
                     {referral.referred_provider?.business_name || "N/A"}
                   </td>
-                  <td className="py-4 px-4 text-sm font-semibold text-slate-900 text-right">
-                    {formatCurrency(referral.original_job?.price|| 0)}
+                  <td className="py-4 px-4 text-sm font-semibold text-secondary-900 text-right">
+                    {formatCurrency(referral.original_job?.price || 0)}
                   </td>
-                  <td className="py-4 px-4 text-sm text-slate-600 text-right">
+                  <td className={`py-4 px-4 ${theme.text.caption} text-right`}>
                     {(referral.commission_rate * 100).toFixed(0)}%
                   </td>
                   <td className="py-4 px-4 text-right">
@@ -291,8 +290,8 @@ function FilterButton({ active, onClick, label }) {
       onClick={onClick}
       className={`px-4 py-2 rounded-lg font-semibold text-sm transition ${
         active
-          ? "bg-blue-600 text-white"
-          : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+          ? "bg-primary-600 text-white"
+          : "bg-slate-100 text-secondary-600 hover:bg-slate-200"
       }`}
     >
       {label}
@@ -302,11 +301,11 @@ function FilterButton({ active, onClick, label }) {
 
 function StatusBadge({ status }) {
   const styles = {
-    pending: "bg-amber-100 text-amber-700",
-    accepted: "bg-blue-100 text-blue-700",
+    pending: "bg-warning-100 text-warning-700",
+    accepted: "bg-primary-100 text-primary-700",
     completed: "bg-emerald-100 text-emerald-700",
     paid: "bg-purple-100 text-purple-700",
-    declined: "bg-red-100 text-red-700",
+    declined: "bg-error-100 text-error-700",
   };
 
   const icons = {

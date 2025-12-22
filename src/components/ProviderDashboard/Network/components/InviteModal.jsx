@@ -1,4 +1,3 @@
-//levlpro-mvp\src\components\ProviderDashboard\Network\components\InviteModal.jsx
 import { useState } from "react";
 import { X, Send, Sparkles, User, Mail, Phone, Briefcase } from "lucide-react";
 import { theme } from "../../../../styles/theme";
@@ -60,10 +59,10 @@ export default function InviteModal({ userId, onClose, onSuccess }) {
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
       <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-purple-600 p-6 flex items-start justify-between z-10">
+        <div className="sticky top-0 bg-gradient-to-r from-primary-600 to-purple-600 p-6 flex items-start justify-between z-10">
           <div className="text-white">
             <h2 className="text-2xl font-bold mb-1">Invite a Partner</h2>
-            <p className="text-blue-100">Build your trusted network</p>
+            <p className="text-primary-100">Build your trusted network</p>
           </div>
           <button
             onClick={onClose}
@@ -78,26 +77,26 @@ export default function InviteModal({ userId, onClose, onSuccess }) {
           <button
             onClick={() => setStep(1)}
             className={`flex-1 py-4 font-semibold transition relative ${
-              step === 1 ? "text-blue-700 bg-blue-50" : "text-slate-600 hover:bg-slate-50"
+              step === 1 ? "text-primary-700 bg-primary-50" : "text-secondary-600 hover:bg-slate-50"
             }`}
           >
             <div className="flex items-center justify-center gap-2">
               <User size={18} />
               Quick Invite
             </div>
-            {step === 1 && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-700"></div>}
+            {step === 1 && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-700"></div>}
           </button>
           <button
             onClick={() => setStep(2)}
             className={`flex-1 py-4 font-semibold transition relative ${
-              step === 2 ? "text-blue-700 bg-blue-50" : "text-slate-600 hover:bg-slate-50"
+              step === 2 ? "text-primary-700 bg-primary-50" : "text-secondary-600 hover:bg-slate-50"
             }`}
           >
             <div className="flex items-center justify-center gap-2">
               <Sparkles size={18} />
               Smart Invite
             </div>
-            {step === 2 && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-700"></div>}
+            {step === 2 && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-700"></div>}
           </button>
         </div>
 
@@ -107,13 +106,13 @@ export default function InviteModal({ userId, onClose, onSuccess }) {
               <div>
                 <label className={theme.text.label}>Business Name *</label>
                 <div className="relative mt-2">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={18} />
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400" size={18} />
                   <input
                     type="text"
                     required
                     value={inviteForm.name}
                     onChange={(e) => setInviteForm({ ...inviteForm, name: e.target.value })}
-                    className={`${theme.input.base} ${theme.input.provider} pl-10`}
+                    className={`${theme.input.base} ${theme.input.focus} pl-10`}
                     placeholder="Mike's Plumbing"
                   />
                 </div>
@@ -122,13 +121,13 @@ export default function InviteModal({ userId, onClose, onSuccess }) {
               <div>
                 <label className={theme.text.label}>Email *</label>
                 <div className="relative mt-2">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={18} />
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400" size={18} />
                   <input
                     type="email"
                     required
                     value={inviteForm.email}
                     onChange={(e) => setInviteForm({ ...inviteForm, email: e.target.value })}
-                    className={`${theme.input.base} ${theme.input.provider} pl-10`}
+                    className={`${theme.input.base} ${theme.input.focus} pl-10`}
                     placeholder="mike@plumbing.com"
                   />
                 </div>
@@ -137,12 +136,12 @@ export default function InviteModal({ userId, onClose, onSuccess }) {
               <div>
                 <label className={theme.text.label}>Phone</label>
                 <div className="relative mt-2">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={18} />
+                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400" size={18} />
                   <input
                     type="tel"
                     value={inviteForm.phone}
                     onChange={(e) => setInviteForm({ ...inviteForm, phone: e.target.value })}
-                    className={`${theme.input.base} ${theme.input.provider} pl-10`}
+                    className={`${theme.input.base} ${theme.input.focus} pl-10`}
                     placeholder="(555) 123-4567"
                   />
                 </div>
@@ -151,11 +150,11 @@ export default function InviteModal({ userId, onClose, onSuccess }) {
               <div>
                 <label className={theme.text.label}>Trade/Service</label>
                 <div className="relative mt-2">
-                  <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={18} />
+                  <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400" size={18} />
                   <select
                     value={inviteForm.trade}
                     onChange={(e) => setInviteForm({ ...inviteForm, trade: e.target.value })}
-                    className={`${theme.input.base} ${theme.input.provider} pl-10`}
+                    className={`${theme.input.base} ${theme.input.focus} pl-10`}
                   >
                     <option value="">Select Trade</option>
                     <option value="Plumbing">Plumbing</option>
@@ -176,7 +175,7 @@ export default function InviteModal({ userId, onClose, onSuccess }) {
                 <textarea
                   value={inviteForm.customMessage}
                   onChange={(e) => setInviteForm({ ...inviteForm, customMessage: e.target.value })}
-                  className={`${theme.input.base} ${theme.input.provider} mt-2`}
+                  className={`${theme.input.base} ${theme.input.focus} mt-2`}
                   rows={3}
                   placeholder="Add a personal note to your invitation..."
                 />
@@ -185,7 +184,7 @@ export default function InviteModal({ userId, onClose, onSuccess }) {
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full ${theme.button.provider} justify-center ${
+                className={`${theme.button.primary} w-full justify-center ${
                   loading ? "opacity-50 cursor-not-allowed" : ""
                 }`}
               >

@@ -1,7 +1,7 @@
-//levlpro-mvp\src\components\ProviderDashboard\Settings\components\AIQuotePreferences.jsx
 import { useState, useEffect } from "react";
-import { Settings as SettingsIcon, Save, Zap, DollarSign, TrendingUp } from "lucide-react";
+import { Settings as SettingsIcon, Save, Zap, DollarSign, TrendingUp, CheckCircle2 } from "lucide-react";
 import { supabase } from "../../../../lib/supabaseClient";
+import { theme } from "../../../../styles/theme";
 
 export default function AIQuotePreferences({ providerData, onUpdate }) {
   const [saving, setSaving] = useState(false);
@@ -48,22 +48,23 @@ export default function AIQuotePreferences({ providerData, onUpdate }) {
     <div className="space-y-6">
       {/* Success Message */}
       {success && (
-        <div className="bg-green-50 border border-green-200 text-green-800 p-4 rounded-xl">
-          {success}
+        <div className={`${theme.alert.success} flex items-center gap-3`}>
+          <CheckCircle2 size={20} />
+          <span className="font-medium">{success}</span>
         </div>
       )}
 
       {/* Header */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div className={`${theme.card.base} ${theme.card.padding}`}>
         <div className="flex items-center gap-3 mb-4">
           <div className="bg-purple-100 p-2.5 rounded-lg">
             <Zap className="text-purple-600" size={20} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-slate-900">
+            <h3 className={theme.text.h4}>
               AI Quote Preferences
             </h3>
-            <p className="text-sm text-slate-600">
+            <p className={`${theme.text.muted} text-sm`}>
               Customize how AI generates quotes for your business
             </p>
           </div>
@@ -77,12 +78,12 @@ export default function AIQuotePreferences({ providerData, onUpdate }) {
       </div>
 
       {/* Pricing Preferences */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div className={`${theme.card.base} ${theme.card.padding}`}>
         <div className="flex items-center gap-3 mb-6">
-          <div className="bg-green-100 p-2.5 rounded-lg">
-            <DollarSign className="text-green-600" size={20} />
+          <div className="bg-success-100 p-2.5 rounded-lg">
+            <DollarSign className="text-success-600" size={20} />
           </div>
-          <h3 className="text-lg font-semibold text-slate-900">
+          <h3 className={theme.text.h4}>
             Pricing Settings
           </h3>
         </div>
@@ -90,7 +91,7 @@ export default function AIQuotePreferences({ providerData, onUpdate }) {
         <div className="space-y-5">
           {/* Material Markup */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className={`${theme.text.label} block mb-2`}>
               Material Markup: {preferences.material_markup}%
             </label>
             <input
@@ -105,26 +106,26 @@ export default function AIQuotePreferences({ providerData, onUpdate }) {
                   material_markup: parseInt(e.target.value),
                 })
               }
-              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-green-600"
+              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-success-600"
             />
-            <div className="flex justify-between text-xs text-slate-600 mt-1">
+            <div className="flex justify-between text-xs text-secondary-600 mt-1">
               <span>0%</span>
               <span>25%</span>
               <span>50%</span>
             </div>
-            <p className="text-xs text-slate-500 mt-2">
+            <p className={`${theme.text.caption} mt-2`}>
               Percentage added to material costs
             </p>
           </div>
 
           {/* Travel Fee */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className={`${theme.text.label} block mb-2`}>
               Standard Travel Fee ($)
             </label>
             <div className="relative">
               <DollarSign
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400"
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-secondary-400"
                 size={18}
               />
               <input
@@ -138,17 +139,17 @@ export default function AIQuotePreferences({ providerData, onUpdate }) {
                     travel_fee: parseFloat(e.target.value) || 0,
                   })
                 }
-                className="w-full border-2 border-slate-300 rounded-xl pl-11 pr-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+                className={`${theme.input.base} ${theme.input.focus} pl-11`}
               />
             </div>
-            <p className="text-xs text-slate-500 mt-2">
+            <p className={`${theme.text.caption} mt-2`}>
               Flat fee added for jobs outside your primary area
             </p>
           </div>
 
           {/* Minimum Labor */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className={`${theme.text.label} block mb-2`}>
               Minimum Labor Time (hours)
             </label>
             <input
@@ -163,9 +164,9 @@ export default function AIQuotePreferences({ providerData, onUpdate }) {
                   minimum_labor_hours: parseFloat(e.target.value) || 1,
                 })
               }
-              className="w-full border-2 border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+              className={`${theme.input.base} ${theme.input.focus}`}
             />
-            <p className="text-xs text-slate-500 mt-2">
+            <p className={`${theme.text.caption} mt-2`}>
               Minimum billable hours for any job
             </p>
           </div>
@@ -173,12 +174,12 @@ export default function AIQuotePreferences({ providerData, onUpdate }) {
       </div>
 
       {/* Rate Multipliers */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div className={`${theme.card.base} ${theme.card.padding}`}>
         <div className="flex items-center gap-3 mb-6">
-          <div className="bg-amber-100 p-2.5 rounded-lg">
-            <TrendingUp className="text-amber-600" size={20} />
+          <div className="bg-warning-100 p-2.5 rounded-lg">
+            <TrendingUp className="text-warning-600" size={20} />
           </div>
-          <h3 className="text-lg font-semibold text-slate-900">
+          <h3 className={theme.text.h4}>
             Rate Multipliers
           </h3>
         </div>
@@ -186,7 +187,7 @@ export default function AIQuotePreferences({ providerData, onUpdate }) {
         <div className="space-y-5">
           {/* Emergency Rate */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className={`${theme.text.label} block mb-2`}>
               Emergency Service Rate: {preferences.emergency_rate_multiplier}x
             </label>
             <input
@@ -201,21 +202,21 @@ export default function AIQuotePreferences({ providerData, onUpdate }) {
                   emergency_rate_multiplier: parseFloat(e.target.value),
                 })
               }
-              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-600"
+              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-warning-600"
             />
-            <div className="flex justify-between text-xs text-slate-600 mt-1">
+            <div className="flex justify-between text-xs text-secondary-600 mt-1">
               <span>1.0x (normal)</span>
               <span>2.0x</span>
               <span>3.0x</span>
             </div>
-            <p className="text-xs text-slate-500 mt-2">
+            <p className={`${theme.text.caption} mt-2`}>
               Multiplier for urgent/same-day requests
             </p>
           </div>
 
           {/* Weekend Rate */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className={`${theme.text.label} block mb-2`}>
               Weekend/Holiday Rate: {preferences.weekend_rate_multiplier}x
             </label>
             <input
@@ -230,14 +231,14 @@ export default function AIQuotePreferences({ providerData, onUpdate }) {
                   weekend_rate_multiplier: parseFloat(e.target.value),
                 })
               }
-              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-600"
+              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-warning-600"
             />
-            <div className="flex justify-between text-xs text-slate-600 mt-1">
+            <div className="flex justify-between text-xs text-secondary-600 mt-1">
               <span>1.0x (normal)</span>
               <span>1.5x</span>
               <span>2.0x</span>
             </div>
-            <p className="text-xs text-slate-500 mt-2">
+            <p className={`${theme.text.caption} mt-2`}>
               Multiplier for weekend and holiday work
             </p>
           </div>
@@ -245,15 +246,15 @@ export default function AIQuotePreferences({ providerData, onUpdate }) {
       </div>
 
       {/* Additional Options */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-        <h3 className="text-lg font-semibold text-slate-900 mb-6">
+      <div className={`${theme.card.base} ${theme.card.padding}`}>
+        <h3 className={`${theme.text.h4} mb-6`}>
           Quote Options
         </h3>
 
         <div className="space-y-4">
           {/* Preferred Materials Brand */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className={`${theme.text.label} block mb-2`}>
               Preferred Materials Brand
             </label>
             <input
@@ -265,10 +266,10 @@ export default function AIQuotePreferences({ providerData, onUpdate }) {
                   preferred_materials_brand: e.target.value,
                 })
               }
-              className="w-full border-2 border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+              className={`${theme.input.base} ${theme.input.focus}`}
               placeholder="e.g., Behr, Sherwin-Williams, etc."
             />
-            <p className="text-xs text-slate-500 mt-2">
+            <p className={`${theme.text.caption} mt-2`}>
               AI will default to this brand when suggesting materials
             </p>
           </div>
@@ -285,13 +286,13 @@ export default function AIQuotePreferences({ providerData, onUpdate }) {
                     include_permits: e.target.checked,
                   })
                 }
-                className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                className="w-5 h-5 text-primary-600 rounded focus:ring-2 focus:ring-primary-500"
               />
               <div>
-                <span className="font-medium text-slate-900">
+                <span className="font-medium text-secondary-900">
                   Include Permits in Quotes
                 </span>
-                <p className="text-xs text-slate-600">
+                <p className={`${theme.text.caption}`}>
                   Automatically add permit costs when required
                 </p>
               </div>
@@ -307,13 +308,13 @@ export default function AIQuotePreferences({ providerData, onUpdate }) {
                     include_cleanup: e.target.checked,
                   })
                 }
-                className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                className="w-5 h-5 text-primary-600 rounded focus:ring-2 focus:ring-primary-500"
               />
               <div>
-                <span className="font-medium text-slate-900">
+                <span className="font-medium text-secondary-900">
                   Include Cleanup Time
                 </span>
-                <p className="text-xs text-slate-600">
+                <p className={`${theme.text.caption}`}>
                   Add time for site cleanup and debris removal
                 </p>
               </div>
@@ -322,7 +323,7 @@ export default function AIQuotePreferences({ providerData, onUpdate }) {
 
           {/* Warranty Period */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className={`${theme.text.label} block mb-2`}>
               Standard Warranty Period (months)
             </label>
             <select
@@ -333,7 +334,7 @@ export default function AIQuotePreferences({ providerData, onUpdate }) {
                   warranty_period: parseInt(e.target.value),
                 })
               }
-              className="w-full border-2 border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+              className={`${theme.input.base} ${theme.input.focus}`}
             >
               <option value="0">No Warranty</option>
               <option value="3">3 Months</option>
@@ -342,7 +343,7 @@ export default function AIQuotePreferences({ providerData, onUpdate }) {
               <option value="24">24 Months (2 Years)</option>
               <option value="36">36 Months (3 Years)</option>
             </select>
-            <p className="text-xs text-slate-500 mt-2">
+            <p className={`${theme.text.caption} mt-2`}>
               Default warranty period shown in quotes
             </p>
           </div>
@@ -353,10 +354,19 @@ export default function AIQuotePreferences({ providerData, onUpdate }) {
       <button
         onClick={handleSave}
         disabled={saving}
-        className="w-full bg-blue-600 text-white py-4 rounded-xl font-semibold hover:bg-blue-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
+        className={`${theme.button.primary} w-full py-4 disabled:opacity-50 justify-center`}
       >
-        <Save size={20} />
-        {saving ? "Saving..." : "Save AI Preferences"}
+        {saving ? (
+          <>
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            Saving...
+          </>
+        ) : (
+          <>
+            <Save size={20} />
+            Save AI Preferences
+          </>
+        )}
       </button>
     </div>
   );

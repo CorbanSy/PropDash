@@ -1,7 +1,7 @@
-//levlpro-mvp\src\components\ProviderDashboard\Settings\components\AvailabilitySettings.jsx
 import { useState, useEffect } from "react";
-import { Clock, Save, Calendar, X, Plus } from "lucide-react";
+import { Clock, Save, Calendar, X, Plus, CheckCircle2 } from "lucide-react";
 import { supabase } from "../../../../lib/supabaseClient";
+import { theme } from "../../../../styles/theme";
 
 const DAYS_OF_WEEK = [
   { key: "monday", label: "Monday" },
@@ -107,22 +107,23 @@ export default function AvailabilitySettings({ providerData, onUpdate }) {
     <div className="space-y-6">
       {/* Success Message */}
       {success && (
-        <div className="bg-green-50 border border-green-200 text-green-800 p-4 rounded-xl">
-          {success}
+        <div className={`${theme.alert.success} flex items-center gap-3`}>
+          <CheckCircle2 size={20} />
+          <span className="font-medium">{success}</span>
         </div>
       )}
 
       {/* Weekly Hours */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div className={`${theme.card.base} ${theme.card.padding}`}>
         <div className="flex items-center gap-3 mb-6">
-          <div className="bg-blue-100 p-2.5 rounded-lg">
-            <Clock className="text-blue-600" size={20} />
+          <div className="bg-primary-100 p-2.5 rounded-lg">
+            <Clock className="text-primary-600" size={20} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-slate-900">
+            <h3 className={theme.text.h4}>
               Working Hours
             </h3>
-            <p className="text-sm text-slate-600">
+            <p className={`${theme.text.muted} text-sm`}>
               Set your typical weekly availability
             </p>
           </div>
@@ -139,9 +140,9 @@ export default function AvailabilitySettings({ providerData, onUpdate }) {
                   type="checkbox"
                   checked={availability[day.key].enabled}
                   onChange={() => toggleDay(day.key)}
-                  className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                  className="w-5 h-5 text-primary-600 rounded focus:ring-2 focus:ring-primary-500"
                 />
-                <span className="font-medium text-slate-900">{day.label}</span>
+                <span className="font-medium text-secondary-900">{day.label}</span>
               </div>
 
               {availability[day.key].enabled ? (
@@ -150,18 +151,18 @@ export default function AvailabilitySettings({ providerData, onUpdate }) {
                     type="time"
                     value={availability[day.key].start}
                     onChange={(e) => updateTime(day.key, "start", e.target.value)}
-                    className="border-2 border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className={`${theme.input.base} ${theme.input.focus}`}
                   />
-                  <span className="text-slate-600">to</span>
+                  <span className={theme.text.muted}>to</span>
                   <input
                     type="time"
                     value={availability[day.key].end}
                     onChange={(e) => updateTime(day.key, "end", e.target.value)}
-                    className="border-2 border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className={`${theme.input.base} ${theme.input.focus}`}
                   />
                 </div>
               ) : (
-                <span className="text-slate-500 italic">Unavailable</span>
+                <span className={`${theme.text.muted} italic`}>Unavailable</span>
               )}
             </div>
           ))}
@@ -169,14 +170,14 @@ export default function AvailabilitySettings({ providerData, onUpdate }) {
       </div>
 
       {/* Time Off / Vacation */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div className={`${theme.card.base} ${theme.card.padding}`}>
         <div className="flex items-center gap-3 mb-6">
-          <div className="bg-amber-100 p-2.5 rounded-lg">
-            <Calendar className="text-amber-600" size={20} />
+          <div className="bg-warning-100 p-2.5 rounded-lg">
+            <Calendar className="text-warning-600" size={20} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-slate-900">Time Off</h3>
-            <p className="text-sm text-slate-600">
+            <h3 className={theme.text.h4}>Time Off</h3>
+            <p className={`${theme.text.muted} text-sm`}>
               Block out vacation days or unavailable periods
             </p>
           </div>
@@ -184,12 +185,12 @@ export default function AvailabilitySettings({ providerData, onUpdate }) {
 
         {/* Add New Time Off */}
         <div className="bg-slate-50 rounded-lg p-4 mb-4">
-          <h4 className="font-semibold text-slate-900 mb-3">
+          <h4 className={`${theme.text.h5} mb-3`}>
             Add Unavailable Period
           </h4>
           <div className="grid md:grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label className={`${theme.text.label} block mb-1`}>
                 Start Date
               </label>
               <input
@@ -201,11 +202,11 @@ export default function AvailabilitySettings({ providerData, onUpdate }) {
                     start: e.target.value,
                   })
                 }
-                className="w-full border-2 border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className={`${theme.input.base} ${theme.input.focus}`}
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label className={`${theme.text.label} block mb-1`}>
                 End Date
               </label>
               <input
@@ -217,11 +218,11 @@ export default function AvailabilitySettings({ providerData, onUpdate }) {
                     end: e.target.value,
                   })
                 }
-                className="w-full border-2 border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className={`${theme.input.base} ${theme.input.focus}`}
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label className={`${theme.text.label} block mb-1`}>
                 Reason (Optional)
               </label>
               <input
@@ -234,13 +235,13 @@ export default function AvailabilitySettings({ providerData, onUpdate }) {
                   })
                 }
                 placeholder="Vacation, etc."
-                className="w-full border-2 border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className={`${theme.input.base} ${theme.input.focus}`}
               />
             </div>
           </div>
           <button
             onClick={addUnavailableDate}
-            className="mt-3 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition font-semibold flex items-center gap-2"
+            className={`${theme.button.warning} mt-3`}
           >
             <Plus size={16} />
             Add Time Off
@@ -250,27 +251,27 @@ export default function AvailabilitySettings({ providerData, onUpdate }) {
         {/* List of Unavailable Dates */}
         <div className="space-y-2">
           {unavailableDates.length === 0 ? (
-            <p className="text-center text-slate-500 py-4">
+            <p className={`${theme.text.muted} text-center py-4`}>
               No time off scheduled
             </p>
           ) : (
             unavailableDates.map((date) => (
               <div
                 key={date.id}
-                className="flex items-center justify-between p-3 bg-amber-50 border border-amber-200 rounded-lg"
+                className="flex items-center justify-between p-3 bg-warning-50 border border-warning-200 rounded-lg"
               >
                 <div>
-                  <p className="font-semibold text-slate-900">
+                  <p className="font-semibold text-secondary-900">
                     {new Date(date.start).toLocaleDateString()} -{" "}
                     {new Date(date.end).toLocaleDateString()}
                   </p>
                   {date.reason && (
-                    <p className="text-sm text-slate-600">{date.reason}</p>
+                    <p className={`${theme.text.caption}`}>{date.reason}</p>
                   )}
                 </div>
                 <button
                   onClick={() => removeUnavailableDate(date.id)}
-                  className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition"
+                  className="p-2 text-error-600 hover:bg-error-100 rounded-lg transition"
                 >
                   <X size={18} />
                 </button>
@@ -284,10 +285,19 @@ export default function AvailabilitySettings({ providerData, onUpdate }) {
       <button
         onClick={handleSave}
         disabled={saving}
-        className="w-full bg-blue-600 text-white py-4 rounded-xl font-semibold hover:bg-blue-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
+        className={`${theme.button.primary} w-full py-4 disabled:opacity-50 justify-center`}
       >
-        <Save size={20} />
-        {saving ? "Saving..." : "Save Availability"}
+        {saving ? (
+          <>
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            Saving...
+          </>
+        ) : (
+          <>
+            <Save size={20} />
+            Save Availability
+          </>
+        )}
       </button>
     </div>
   );

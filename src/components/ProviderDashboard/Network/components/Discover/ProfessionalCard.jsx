@@ -1,4 +1,3 @@
-//levlpro-mvp\src\components\ProviderDashboard\Network\components\Discover\ProfessionalCard.jsx
 import { useState } from "react";
 import {
   UserPlus,
@@ -124,21 +123,21 @@ export default function ProfessionalCard({
     switch (connectionStatus) {
       case "connected":
         return (
-          <div className="flex items-center gap-1 px-3 py-2 bg-green-50 text-green-700 rounded-lg font-semibold text-sm">
+          <div className="flex items-center gap-1 px-3 py-2 bg-success-50 text-success-700 rounded-lg font-semibold text-sm">
             <UserCheck size={14} />
             Connected
           </div>
         );
       case "pending_sent":
         return (
-          <div className="flex items-center gap-1 px-3 py-2 bg-amber-50 text-amber-700 rounded-lg font-semibold text-sm">
+          <div className="flex items-center gap-1 px-3 py-2 bg-warning-50 text-warning-700 rounded-lg font-semibold text-sm">
             <Clock size={14} />
             Invite Sent
           </div>
         );
       case "pending_received":
         return (
-          <div className="flex items-center gap-1 px-3 py-2 bg-blue-50 text-blue-700 rounded-lg font-semibold text-sm">
+          <div className="flex items-center gap-1 px-3 py-2 bg-primary-50 text-primary-700 rounded-lg font-semibold text-sm">
             <Bell size={14} />
             Invited You
           </div>
@@ -147,7 +146,7 @@ export default function ProfessionalCard({
         return (
           <button
             onClick={() => onSendInvite(professional)}
-            className="flex items-center gap-1 px-3 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition text-sm"
+            className={`${theme.button.primary} text-sm`}
           >
             <UserPlus size={14} />
             Connect
@@ -162,7 +161,7 @@ export default function ProfessionalCard({
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3 flex-1">
           {/* Profile Photo */}
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg flex-shrink-0 overflow-hidden">
+          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg flex-shrink-0 overflow-hidden">
             {professional.profile_photo ? (
               <img
                 src={professional.profile_photo}
@@ -176,14 +175,14 @@ export default function ProfessionalCard({
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <h3 className="font-bold text-slate-900 text-base truncate">
+              <h3 className={`${theme.text.h5} truncate`}>
                 {professional.business_name || "Professional"}
               </h3>
               {isVerified && (
-                <CheckCircle className="text-green-600 flex-shrink-0" size={14} />
+                <CheckCircle className="text-success-600 flex-shrink-0" size={14} />
               )}
             </div>
-            <p className="text-xs text-slate-600 capitalize truncate">
+            <p className={`${theme.text.caption} capitalize truncate`}>
               {primaryService}
             </p>
           </div>
@@ -191,8 +190,8 @@ export default function ProfessionalCard({
 
         {professional.is_online && (
           <div className="flex items-center gap-1 text-xs flex-shrink-0">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span className="text-green-700 font-medium">Online</span>
+            <div className="w-2 h-2 bg-success-500 rounded-full animate-pulse"></div>
+            <span className="text-success-700 font-medium">Online</span>
           </div>
         )}
       </div>
@@ -206,7 +205,7 @@ export default function ProfessionalCard({
               .map((service, index) => (
                 <div
                   key={index}
-                  className="flex items-center gap-1 bg-blue-50 text-blue-700 px-2 py-1 rounded text-xs font-medium"
+                  className="flex items-center gap-1 bg-primary-50 text-primary-700 px-2 py-1 rounded text-xs font-medium"
                 >
                   <span>{serviceIcons[service] || "🔨"}</span>
                   <span className="capitalize">{service}</span>
@@ -214,7 +213,7 @@ export default function ProfessionalCard({
               ))}
             {(professional.service_categories || professional.services_offered)
               ?.length > 3 && (
-              <div className="bg-slate-100 text-slate-600 px-2 py-1 rounded text-xs font-medium">
+              <div className="bg-slate-100 text-secondary-600 px-2 py-1 rounded text-xs font-medium">
                 +
                 {(professional.service_categories || professional.services_offered)
                   .length - 3}
@@ -225,7 +224,7 @@ export default function ProfessionalCard({
       )}
 
       {/* Info */}
-      <div className="space-y-1.5 text-xs text-slate-600 mb-4">
+      <div className={`space-y-1.5 ${theme.text.caption} mb-4`}>
         {professional.base_rate && (
           <div className="flex items-center gap-2">
             <TrendingUp size={12} />
@@ -238,8 +237,8 @@ export default function ProfessionalCard({
               size={12}
               className={
                 professional.verification_status === "verified"
-                  ? "text-green-600"
-                  : "text-slate-400"
+                  ? "text-success-600"
+                  : "text-secondary-400"
               }
             />
             <span className="capitalize">{professional.verification_status}</span>
@@ -255,14 +254,14 @@ export default function ProfessionalCard({
         <div className="grid grid-cols-2 gap-2">
           <button
             onClick={handleMessage}
-            className="flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition text-sm"
+            className={`${theme.button.primary} text-sm justify-center`}
           >
             <MessageSquare size={14} />
             Message
           </button>
           <button
             onClick={handleReferral}
-            className="flex items-center justify-center gap-2 px-3 py-2 border-2 border-blue-600 text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition text-sm"
+            className={`${theme.button.primaryOutline} text-sm justify-center`}
           >
             <Send size={14} />
             Refer

@@ -1,8 +1,8 @@
-//levlpro-mvp\src\components\ProviderDashboard\Settings\components\ServiceAreas.jsx
 import { useState, useEffect } from "react";
-import { MapPin, Save, Plus, X, Navigation } from "lucide-react";
+import { MapPin, Save, Plus, X, Navigation, CheckCircle2 } from "lucide-react";
 import { supabase } from "../../../../lib/supabaseClient";
 import { validateZipCode } from "../utils/settingsHelpers";
+import { theme } from "../../../../styles/theme";
 
 export default function ServiceAreas({ providerData, onUpdate }) {
   const [saving, setSaving] = useState(false);
@@ -75,22 +75,23 @@ export default function ServiceAreas({ providerData, onUpdate }) {
     <div className="space-y-6">
       {/* Success Message */}
       {success && (
-        <div className="bg-green-50 border border-green-200 text-green-800 p-4 rounded-xl">
-          {success}
+        <div className={`${theme.alert.success} flex items-center gap-3`}>
+          <CheckCircle2 size={20} />
+          <span className="font-medium">{success}</span>
         </div>
       )}
 
       {/* Service Area Method */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div className={`${theme.card.base} ${theme.card.padding}`}>
         <div className="flex items-center gap-3 mb-6">
           <div className="bg-purple-100 p-2.5 rounded-lg">
             <MapPin className="text-purple-600" size={20} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-slate-900">
+            <h3 className={theme.text.h4}>
               Service Areas
             </h3>
-            <p className="text-sm text-slate-600">
+            <p className={`${theme.text.muted} text-sm`}>
               Define where you provide services
             </p>
           </div>
@@ -102,15 +103,15 @@ export default function ServiceAreas({ providerData, onUpdate }) {
             onClick={() => setServiceMethod("zipcodes")}
             className={`p-4 rounded-lg border-2 transition text-left ${
               serviceMethod === "zipcodes"
-                ? "border-blue-400 bg-blue-50"
+                ? "border-primary-400 bg-primary-50"
                 : "border-slate-200 hover:border-slate-300"
             }`}
           >
             <div className="flex items-center gap-3 mb-2">
-              <MapPin size={20} className="text-blue-600" />
-              <h4 className="font-semibold text-slate-900">Specific ZIP Codes</h4>
+              <MapPin size={20} className="text-primary-600" />
+              <h4 className={`${theme.text.h5}`}>Specific ZIP Codes</h4>
             </div>
-            <p className="text-sm text-slate-600">
+            <p className={`${theme.text.caption}`}>
               Choose exact ZIP codes you serve
             </p>
           </button>
@@ -119,15 +120,15 @@ export default function ServiceAreas({ providerData, onUpdate }) {
             onClick={() => setServiceMethod("radius")}
             className={`p-4 rounded-lg border-2 transition text-left ${
               serviceMethod === "radius"
-                ? "border-blue-400 bg-blue-50"
+                ? "border-primary-400 bg-primary-50"
                 : "border-slate-200 hover:border-slate-300"
             }`}
           >
             <div className="flex items-center gap-3 mb-2">
-              <Navigation size={20} className="text-blue-600" />
-              <h4 className="font-semibold text-slate-900">Radius</h4>
+              <Navigation size={20} className="text-primary-600" />
+              <h4 className={`${theme.text.h5}`}>Radius</h4>
             </div>
-            <p className="text-sm text-slate-600">
+            <p className={`${theme.text.caption}`}>
               Set a mile radius around your location
             </p>
           </button>
@@ -136,7 +137,7 @@ export default function ServiceAreas({ providerData, onUpdate }) {
         {/* ZIP Codes Method */}
         {serviceMethod === "zipcodes" && (
           <div>
-            <h4 className="font-semibold text-slate-900 mb-3">Add ZIP Codes</h4>
+            <h4 className={`${theme.text.h5} mb-3`}>Add ZIP Codes</h4>
             <div className="flex gap-2 mb-4">
               <input
                 type="text"
@@ -144,12 +145,12 @@ export default function ServiceAreas({ providerData, onUpdate }) {
                 onChange={(e) => setNewZipCode(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && addZipCode()}
                 placeholder="Enter ZIP code"
-                className="flex-1 border-2 border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className={`${theme.input.base} ${theme.input.focus} flex-1`}
                 maxLength={10}
               />
               <button
                 onClick={addZipCode}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold flex items-center gap-2"
+                className={theme.button.primary}
               >
                 <Plus size={18} />
                 Add
@@ -159,17 +160,17 @@ export default function ServiceAreas({ providerData, onUpdate }) {
             {/* ZIP Code List */}
             <div className="flex flex-wrap gap-2">
               {zipCodes.length === 0 ? (
-                <p className="text-slate-500 text-sm">No ZIP codes added yet</p>
+                <p className={`${theme.text.muted} text-sm`}>No ZIP codes added yet</p>
               ) : (
                 zipCodes.map((zip) => (
                   <span
                     key={zip}
-                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-lg font-medium"
+                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary-100 text-primary-700 rounded-lg font-medium"
                   >
                     {zip}
                     <button
                       onClick={() => removeZipCode(zip)}
-                      className="hover:bg-blue-200 rounded-full p-0.5 transition"
+                      className="hover:bg-primary-200 rounded-full p-0.5 transition"
                     >
                       <X size={14} />
                     </button>
@@ -184,7 +185,7 @@ export default function ServiceAreas({ providerData, onUpdate }) {
         {serviceMethod === "radius" && (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
+              <label className={`${theme.text.label} block mb-2`}>
                 Your Base Location (ZIP or Address)
               </label>
               <input
@@ -192,12 +193,12 @@ export default function ServiceAreas({ providerData, onUpdate }) {
                 value={baseLocation}
                 onChange={(e) => setBaseLocation(e.target.value)}
                 placeholder="e.g., 90210 or 123 Main St, Los Angeles, CA"
-                className="w-full border-2 border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className={`${theme.input.base} ${theme.input.focus}`}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
+              <label className={`${theme.text.label} block mb-2`}>
                 Service Radius: {radius} miles
               </label>
               <input
@@ -207,17 +208,17 @@ export default function ServiceAreas({ providerData, onUpdate }) {
                 step="5"
                 value={radius}
                 onChange={(e) => setRadius(parseInt(e.target.value))}
-                className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary-600"
               />
-              <div className="flex justify-between text-xs text-slate-600 mt-1">
+              <div className="flex justify-between text-xs text-secondary-600 mt-1">
                 <span>5 mi</span>
                 <span>25 mi</span>
                 <span>50 mi</span>
               </div>
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-sm text-blue-900">
+            <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
+              <p className="text-sm text-primary-900">
                 <strong>Coverage Area:</strong> You'll serve all locations within {radius} miles of {baseLocation || "your base location"}.
               </p>
             </div>
@@ -226,9 +227,9 @@ export default function ServiceAreas({ providerData, onUpdate }) {
       </div>
 
       {/* Travel Fee Info */}
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
-        <h4 className="font-semibold text-amber-900 mb-2">💡 Pro Tip</h4>
-        <p className="text-sm text-amber-800">
+      <div className="bg-warning-50 border border-warning-200 rounded-xl p-5">
+        <h4 className="font-semibold text-warning-900 mb-2">💡 Pro Tip</h4>
+        <p className="text-sm text-warning-800">
           Set travel fees in your AI Quote Preferences to automatically charge for jobs outside your primary area.
         </p>
       </div>
@@ -237,10 +238,19 @@ export default function ServiceAreas({ providerData, onUpdate }) {
       <button
         onClick={handleSave}
         disabled={saving}
-        className="w-full bg-blue-600 text-white py-4 rounded-xl font-semibold hover:bg-blue-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
+        className={`${theme.button.primary} w-full py-4 disabled:opacity-50 justify-center`}
       >
-        <Save size={20} />
-        {saving ? "Saving..." : "Save Service Areas"}
+        {saving ? (
+          <>
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            Saving...
+          </>
+        ) : (
+          <>
+            <Save size={20} />
+            Save Service Areas
+          </>
+        )}
       </button>
     </div>
   );

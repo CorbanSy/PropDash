@@ -1,4 +1,3 @@
-//levlpro-mvp\src\components\ProviderDashboard\Network\components\MyConnections\ConnectionsSearch.jsx
 import { useState } from "react";
 import { Search, Filter, ChevronDown } from "lucide-react";
 import { theme } from "../../../../../styles/theme";
@@ -33,7 +32,7 @@ export default function ConnectionsSearch({
         {/* Search */}
         <div className="flex-1 relative">
           <Search
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400"
             size={18}
           />
           <input
@@ -41,7 +40,7 @@ export default function ConnectionsSearch({
             placeholder="Search connections..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className={`${theme.input.base} ${theme.input.focus} pl-10`}
           />
         </div>
 
@@ -49,7 +48,7 @@ export default function ConnectionsSearch({
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="border-2 border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          className={`${theme.input.base} ${theme.input.focus}`}
         >
           <option value="all">All Connections</option>
           <option value="active">Active Only</option>
@@ -61,7 +60,7 @@ export default function ConnectionsSearch({
         <div className="relative">
           <button
             onClick={() => setShowDropdown(!showDropdown)}
-            className="flex items-center gap-2 border-2 border-slate-300 rounded-lg px-4 py-2.5 hover:bg-slate-50 transition"
+            className={`${theme.button.secondary} gap-2`}
           >
             <Filter size={18} />
             <span className="text-sm font-medium">Sort: {getSortLabel()}</span>
@@ -88,7 +87,7 @@ export default function ConnectionsSearch({
       </div>
 
       {/* Results count */}
-      <div className="mt-3 text-sm text-slate-600">
+      <div className={`mt-3 ${theme.text.caption}`}>
         Showing {filteredCount} of {totalConnections} connections
       </div>
     </div>

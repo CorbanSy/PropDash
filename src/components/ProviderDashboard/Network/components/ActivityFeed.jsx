@@ -1,4 +1,3 @@
-//levlpro-mvp\src\components\ProviderDashboard\Network\components\ActivityFeed.jsx
 import {
   UserPlus,
   CheckCircle2,
@@ -14,17 +13,17 @@ export default function ActivityFeed({ activities }) {
   const getActivityIcon = (type) => {
     switch (type) {
       case "referral_joined":
-        return <UserPlus size={16} className="text-green-600" />;
+        return <UserPlus size={16} className="text-success-600" />;
       case "job_completed":
-        return <CheckCircle2 size={16} className="text-blue-600" />;
+        return <CheckCircle2 size={16} className="text-primary-600" />;
       case "commission_earned":
         return <DollarSign size={16} className="text-emerald-600" />;
       case "referral_sent":
         return <Send size={16} className="text-purple-600" />;
       case "job_referred":
-        return <Briefcase size={16} className="text-amber-600" />;
+        return <Briefcase size={16} className="text-warning-600" />;
       default:
-        return <TrendingUp size={16} className="text-slate-600" />;
+        return <TrendingUp size={16} className="text-secondary-600" />;
     }
   };
 
@@ -68,9 +67,9 @@ export default function ActivityFeed({ activities }) {
 
       {displayActivities.length === 0 ? (
         <div className="text-center py-8">
-          <TrendingUp className="text-slate-400 mx-auto mb-3" size={32} />
+          <TrendingUp className="text-secondary-400 mx-auto mb-3" size={32} />
           <p className={theme.text.body}>No activity yet</p>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className={`${theme.text.caption} mt-1`}>
             Your network activity will appear here
           </p>
         </div>
@@ -85,10 +84,10 @@ export default function ActivityFeed({ activities }) {
                 {getActivityIcon(activity.type)}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-slate-900 font-medium">
+                <p className="text-sm text-secondary-900 font-medium">
                   {activity.message}
                 </p>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className={`${theme.text.caption} mt-1`}>
                   {formatTimeAgo(activity.created_at)}
                 </p>
               </div>
@@ -98,7 +97,7 @@ export default function ActivityFeed({ activities }) {
       )}
 
       {displayActivities.length > 8 && (
-        <button className="w-full mt-4 text-sm text-blue-600 hover:text-blue-700 font-medium">
+        <button className="w-full mt-4 text-sm text-primary-600 hover:text-primary-700 font-medium">
           View All Activity
         </button>
       )}

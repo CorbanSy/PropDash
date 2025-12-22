@@ -1,4 +1,3 @@
-//levlpro-mvp\src\components\ProviderDashboard\Network\components\PartnerCard.jsx
 import {
   Star,
   MapPin,
@@ -17,11 +16,11 @@ export default function PartnerCard({ partner, onClick, onMessage, onRefer }) {
   const getStatusColor = (status) => {
     switch (status) {
       case "active":
-        return "bg-green-100 text-green-700";
+        return "bg-success-100 text-success-700";
       case "inactive":
-        return "bg-slate-100 text-slate-600";
+        return "bg-slate-100 text-secondary-600";
       default:
-        return "bg-blue-100 text-blue-700";
+        return "bg-primary-100 text-primary-700";
     }
   };
 
@@ -36,25 +35,25 @@ export default function PartnerCard({ partner, onClick, onMessage, onRefer }) {
         />
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2 mb-1">
-            <h3 className="font-semibold text-slate-900 truncate">
+            <h3 className={`${theme.text.h5} truncate`}>
               {partner.business_name || partner.referred_business_name}
             </h3>
             {partner.verified && (
-              <ShieldCheck className="text-blue-600 flex-shrink-0" size={18} />
+              <ShieldCheck className="text-primary-600 flex-shrink-0" size={18} />
             )}
           </div>
-          <p className="text-sm text-slate-600 mb-2">{partner.trade}</p>
+          <p className={`${theme.text.caption} mb-2`}>{partner.trade}</p>
           <div className="flex items-center gap-3">
             {partner.rating && (
               <div className="flex items-center gap-1">
                 <Star size={14} className="text-yellow-500 fill-yellow-500" />
-                <span className="text-sm font-semibold text-slate-700">
+                <span className="text-sm font-semibold text-secondary-700">
                   {partner.rating.toFixed(1)}
                 </span>
               </div>
             )}
             {partner.jobsCompleted > 0 && (
-              <span className="text-xs text-slate-500">
+              <span className={theme.text.caption}>
                 {partner.jobsCompleted} jobs
               </span>
             )}
@@ -64,8 +63,8 @@ export default function PartnerCard({ partner, onClick, onMessage, onRefer }) {
         {/* Online Status Badge */}
         {partner.is_online && (
           <div className="absolute top-4 right-4">
-            <div className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <div className="bg-success-100 text-success-700 px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
+              <div className="w-2 h-2 bg-success-500 rounded-full animate-pulse"></div>
               Online
             </div>
           </div>
@@ -75,8 +74,8 @@ export default function PartnerCard({ partner, onClick, onMessage, onRefer }) {
       {/* Stats */}
       <div className="grid grid-cols-2 gap-3 mb-4">
         <div className="bg-slate-50 rounded-lg p-2">
-          <p className="text-xs text-slate-600 mb-1">Jobs Referred</p>
-          <p className="text-lg font-bold text-slate-900">{partner.jobsReferred || 0}</p>
+          <p className={`${theme.text.caption} mb-1`}>Jobs Referred</p>
+          <p className="text-lg font-bold text-secondary-900">{partner.jobsReferred || 0}</p>
         </div>
         <div className="bg-emerald-50 rounded-lg p-2">
           <p className="text-xs text-emerald-700 mb-1">Completed</p>
@@ -85,7 +84,7 @@ export default function PartnerCard({ partner, onClick, onMessage, onRefer }) {
       </div>
 
       {/* Info */}
-      <div className="space-y-2 text-xs text-slate-600 mb-4">
+      <div className={`space-y-2 ${theme.text.caption} mb-4`}>
         {partner.location && (
           <div className="flex items-center gap-2">
             <MapPin size={12} />
@@ -111,7 +110,7 @@ export default function PartnerCard({ partner, onClick, onMessage, onRefer }) {
         {/* View Profile */}
         <button
           onClick={onClick}
-          className="flex items-center justify-center gap-1 px-3 py-2 border-2 border-slate-300 text-slate-700 rounded-lg font-semibold hover:bg-slate-50 transition text-xs"
+          className={`${theme.button.secondaryOutline} text-xs justify-center`}
         >
           <ExternalLink size={14} />
           Profile
@@ -120,7 +119,7 @@ export default function PartnerCard({ partner, onClick, onMessage, onRefer }) {
         {/* Message */}
         <button
           onClick={() => onMessage(partner)}
-          className="flex items-center justify-center gap-1 px-3 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition text-xs"
+          className={`${theme.button.primary} text-xs justify-center`}
         >
           <MessageSquare size={14} />
           Message

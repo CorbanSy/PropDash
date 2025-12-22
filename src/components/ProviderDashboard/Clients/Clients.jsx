@@ -1,4 +1,3 @@
-//levlpro-mvp\src\components\ProviderDashboard\Clients\Clients.jsx
 import { useState, useEffect } from "react";
 import {
   Users,
@@ -149,7 +148,7 @@ export default function Clients() {
           </button>
           <button
             onClick={() => setShowEditModal(true)}
-            className={`${theme.button.provider} flex items-center gap-2`}
+            className={`${theme.button.primary} flex items-center gap-2`}
           >
             <Plus size={18} />
             Add Client
@@ -165,7 +164,7 @@ export default function Clients() {
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
             <Search
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400"
               size={18}
             />
             <input
@@ -173,7 +172,7 @@ export default function Clients() {
               placeholder="Search by name, email, or phone..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className={`${theme.input.base} ${theme.input.provider} pl-10`}
+              className={`${theme.input.base} ${theme.input.focus} pl-10`}
             />
           </div>
           <button
@@ -199,7 +198,7 @@ export default function Clients() {
       {filteredClients.length === 0 ? (
         <div className={`${theme.card.base} ${theme.card.padding} text-center py-12`}>
           <div className="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Users className="text-slate-400" size={32} />
+            <Users className="text-secondary-400" size={32} />
           </div>
           <p className={`${theme.text.h4} mb-2`}>
             {searchQuery || showFilters ? "No Clients Match Filters" : "No Clients Yet"}

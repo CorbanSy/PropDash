@@ -1,7 +1,7 @@
-//levlpro-mvp\src\components\ProviderDashboard\Settings\components\StripeConnect.jsx
 import { useState } from "react";
 import { CreditCard, ExternalLink, DollarSign, TrendingUp, CheckCircle2 } from "lucide-react";
 import { supabase } from "../../../../lib/supabaseClient";
+import { theme } from "../../../../styles/theme";
 
 export default function StripeConnect({ providerData, onUpdate }) {
   const [loading, setLoading] = useState(false);
@@ -34,21 +34,21 @@ export default function StripeConnect({ providerData, onUpdate }) {
   return (
     <div className="space-y-6">
       {/* Stripe Status */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div className={`${theme.card.base} ${theme.card.padding}`}>
         <div className="flex items-center gap-3 mb-6">
           <div className="bg-purple-100 p-2.5 rounded-lg">
             <CreditCard className="text-purple-600" size={20} />
           </div>
           <div className="flex-1">
-            <h3 className="text-lg font-semibold text-slate-900">
+            <h3 className={theme.text.h4}>
               Payment Processing
             </h3>
-            <p className="text-sm text-slate-600">
+            <p className={`${theme.text.muted} text-sm`}>
               Connect Stripe to receive payments from clients
             </p>
           </div>
           {isConnected && (
-            <span className="px-3 py-1.5 bg-green-100 text-green-700 rounded-full text-sm font-semibold flex items-center gap-1">
+            <span className="px-3 py-1.5 bg-success-100 text-success-700 rounded-full text-sm font-semibold flex items-center gap-1">
               <CheckCircle2 size={14} />
               Connected
             </span>
@@ -58,14 +58,14 @@ export default function StripeConnect({ providerData, onUpdate }) {
         {isConnected ? (
           /* Connected State */
           <div className="space-y-4">
-            <div className="bg-green-50 border-2 border-green-200 rounded-lg p-5">
+            <div className="bg-success-50 border-2 border-success-200 rounded-lg p-5">
               <div className="flex items-center gap-3 mb-3">
-                <CheckCircle2 className="text-green-600" size={24} />
+                <CheckCircle2 className="text-success-600" size={24} />
                 <div>
-                  <p className="font-semibold text-green-900">
+                  <p className="font-semibold text-success-900">
                     Stripe Account Connected
                   </p>
-                  <p className="text-sm text-green-700">
+                  <p className="text-sm text-success-700">
                     You can now receive payments directly
                   </p>
                 </div>
@@ -75,12 +75,12 @@ export default function StripeConnect({ providerData, onUpdate }) {
             {/* Account Details */}
             <div className="grid md:grid-cols-2 gap-4">
               <div className="bg-slate-50 rounded-lg p-4">
-                <p className="text-xs text-slate-600 mb-1">Available Balance</p>
-                <p className="text-2xl font-bold text-slate-900">$0.00</p>
+                <p className={`${theme.text.caption} mb-1`}>Available Balance</p>
+                <p className={`${theme.text.h2}`}>$0.00</p>
               </div>
               <div className="bg-slate-50 rounded-lg p-4">
-                <p className="text-xs text-slate-600 mb-1">Pending</p>
-                <p className="text-2xl font-bold text-slate-900">$0.00</p>
+                <p className={`${theme.text.caption} mb-1`}>Pending</p>
+                <p className={`${theme.text.h2}`}>$0.00</p>
               </div>
             </div>
 
@@ -90,12 +90,12 @@ export default function StripeConnect({ providerData, onUpdate }) {
                 href="https://dashboard.stripe.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 px-4 py-3 border-2 border-slate-300 text-slate-700 rounded-xl hover:bg-slate-50 transition font-semibold text-center flex items-center justify-center gap-2"
+                className={`${theme.button.secondaryOutline} flex-1 text-center`}
               >
                 <ExternalLink size={18} />
                 Open Stripe Dashboard
               </a>
-              <button className="flex-1 px-4 py-3 bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition font-semibold">
+              <button className="flex-1 px-4 py-3 bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition font-semibold flex items-center justify-center gap-2">
                 Manage Payouts
               </button>
             </div>
@@ -103,11 +103,11 @@ export default function StripeConnect({ providerData, onUpdate }) {
         ) : (
           /* Not Connected State */
           <div className="space-y-4">
-            <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-5">
-              <h4 className="font-semibold text-blue-900 mb-3">
+            <div className="bg-primary-50 border-2 border-primary-200 rounded-lg p-5">
+              <h4 className="font-semibold text-primary-900 mb-3">
                 Why Connect Stripe?
               </h4>
-              <ul className="space-y-2 text-sm text-blue-800">
+              <ul className="space-y-2 text-sm text-primary-800">
                 <li className="flex items-start gap-2">
                   <DollarSign size={16} className="flex-shrink-0 mt-0.5" />
                   <span>Receive payments directly from clients</span>
@@ -139,7 +139,7 @@ export default function StripeConnect({ providerData, onUpdate }) {
 
             {/* Info */}
             <div className="bg-slate-50 rounded-lg p-4">
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className={`${theme.text.caption} leading-relaxed`}>
                 <strong>Note:</strong> You'll be redirected to Stripe to complete
                 a quick verification process. This typically takes 5-10 minutes
                 and requires your business information and bank account details.
@@ -150,32 +150,32 @@ export default function StripeConnect({ providerData, onUpdate }) {
       </div>
 
       {/* Subscription Info */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div className={`${theme.card.base} ${theme.card.padding}`}>
         <div className="flex items-center gap-3 mb-4">
-          <div className="bg-green-100 p-2.5 rounded-lg">
-            <DollarSign className="text-green-600" size={20} />
+          <div className="bg-success-100 p-2.5 rounded-lg">
+            <DollarSign className="text-success-600" size={20} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-slate-900">Subscription</h3>
-            <p className="text-sm text-slate-600">Your current plan</p>
+            <h3 className={theme.text.h4}>Subscription</h3>
+            <p className={`${theme.text.muted} text-sm`}>Your current plan</p>
           </div>
         </div>
 
-        <div className="bg-green-50 border border-green-200 rounded-xl p-5">
+        <div className="bg-success-50 border border-success-200 rounded-xl p-5">
           <div className="flex items-center justify-between mb-3">
             <div>
-              <p className="font-semibold text-slate-900 mb-1">Free Plan</p>
-              <p className="text-sm text-slate-600">
+              <p className={`${theme.text.h5} mb-1`}>Free Plan</p>
+              <p className={`${theme.text.caption}`}>
                 All core features included
               </p>
             </div>
-            <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">
+            <span className="bg-success-100 text-success-700 px-3 py-1 rounded-full text-xs font-bold">
               ACTIVE
             </span>
           </div>
 
-          <div className="pt-3 border-t border-green-200">
-            <p className="text-xs text-slate-600">
+          <div className="pt-3 border-t border-success-200">
+            <p className={theme.text.caption}>
               💡 Premium plans with advanced features coming soon
             </p>
           </div>

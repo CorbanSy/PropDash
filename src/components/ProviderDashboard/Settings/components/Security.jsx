@@ -1,4 +1,3 @@
-//levlpro-mvp\src\components\ProviderDashboard\Settings\components\Security.jsx
 import { useState } from "react";
 import {
   Lock,
@@ -14,6 +13,7 @@ import {
 } from "lucide-react";
 import { supabase } from "../../../../lib/supabaseClient";
 import { useNavigate } from "react-router-dom";
+import { theme } from "../../../../styles/theme";
 
 export default function Security({ user, providerData, onUpdate }) {
   const navigate = useNavigate();
@@ -245,29 +245,29 @@ export default function Security({ user, providerData, onUpdate }) {
     <div className="space-y-6">
       {/* Success/Error Messages */}
       {success && (
-        <div className="bg-green-50 border border-green-200 text-green-800 p-4 rounded-xl flex items-center gap-3">
+        <div className={`${theme.alert.success} flex items-center gap-3`}>
           <CheckCircle2 size={20} />
           <span className="font-medium">{success}</span>
         </div>
       )}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-xl flex items-center gap-3">
+        <div className={`${theme.alert.error} flex items-center gap-3`}>
           <AlertTriangle size={20} />
           <span className="font-medium">{error}</span>
         </div>
       )}
 
       {/* Change Password */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div className={`${theme.card.base} ${theme.card.padding}`}>
         <div className="flex items-center gap-3 mb-6">
-          <div className="bg-blue-100 p-2.5 rounded-lg">
-            <Lock className="text-blue-600" size={20} />
+          <div className="bg-primary-100 p-2.5 rounded-lg">
+            <Lock className="text-primary-600" size={20} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-slate-900">
+            <h3 className={theme.text.h4}>
               Change Password
             </h3>
-            <p className="text-sm text-slate-600">
+            <p className={`${theme.text.muted} text-sm`}>
               Update your password to keep your account secure
             </p>
           </div>
@@ -275,7 +275,7 @@ export default function Security({ user, providerData, onUpdate }) {
 
         <form onSubmit={handleChangePassword} className="space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className={`${theme.text.label} block mb-2`}>
               New Password
             </label>
             <div className="relative">
@@ -288,7 +288,7 @@ export default function Security({ user, providerData, onUpdate }) {
                     newPassword: e.target.value,
                   })
                 }
-                className="w-full border-2 border-slate-300 rounded-xl px-4 py-3 pr-12 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+                className={`${theme.input.base} ${theme.input.focus} pr-12`}
                 placeholder="••••••••"
                 minLength={6}
                 required
@@ -296,7 +296,7 @@ export default function Security({ user, providerData, onUpdate }) {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-secondary-400 hover:text-secondary-600"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -304,7 +304,7 @@ export default function Security({ user, providerData, onUpdate }) {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className={`${theme.text.label} block mb-2`}>
               Confirm New Password
             </label>
             <input
@@ -316,7 +316,7 @@ export default function Security({ user, providerData, onUpdate }) {
                   confirmPassword: e.target.value,
                 })
               }
-              className="w-full border-2 border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+              className={`${theme.input.base} ${theme.input.focus}`}
               placeholder="••••••••"
               minLength={6}
               required
@@ -326,7 +326,7 @@ export default function Security({ user, providerData, onUpdate }) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className={`${theme.button.primary} w-full py-3 disabled:opacity-50 disabled:cursor-not-allowed justify-center`}
           >
             {loading ? "Updating..." : "Update Password"}
           </button>
@@ -334,16 +334,16 @@ export default function Security({ user, providerData, onUpdate }) {
       </div>
 
       {/* Change Email */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div className={`${theme.card.base} ${theme.card.padding}`}>
         <div className="flex items-center gap-3 mb-6">
           <div className="bg-purple-100 p-2.5 rounded-lg">
             <Mail className="text-purple-600" size={20} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-slate-900">
+            <h3 className={theme.text.h4}>
               Change Email Address
             </h3>
-            <p className="text-sm text-slate-600">
+            <p className={`${theme.text.muted} text-sm`}>
               Current email: <span className="font-medium">{user.email}</span>
             </p>
           </div>
@@ -351,7 +351,7 @@ export default function Security({ user, providerData, onUpdate }) {
 
         <form onSubmit={handleChangeEmail} className="space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className={`${theme.text.label} block mb-2`}>
               New Email Address
             </label>
             <input
@@ -360,14 +360,14 @@ export default function Security({ user, providerData, onUpdate }) {
               onChange={(e) =>
                 setEmailData({ ...emailData, newEmail: e.target.value })
               }
-              className="w-full border-2 border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+              className={`${theme.input.base} ${theme.input.focus}`}
               placeholder="newemail@example.com"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className={`${theme.text.label} block mb-2`}>
               Confirm New Email Address
             </label>
             <input
@@ -376,14 +376,14 @@ export default function Security({ user, providerData, onUpdate }) {
               onChange={(e) =>
                 setEmailData({ ...emailData, confirmNewEmail: e.target.value })
               }
-              className="w-full border-2 border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+              className={`${theme.input.base} ${theme.input.focus}`}
               placeholder="newemail@example.com"
               required
             />
           </div>
 
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-            <p className="text-xs text-amber-800">
+          <div className="bg-warning-50 border border-warning-200 rounded-lg p-3">
+            <p className={`${theme.text.caption} text-warning-800`}>
               <strong>Note:</strong> You'll receive a verification email at your
               new address. You must confirm it before the change takes effect.
             </p>
@@ -400,17 +400,17 @@ export default function Security({ user, providerData, onUpdate }) {
       </div>
 
       {/* Two-Factor Authentication */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div className={`${theme.card.base} ${theme.card.padding}`}>
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="bg-green-100 p-2.5 rounded-lg">
-              <Shield className="text-green-600" size={20} />
+            <div className="bg-success-100 p-2.5 rounded-lg">
+              <Shield className="text-success-600" size={20} />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-slate-900">
+              <h3 className={theme.text.h4}>
                 Two-Factor Authentication
               </h3>
-              <p className="text-sm text-slate-600">
+              <p className={`${theme.text.muted} text-sm`}>
                 Add an extra layer of security to your account
               </p>
             </div>
@@ -421,7 +421,7 @@ export default function Security({ user, providerData, onUpdate }) {
             onClick={handleToggle2FA}
             disabled={loading}
             className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${
-              twoFactorEnabled ? "bg-green-600" : "bg-slate-300"
+              twoFactorEnabled ? "bg-success-600" : "bg-slate-300"
             } ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             <span
@@ -432,8 +432,8 @@ export default function Security({ user, providerData, onUpdate }) {
           </button>
         </div>
 
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-          <p className="text-xs text-blue-900">
+        <div className="bg-primary-50 border border-primary-200 rounded-lg p-3">
+          <p className={`${theme.text.caption} text-primary-900`}>
             {twoFactorEnabled
               ? "✅ 2FA is enabled. You'll receive a verification code via email when logging in."
               : "🔓 2FA is disabled. Enable it to require a verification code when logging in."}
@@ -442,16 +442,16 @@ export default function Security({ user, providerData, onUpdate }) {
       </div>
 
       {/* Account Deactivation */}
-      <div className="bg-white rounded-xl shadow-sm border border-orange-200 p-6">
+      <div className={`${theme.card.base} ${theme.card.padding} border-warning-200`}>
         <div className="flex items-center gap-3 mb-4">
-          <div className="bg-orange-100 p-2.5 rounded-lg">
-            <UserX className="text-orange-600" size={20} />
+          <div className="bg-warning-100 p-2.5 rounded-lg">
+            <UserX className="text-warning-600" size={20} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-slate-900">
+            <h3 className={theme.text.h4}>
               Deactivate Account
             </h3>
-            <p className="text-sm text-slate-600">
+            <p className={`${theme.text.muted} text-sm`}>
               Temporarily disable your account (can be reactivated)
             </p>
           </div>
@@ -459,23 +459,23 @@ export default function Security({ user, providerData, onUpdate }) {
 
         <button
           onClick={() => setShowDeactivateModal(true)}
-          className="w-full border-2 border-orange-300 text-orange-600 py-3 rounded-xl font-semibold hover:bg-orange-50 transition"
+          className={theme.button.warningOutline}
         >
           Deactivate Account
         </button>
       </div>
 
       {/* Account Deletion */}
-      <div className="bg-white rounded-xl shadow-sm border border-red-200 p-6">
+      <div className={`${theme.card.base} ${theme.card.padding} border-error-200`}>
         <div className="flex items-center gap-3 mb-4">
-          <div className="bg-red-100 p-2.5 rounded-lg">
-            <Trash2 className="text-red-600" size={20} />
+          <div className="bg-error-100 p-2.5 rounded-lg">
+            <Trash2 className="text-error-600" size={20} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-slate-900">
+            <h3 className={theme.text.h4}>
               Delete Account
             </h3>
-            <p className="text-sm text-slate-600">
+            <p className={`${theme.text.muted} text-sm`}>
               Permanently delete your account and all data (cannot be undone)
             </p>
           </div>
@@ -483,21 +483,21 @@ export default function Security({ user, providerData, onUpdate }) {
 
         <button
           onClick={() => setShowDeleteModal(true)}
-          className="w-full border-2 border-red-300 text-red-600 py-3 rounded-xl font-semibold hover:bg-red-50 transition"
+          className={theme.button.dangerOutline}
         >
           Request Account Deletion
         </button>
       </div>
 
       {/* Logout */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div className={`${theme.card.base} ${theme.card.padding}`}>
         <div className="flex items-center gap-3 mb-4">
           <div className="bg-slate-100 p-2.5 rounded-lg">
-            <LogOut className="text-slate-600" size={20} />
+            <LogOut className="text-secondary-600" size={20} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-slate-900">Log Out</h3>
-            <p className="text-sm text-slate-600">
+            <h3 className={theme.text.h4}>Log Out</h3>
+            <p className={`${theme.text.muted} text-sm`}>
               Sign out of your account on this device
             </p>
           </div>
@@ -505,7 +505,7 @@ export default function Security({ user, providerData, onUpdate }) {
 
         <button
           onClick={handleLogout}
-          className="w-full border-2 border-slate-300 text-slate-700 py-3 rounded-xl font-semibold hover:bg-slate-50 transition flex items-center justify-center gap-2"
+          className={`${theme.button.secondaryOutline} justify-center`}
         >
           <LogOut size={20} />
           Log Out
@@ -516,11 +516,11 @@ export default function Security({ user, providerData, onUpdate }) {
       {showDeactivateModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl max-w-md w-full p-6">
-            <h3 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-              <UserX className="text-orange-600" size={24} />
+            <h3 className={`${theme.text.h3} mb-4 flex items-center gap-2`}>
+              <UserX className="text-warning-600" size={24} />
               Deactivate Account?
             </h3>
-            <p className="text-slate-600 mb-4">
+            <p className={`${theme.text.body} mb-4`}>
               Your account will be temporarily disabled. You can reactivate it by
               contacting support. Type <strong>DEACTIVATE</strong> to confirm.
             </p>
@@ -528,11 +528,11 @@ export default function Security({ user, providerData, onUpdate }) {
               type="text"
               value={confirmText}
               onChange={(e) => setConfirmText(e.target.value)}
-              className="w-full border-2 border-slate-300 rounded-xl px-4 py-3 mb-4 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+              className={`${theme.input.base} ${theme.input.focus} mb-4`}
               placeholder="Type DEACTIVATE"
             />
             {error && (
-              <p className="text-sm text-red-600 mb-4">{error}</p>
+              <p className="text-sm text-error-600 mb-4">{error}</p>
             )}
             <div className="flex gap-3">
               <button
@@ -541,14 +541,14 @@ export default function Security({ user, providerData, onUpdate }) {
                   setConfirmText("");
                   setError("");
                 }}
-                className="flex-1 border-2 border-slate-300 text-slate-700 py-3 rounded-xl font-semibold hover:bg-slate-50 transition"
+                className={`${theme.button.secondaryOutline} flex-1`}
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeactivateAccount}
                 disabled={loading}
-                className="flex-1 bg-orange-600 text-white py-3 rounded-xl font-semibold hover:bg-orange-700 transition disabled:opacity-50"
+                className={`${theme.button.warning} flex-1 disabled:opacity-50`}
               >
                 {loading ? "Processing..." : "Deactivate"}
               </button>
@@ -561,11 +561,11 @@ export default function Security({ user, providerData, onUpdate }) {
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl max-w-md w-full p-6">
-            <h3 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-              <Trash2 className="text-red-600" size={24} />
+            <h3 className={`${theme.text.h3} mb-4 flex items-center gap-2`}>
+              <Trash2 className="text-error-600" size={24} />
               Delete Account Permanently?
             </h3>
-            <p className="text-slate-600 mb-4">
+            <p className={`${theme.text.body} mb-4`}>
               This action <strong>cannot be undone</strong>. All your data,
               documents, and history will be permanently deleted. Type{" "}
               <strong>DELETE</strong> to confirm.
@@ -574,11 +574,11 @@ export default function Security({ user, providerData, onUpdate }) {
               type="text"
               value={confirmText}
               onChange={(e) => setConfirmText(e.target.value)}
-              className="w-full border-2 border-slate-300 rounded-xl px-4 py-3 mb-4 focus:ring-2 focus:ring-red-500 focus:outline-none"
+              className={`${theme.input.base} ${theme.input.focus} mb-4`}
               placeholder="Type DELETE"
             />
             {error && (
-              <p className="text-sm text-red-600 mb-4">{error}</p>
+              <p className="text-sm text-error-600 mb-4">{error}</p>
             )}
             <div className="flex gap-3">
               <button
@@ -587,14 +587,14 @@ export default function Security({ user, providerData, onUpdate }) {
                   setConfirmText("");
                   setError("");
                 }}
-                className="flex-1 border-2 border-slate-300 text-slate-700 py-3 rounded-xl font-semibold hover:bg-slate-50 transition"
+                className={`${theme.button.secondaryOutline} flex-1`}
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeleteAccount}
                 disabled={loading}
-                className="flex-1 bg-red-600 text-white py-3 rounded-xl font-semibold hover:bg-red-700 transition disabled:opacity-50"
+                className={`${theme.button.danger} flex-1 disabled:opacity-50`}
               >
                 {loading ? "Processing..." : "Delete Account"}
               </button>

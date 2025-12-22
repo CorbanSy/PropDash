@@ -1,5 +1,5 @@
-//levlpro-mvp\src\components\ProviderDashboard\Network\components\MyConnections\ConnectionsStats.jsx
 import { Users, UserCheck, Award, Send, DollarSign } from "lucide-react";
+import { theme } from "../../../../../styles/theme";
 
 export default function ConnectionsStats({ stats }) {
   return (
@@ -8,13 +8,13 @@ export default function ConnectionsStats({ stats }) {
         icon={<Users size={18} />}
         label="Total"
         value={stats.total}
-        color="blue"
+        color="primary"
       />
       <StatCard
         icon={<UserCheck size={18} />}
         label="Active"
         value={stats.active}
-        color="green"
+        color="success"
       />
       <StatCard
         icon={<Award size={18} />}
@@ -26,7 +26,7 @@ export default function ConnectionsStats({ stats }) {
         icon={<Send size={18} />}
         label="Referrals"
         value={stats.totalReferrals}
-        color="amber"
+        color="warning"
       />
       <StatCard
         icon={<DollarSign size={18} />}
@@ -40,10 +40,10 @@ export default function ConnectionsStats({ stats }) {
 
 function StatCard({ icon, label, value, color }) {
   const colors = {
-    blue: "bg-blue-50 border-blue-200 text-blue-700",
-    green: "bg-green-50 border-green-200 text-green-700",
+    primary: "bg-primary-50 border-primary-200 text-primary-700",
+    success: "bg-success-50 border-success-200 text-success-700",
     purple: "bg-purple-50 border-purple-200 text-purple-700",
-    amber: "bg-amber-50 border-amber-200 text-amber-700",
+    warning: "bg-warning-50 border-warning-200 text-warning-700",
     emerald: "bg-emerald-50 border-emerald-200 text-emerald-700",
   };
 
