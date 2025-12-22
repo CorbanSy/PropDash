@@ -41,6 +41,12 @@ export default function ProfilePhotoUpload({ currentPhoto, userId, onUploadSucce
       // Upload new photo
       const { url, path } = await uploadFile(file, "provider-photos", "profiles", userId);
 
+      // ✅ Add cache-busting parameter to force image reload
+      const cacheBustedUrl = `${url}?t=${Date.now()}`;
+
+      console.log("📸 Uploaded photo URL:", url);
+      console.log("📸 Cache-busted URL:", cacheBustedUrl);
+
       // Update database
       const { error } = await supabase
         .from("providers")
@@ -49,7 +55,9 @@ export default function ProfilePhotoUpload({ currentPhoto, userId, onUploadSucce
 
       if (error) throw error;
 
-      setPreview(url);
+      console.log("✅ Database updated successfully");
+
+      setPreview(cacheBustedUrl);
       onUploadSuccess();
     } catch (error) {
       console.error("Upload error:", error);
@@ -107,11 +115,16 @@ export default function ProfilePhotoUpload({ currentPhoto, userId, onUploadSucce
         {/* Photo Preview */}
         <div className="relative">
           <div className="w-32 h-32 rounded-2xl bg-slate-100 border-2 border-slate-300 overflow-hidden">
-            {preview ? (
+            {preview && preview.startsWith('http') ? (
               <img
+                key={preview}
                 src={preview}
                 alt="Profile"
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  console.error("❌ Failed to load preview image:", preview);
+                  e.target.style.display = 'none';
+                }}
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
@@ -120,7 +133,7 @@ export default function ProfilePhotoUpload({ currentPhoto, userId, onUploadSucce
             )}
           </div>
 
-          {preview && !uploading && (
+          {preview && preview.startsWith('http') && !uploading && (
             <button
               onClick={handleRemove}
               className="absolute -top-2 -right-2 bg-red-600 text-white p-1.5 rounded-full hover:bg-red-700 transition shadow-lg"

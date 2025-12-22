@@ -225,13 +225,18 @@ export default function Settings() {
 
   const refreshProviderData = () => {
     if (user) {
+      console.log("🔄 Refreshing provider data...");
       supabase
         .from("providers")
         .select("*")
         .eq("id", user.id)
         .maybeSingle() // ✅ Changed to maybeSingle
         .then(({ data }) => {
-          if (data) setProviderData(data);
+          if (data) {
+            console.log("✅ Provider data refreshed:", data);
+            console.log("📸 Profile photo URL:", data.profile_photo);
+            setProviderData(data);
+          }
         });
     }
   };
@@ -288,11 +293,16 @@ export default function Settings() {
           <div className="flex items-center gap-4">
             {/* Profile Photo */}
             <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm border-2 border-white/30 overflow-hidden">
-              {providerData.profile_photo ? (
+              {providerData.profile_photo && providerData.profile_photo.startsWith('http') ? (
                 <img
-                  src={providerData.profile_photo}
+                  key={providerData.profile_photo}
+                  src={`${providerData.profile_photo}?t=${Date.now()}`}
                   alt="Profile"
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    console.error("❌ Failed to load profile photo:", providerData.profile_photo);
+                    e.target.style.display = 'none';
+                  }}
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
