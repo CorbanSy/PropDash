@@ -285,12 +285,14 @@ export default function Settings() {
       )}
 
       {/* Account Overview Card */}
-      <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-600 p-8 rounded-2xl text-white shadow-xl relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 right-10 w-40 h-40 bg-white rounded-full blur-3xl"></div>
-          <div className="absolute bottom-10 left-10 w-60 h-60 bg-white rounded-full blur-3xl"></div>
-        </div>
-        <div className="relative z-10 flex items-start justify-between">
+      <div className="relative overflow-hidden rounded-2xl shadow-xl">
+        {/* Gradient Background - Professional Theme */}
+        <div className="absolute inset-0 bg-gradient-to-r from-primary-700 via-primary-800 to-primary-900" />
+
+        {/* Subtle Glow */}
+        <div className="absolute top-12 right-12 w-48 h-48 bg-white/10 rounded-full blur-3xl" />
+
+        <div className="relative z-10 p-8 text-white flex items-start justify-between">
           <div className="flex items-center gap-4">
             {/* Profile Photo */}
             <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm border-2 border-white/30 overflow-hidden">
@@ -313,21 +315,21 @@ export default function Settings() {
             </div>
 
             <div>
-              <p className="text-blue-100 text-sm font-medium mb-2">Account</p>
+              <p className="text-primary-100 text-sm font-medium mb-2">Account</p>
               <h2 className="text-2xl font-bold mb-1">
                 {providerData.business_name || user.email?.split('@')[0] || "Provider"}
               </h2>
-              <p className="text-blue-100 text-sm mb-2">{user.email}</p>
-              
+              <p className="text-primary-100 text-sm mb-2">{user.email}</p>
+
               {/* Verification Badges */}
               <div className="flex items-center gap-2">
                 {providerData.phone_verified && (
-                  <span className="text-xs bg-white/20 backdrop-blur-sm px-2 py-1 rounded border border-white/30">
+                  <span className="text-xs bg-success-100 text-success-800 px-2 py-1 rounded font-medium">
                     ✓ Phone Verified
                   </span>
                 )}
                 {providerData.verification_status === "verified" && (
-                  <span className="text-xs bg-white/20 backdrop-blur-sm px-2 py-1 rounded border border-white/30">
+                  <span className="text-xs bg-success-100 text-success-800 px-2 py-1 rounded font-medium">
                     ✓ License Verified
                   </span>
                 )}
