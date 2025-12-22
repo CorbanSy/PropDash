@@ -1,4 +1,4 @@
-//propdash-mvp\src\components\CustomerDashboard\ProviderProfileModal.jsx
+//levlpro-mvp\src\components\CustomerDashboard\ProviderProfileModal.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -553,7 +553,7 @@ function CredentialsSection({ provider }) {
         </div>
         <p className={`text-sm ${isVerified ? "text-green-700" : "text-amber-700"}`}>
           {isVerified 
-            ? "This provider has been verified by PropDash and has submitted required documentation."
+            ? "This provider has been verified by LevlPro and has submitted required documentation."
             : "This provider's credentials are currently being reviewed."}
         </p>
       </div>

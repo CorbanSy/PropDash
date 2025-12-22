@@ -1,4 +1,4 @@
-// src/components/CustomerDashboard/MyJobs/components/PostJobModal/components/DirectBookingBanner.jsx
+//levlpro-mvp\src\components\CustomerDashboard\MyJobs\components\PostJobModal\components\DirectBookingBanner.jsx
 import { Info } from "lucide-react";
 
 export default function DirectBookingBanner({ providerName }) {

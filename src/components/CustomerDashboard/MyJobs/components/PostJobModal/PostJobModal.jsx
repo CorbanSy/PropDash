@@ -1,4 +1,4 @@
-// src/components/CustomerDashboard/MyJobs/components/PostJobModal/PostJobModal.jsx
+//levlpro-mvp\src\components\CustomerDashboard\MyJobs\components\PostJobModal\PostJobModal.jsx
 import { useState } from "react";
 import { X, AlertCircle } from "lucide-react";
 import { supabase } from "../../../../../lib/supabaseClient";

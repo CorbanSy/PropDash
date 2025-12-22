@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Clients/components/CreateJobModal.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Clients\components\CreateJobModal.jsx
 import { useState } from "react";
 import { X, Calendar, DollarSign, Clock, MapPin, FileText } from "lucide-react";
 import { theme } from "../../../../styles/theme";

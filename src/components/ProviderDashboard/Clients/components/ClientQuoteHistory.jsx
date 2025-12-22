@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Clients/components/ClientQuoteHistory.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Clients\components\ClientQuoteHistory.jsx
 import { useState, useEffect } from "react";
 import { FileText, CheckCircle2, Clock, XCircle, Eye } from "lucide-react";
 import { theme } from "../../../../styles/theme";

@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Clients/components/ClientMetrics.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Clients\components\ClientMetrics.jsx
 import { DollarSign, Briefcase, Calendar, TrendingUp, AlertCircle } from "lucide-react";
 import { theme } from "../../../../styles/theme";
 import {

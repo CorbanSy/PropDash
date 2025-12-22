@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Clients/components/QuickActions.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Clients\components\QuickActions.jsx
 import { useState } from "react";
 import { Phone, Mail, MessageSquare, Calendar, Star, Edit, FileText } from "lucide-react";
 import { theme } from "../../../../styles/theme";

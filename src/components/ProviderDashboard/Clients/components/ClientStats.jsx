@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Clients/components/ClientStats.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Clients\components\ClientStats.jsx
 import { Users, DollarSign, TrendingUp, AlertCircle } from "lucide-react";
 import { theme } from "../../../../styles/theme";
 import { getClientStatus, formatCurrency } from "../utils/clientCalculations";

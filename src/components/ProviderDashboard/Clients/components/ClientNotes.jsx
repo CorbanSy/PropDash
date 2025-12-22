@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Clients/components/ClientNotes.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Clients\components\ClientNotes.jsx
 import { useState, useEffect } from "react";
 import { Plus, Trash2, Edit2, Save, X } from "lucide-react";
 import { theme } from "../../../../styles/theme";

@@ -1,4 +1,4 @@
-// src/components/CustomerDashboard/MyJobs/components/PostJobModal/sections/PhotosSection.jsx
+//levlpro-mvp\src\components\CustomerDashboard\MyJobs\components\PostJobModal\sections\PhotosSection.jsx
 import { Upload, X } from "lucide-react";
 import { MAX_PHOTOS } from "../utils/constants";
 

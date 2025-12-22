@@ -1,4 +1,4 @@
-//propdash-mvp\src\components\CustomerDashboard\MyJobs\components\DetailedJobCard.jsx
+//levlpro-mvp\src\components\CustomerDashboard\MyJobs\components\DetailedJobCard.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // ✅ Added
 import {

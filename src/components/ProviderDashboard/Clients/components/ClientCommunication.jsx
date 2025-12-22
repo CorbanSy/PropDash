@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Clients/components/ClientCommunication.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Clients\components\ClientCommunication.jsx
 import { useState, useEffect } from "react";
 import { Phone, Mail, MessageSquare, Plus } from "lucide-react";
 import { theme } from "../../../../styles/theme";

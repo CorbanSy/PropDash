@@ -1,4 +1,4 @@
-// src/components/CustomerDashboard/MyJobs/components/PostJobModal/sections/NotificationsSection.jsx
+//levlpro-mvp\src\components\CustomerDashboard\MyJobs\components\PostJobModal\sections\NotificationsSection.jsx
 
 export default function NotificationsSection({ formData, updateFormData }) {
   return (

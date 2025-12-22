@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Clients/components/ClientRating.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Clients\components\ClientRating.jsx
 import { useState } from "react";
 import { Star, Save } from "lucide-react";
 import { theme } from "../../../../styles/theme";

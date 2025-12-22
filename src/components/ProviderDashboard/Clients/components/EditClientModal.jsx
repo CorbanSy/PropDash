@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Clients/components/EditClientModal.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Clients\components\EditClientModal.jsx
 import { useState } from "react";
 import { X, User, Mail, Phone, MapPin, Save } from "lucide-react";
 import { theme } from "../../../../styles/theme";

@@ -1,4 +1,4 @@
-// src/components/CustomerDashboard/MyJobs/components/PostJobModal/sections/BasicInfoSection.jsx
+//levlpro-mvp\src\components\CustomerDashboard\MyJobs\components\PostJobModal\sections\BasicInfoSection.jsx
 import { SERVICE_CATEGORIES } from "../../../../../../constants/serviceCategories";
 
 export default function BasicInfoSection({ formData, updateFormData }) {

@@ -1,4 +1,4 @@
-// src/components/CustomerDashboard/MyJobs/components/PostJobModal/sections/LocationSection.jsx
+//levlpro-mvp\src\components\CustomerDashboard\MyJobs\components\PostJobModal\sections\LocationSection.jsx
 
 export default function LocationSection({ formData, updateFormData }) {
   return (

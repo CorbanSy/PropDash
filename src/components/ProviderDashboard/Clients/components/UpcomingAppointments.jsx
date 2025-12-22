@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Clients/components/UpcomingAppointments.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Clients\components\UpcomingAppointments.jsx
 import { Calendar, Clock, MapPin } from "lucide-react";
 import { theme } from "../../../../styles/theme";
 import { formatCurrency } from "../utils/clientCalculations";

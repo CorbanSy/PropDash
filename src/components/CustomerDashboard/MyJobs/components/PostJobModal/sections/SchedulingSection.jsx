@@ -1,4 +1,4 @@
-// src/components/CustomerDashboard/MyJobs/components/PostJobModal/sections/SchedulingSection.jsx
+//levlpro-mvp\src\components\CustomerDashboard\MyJobs\components\PostJobModal\sections\SchedulingSection.jsx
 
 export default function SchedulingSection({ formData, updateFormData }) {
   return (

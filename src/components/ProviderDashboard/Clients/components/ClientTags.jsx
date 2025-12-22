@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Clients/components/ClientTags.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Clients\components\ClientTags.jsx
 import { useState } from "react";
 import { Plus, X, Tag } from "lucide-react";
 import { theme } from "../../../../styles/theme";

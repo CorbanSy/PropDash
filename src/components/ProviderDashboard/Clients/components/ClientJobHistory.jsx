@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Clients/components/ClientJobHistory.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Clients\components\ClientJobHistory.jsx
 import { Calendar, DollarSign, CheckCircle2, Clock, XCircle } from "lucide-react";
 import { theme } from "../../../../styles/theme";
 import { formatCurrency } from "../utils/clientCalculations";

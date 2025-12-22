@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Clients/components/RevenueChart.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Clients\components\RevenueChart.jsx
 import { BarChart3 } from "lucide-react";
 import { theme } from "../../../../styles/theme";
 import { getRevenueByMonth, formatCurrency } from "../utils/clientCalculations";

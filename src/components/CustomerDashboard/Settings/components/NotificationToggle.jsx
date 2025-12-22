@@ -1,4 +1,4 @@
-// src/components/CustomerDashboard/Settings/components/NotificationToggle.jsx
+//levlpro-mvp\src\components\CustomerDashboard\Settings\components\NotificationToggle.jsx
 
 export default function NotificationToggle({ label, description, checked, onChange, icon }) {
   return (

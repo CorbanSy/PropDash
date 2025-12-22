@@ -1,4 +1,4 @@
-// src/components/CustomerDashboard/MyJobs/components/PostJobModal/utils/jobSubmission.js
+//levlpro-mvp\src\components\CustomerDashboard\MyJobs\components\PostJobModal\utils\jobSubmission.js
 import { supabase } from "../../../../../../lib/supabaseClient";
 
 export async function uploadPhotos(photos, userId) {

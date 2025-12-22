@@ -1,4 +1,4 @@
-// src/components/CustomerDashboard/Settings/components/SecurityTab.jsx
+//levlpro-mvp\src\components\CustomerDashboard\Settings\components\SecurityTab.jsx
 import { Lock, LogOut, Eye, EyeOff, Shield } from "lucide-react";
 
 export default function SecurityTab({

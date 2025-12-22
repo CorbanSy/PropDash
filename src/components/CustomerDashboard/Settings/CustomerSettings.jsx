@@ -1,4 +1,4 @@
-// src/components/CustomerDashboard/Settings/CustomerSettings.jsx
+//levlpro-mvp\src\components\CustomerDashboard\Settings\CustomerSettings.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {

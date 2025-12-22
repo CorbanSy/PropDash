@@ -1,4 +1,4 @@
-// src/components/CustomerDashboard/Settings/components/ProfileTab.jsx
+//levlpro-mvp\src\components\CustomerDashboard\Settings\components\ProfileTab.jsx
 import { User, Mail, Phone, Save } from "lucide-react";
 
 export default function ProfileTab({ customerData, setCustomerData, user, handleSaveProfile, saving }) {

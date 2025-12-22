@@ -1,4 +1,4 @@
-// src/components/CustomerDashboard/MyJobs/components/PostJobModal/components/InfoBox.jsx
+//levlpro-mvp\src\components\CustomerDashboard\MyJobs\components\PostJobModal\components\InfoBox.jsx
 import { Info } from "lucide-react";
 
 export default function InfoBox({ isDirectBooking, providerName }) {

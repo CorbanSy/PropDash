@@ -1,4 +1,4 @@
-// src/components/CustomerDashboard/MyJobs/components/StatBox.jsx
+//levlpro-mvp\src\components\CustomerDashboard\MyJobs\components\StatBox.jsx
 export default function StatBox({ label, value, color }) {
   const colorClasses = {
     blue: "bg-blue-50 border-blue-200 text-blue-600",

@@ -1,4 +1,4 @@
-// src/components/ProviderDashboard/Clients/components/ClientCard.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Clients\components\ClientCard.jsx
 import { Mail, Phone, MapPin, DollarSign, Briefcase, Star } from "lucide-react";
 import { theme } from "../../../../styles/theme";
 import { getClientStatus, formatCurrency } from "../utils/clientCalculations";

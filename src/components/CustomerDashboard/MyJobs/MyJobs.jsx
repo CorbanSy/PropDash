@@ -1,4 +1,4 @@
-// src/components/CustomerDashboard/MyJobs/MyJobs.jsx
+//levlpro-mvp\src\components\CustomerDashboard\MyJobs\MyJobs.jsx
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom"; // ✅ Added useLocation and useNavigate
 import { Search, Filter, Calendar, Plus } from "lucide-react";

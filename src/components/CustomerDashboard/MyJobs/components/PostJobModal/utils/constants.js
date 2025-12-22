@@ -1,4 +1,4 @@
-// src/components/CustomerDashboard/MyJobs/components/PostJobModal/utils/constants.js
+//levlpro-mvp\src\components\CustomerDashboard\MyJobs\components\PostJobModal\utils\constants.js
 export const DEFAULT_FORM_DATA = {
   jobTitle: "",
   category: "",

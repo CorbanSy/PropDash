@@ -1,4 +1,4 @@
-// src/components/CustomerDashboard/Settings/components/PaymentTab.jsx
+//levlpro-mvp\src\components\CustomerDashboard\Settings\components\PaymentTab.jsx
 import { CreditCard, Heart } from "lucide-react";
 
 export default function PaymentTab() {

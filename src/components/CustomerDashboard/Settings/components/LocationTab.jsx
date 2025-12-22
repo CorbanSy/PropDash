@@ -1,4 +1,4 @@
-// src/components/CustomerDashboard/Settings/components/LocationTab.jsx
+//levlpro-mvp\src\components\CustomerDashboard\Settings\components\LocationTab.jsx
 import { MapPin, Home, Save } from "lucide-react";
 
 export default function LocationTab({ customerData, setCustomerData, handleSaveProfile, saving }) {

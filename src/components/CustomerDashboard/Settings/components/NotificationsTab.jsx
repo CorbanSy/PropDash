@@ -1,4 +1,4 @@
-// src/components/CustomerDashboard/Settings/components/NotificationsTab.jsx
+//levlpro-mvp\src\components\CustomerDashboard\Settings\components\NotificationsTab.jsx
 import { Mail, Smartphone, Bell, CheckCircle2 } from "lucide-react";
 import NotificationToggle from "./NotificationToggle";
 

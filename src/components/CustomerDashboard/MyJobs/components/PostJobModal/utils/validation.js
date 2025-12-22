@@ -1,4 +1,4 @@
-// src/components/CustomerDashboard/MyJobs/components/PostJobModal/utils/validation.js
+//levlpro-mvp\src\components\CustomerDashboard\MyJobs\components\PostJobModal\utils\validation.js
 
 export function validateJobForm(formData) {
   if (!formData.jobTitle.trim()) {

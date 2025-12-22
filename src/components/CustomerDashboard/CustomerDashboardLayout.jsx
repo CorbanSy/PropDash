@@ -1,4 +1,4 @@
-// src/components/CustomerDashboard/CustomerDashboardLayout.jsx
+//levlpro-mvp\src\components\CustomerDashboard\CustomerDashboardLayout.jsx
 import { NavLink, Outlet } from "react-router-dom";
 import {
   Home,
@@ -38,7 +38,7 @@ export default function CustomerDashboardLayout() {
             <ShoppingBag className="text-white" size={20} />
           </div>
           <h1 className="text-xl font-bold tracking-tight text-secondary-900">
-            PropDash
+            LevlPro
           </h1>
         </div>
 
