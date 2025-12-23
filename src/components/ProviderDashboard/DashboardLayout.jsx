@@ -22,6 +22,28 @@ export default function DashboardLayout() {
   const { user } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [availableJobsCount, setAvailableJobsCount] = useState(0);
+  const [profilePhoto, setProfilePhoto] = useState(null);
+  const [businessName, setBusinessName] = useState(null);
+
+  // Fetch provider profile data
+  const fetchProviderProfile = async () => {
+    if (!user) return;
+
+    try {
+      const { data: providerData } = await supabase
+        .from("providers")
+        .select("profile_photo, business_name")
+        .eq("id", user.id)
+        .single();
+
+      if (providerData) {
+        setProfilePhoto(providerData.profile_photo);
+        setBusinessName(providerData.business_name);
+      }
+    } catch (error) {
+      console.error("Error fetching provider profile:", error);
+    }
+  };
 
   // Fetch available jobs count
   const fetchAvailableJobsCount = async () => {
@@ -53,6 +75,7 @@ export default function DashboardLayout() {
   };
 
   useEffect(() => {
+    fetchProviderProfile();
     fetchAvailableJobsCount();
 
     // Listen for custom event when job is accepted
@@ -63,7 +86,14 @@ export default function DashboardLayout() {
       }, 1000);
     };
 
+    // Listen for profile photo updates
+    const handleProfileUpdate = () => {
+      console.log("Profile updated, refreshing profile data...");
+      fetchProviderProfile();
+    };
+
     window.addEventListener("jobAccepted", handleJobAccepted);
+    window.addEventListener("profileUpdated", handleProfileUpdate);
 
     // Set up real-time subscription for jobs changes
     const channel = supabase
@@ -84,9 +114,34 @@ export default function DashboardLayout() {
       )
       .subscribe();
 
+    // Set up real-time subscription for profile changes
+    const profileChannel = supabase
+      .channel("provider-profile-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "providers",
+          filter: `id=eq.${user?.id}`,
+        },
+        (payload) => {
+          console.log("Profile change detected:", payload);
+          if (payload.new.profile_photo !== profilePhoto) {
+            setProfilePhoto(payload.new.profile_photo);
+          }
+          if (payload.new.business_name !== businessName) {
+            setBusinessName(payload.new.business_name);
+          }
+        }
+      )
+      .subscribe();
+
     return () => {
       window.removeEventListener("jobAccepted", handleJobAccepted);
+      window.removeEventListener("profileUpdated", handleProfileUpdate);
       supabase.removeChannel(channel);
+      supabase.removeChannel(profileChannel);
     };
   }, [user]);
 
@@ -137,14 +192,22 @@ export default function DashboardLayout() {
             className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-secondary-100 transition-all duration-200"
           >
             {/* Avatar */}
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center text-primary-700 font-bold flex-shrink-0">
-              {user?.email?.charAt(0).toUpperCase() || "U"}
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center text-primary-700 font-bold flex-shrink-0 overflow-hidden">
+              {profilePhoto ? (
+                <img 
+                  src={profilePhoto} 
+                  alt="Profile" 
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span>{businessName?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || "U"}</span>
+              )}
             </div>
             
             {/* User Info */}
             <div className="flex-1 text-left min-w-0">
               <p className="text-sm font-semibold text-secondary-900 truncate">
-                {user?.email || "User"}
+                {businessName || user?.email || "User"}
               </p>
               <p className="text-xs text-secondary-600">Provider</p>
             </div>

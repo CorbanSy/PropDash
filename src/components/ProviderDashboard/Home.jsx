@@ -1,4 +1,4 @@
-//levlpro-mvp\src\components\ProviderDashboard\Messages.jsx
+//levlpro-mvp\src\components\ProviderDashboard\Home.jsx
 import { useState, useEffect } from "react";
 import {
   Calendar,
@@ -30,6 +30,8 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [isOnline, setIsOnline] = useState(false);
   const [togglingOnline, setTogglingOnline] = useState(false);
+  const [profilePhoto, setProfilePhoto] = useState(null);
+  const [businessName, setBusinessName] = useState(null);
   
   const {
       currentOffer,
@@ -46,22 +48,59 @@ export default function Home() {
     console.log('👂 Is listening:', isListening);
   }, [user?.id, currentOffer, isListening]);
 
+  // Fetch provider profile data
   useEffect(() => {
-    async function fetchProviderStatus() {
+    async function fetchProviderProfile() {
       if (!user?.id) return;
       
       const { data, error } = await supabase
         .from("providers")
-        .select("is_online, is_available")
+        .select("is_online, is_available, profile_photo, business_name")
         .eq("id", user.id)
         .single();
       
       if (data) {
         setIsOnline(data.is_online);
+        setProfilePhoto(data.profile_photo);
+        setBusinessName(data.business_name);
       }
     }
     
-    fetchProviderStatus();
+    fetchProviderProfile();
+
+    // Listen for profile updates
+    const handleProfileUpdate = () => {
+      fetchProviderProfile();
+    };
+
+    window.addEventListener("profileUpdated", handleProfileUpdate);
+
+    // Set up real-time subscription for profile changes
+    const profileChannel = supabase
+      .channel("provider-profile-home")
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "providers",
+          filter: `id=eq.${user?.id}`,
+        },
+        (payload) => {
+          if (payload.new.profile_photo !== profilePhoto) {
+            setProfilePhoto(payload.new.profile_photo);
+          }
+          if (payload.new.business_name !== businessName) {
+            setBusinessName(payload.new.business_name);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      window.removeEventListener("profileUpdated", handleProfileUpdate);
+      supabase.removeChannel(profileChannel);
+    };
   }, [user?.id]);
 
   const toggleOnlineStatus = async () => {
@@ -208,6 +247,9 @@ export default function Home() {
   const draftQuotes = quotes.filter((q) => q.status === "draft").length;
   const approvedQuotes = quotes.filter((q) => q.status === "approved").length;
 
+  // Get display name
+  const displayName = businessName || user?.email?.split('@')[0] || "Pro";
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -302,17 +344,36 @@ export default function Home() {
       {/* HERO: TODAY AT A GLANCE - Corporate Primary Gradient */}
       <div className="bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 rounded-2xl p-8 text-white shadow-xl">
         <div className="flex items-start justify-between mb-6">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">
-              Welcome back, {user.user_metadata?.full_name?.split(" ")[0] || "Pro"}! 👋
-            </h1>
-            <p className="text-primary-100 text-lg">
-              {new Date().toLocaleDateString("en-US", {
-                weekday: "long",
-                month: "long",
-                day: "numeric",
-              })}
-            </p>
+          <div className="flex items-center gap-4">
+            {/* Profile Photo */}
+            <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-bold text-2xl overflow-hidden border-2 border-white/30">
+              {profilePhoto ? (
+                <img 
+                  src={profilePhoto} 
+                  alt="Profile" 
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span>{displayName.charAt(0).toUpperCase()}</span>
+              )}
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold mb-2">
+                Welcome back, {displayName}! 👋
+              </h1>
+              <p className="text-primary-100 text-lg">
+                {new Date().toLocaleDateString("en-US", {
+                  weekday: "long",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </p>
+              {user?.email && (
+                <p className="text-primary-200 text-sm mt-1">
+                  {user.email}
+                </p>
+              )}
+            </div>
           </div>
         </div>
 

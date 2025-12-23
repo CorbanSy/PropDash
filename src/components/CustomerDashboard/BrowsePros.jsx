@@ -19,6 +19,7 @@ import {
   AlertTriangle,
   Home,
 } from "lucide-react";
+import { theme } from "../../styles/theme";
 import { supabase } from "../../lib/supabaseClient";
 import ProviderProfileModal from "./ProviderProfileModal";
 import PostJobModal from "./MyJobs/components/PostJobModal/PostJobModal";
@@ -122,7 +123,7 @@ export default function BrowsePros() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-slate-600">Loading providers...</div>
+        <div className={theme.text.body}>Loading providers...</div>
       </div>
     );
   }
@@ -131,14 +132,14 @@ export default function BrowsePros() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-slate-900">Browse Pros</h1>
-        <p className="text-slate-600 mt-1">
+        <h1 className={theme.text.h1}>Browse Pros</h1>
+        <p className={`${theme.text.body} mt-1`}>
           Find trusted service professionals for your home projects
         </p>
       </div>
 
       {/* Stats Banner */}
-      <div className="bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 p-6 rounded-2xl text-white shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-br from-primary-600 via-indigo-600 to-purple-600 p-6 rounded-2xl text-white shadow-xl relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 right-10 w-40 h-40 bg-white rounded-full blur-3xl"></div>
         </div>
@@ -163,12 +164,12 @@ export default function BrowsePros() {
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-white rounded-xl border border-slate-200 p-4">
+      <div className={`${theme.card.base} ${theme.card.padding}`}>
         <div className="flex flex-col md:flex-row gap-4">
           {/* Search */}
           <div className="flex-1 relative">
             <Search
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400"
               size={18}
             />
             <input
@@ -176,19 +177,19 @@ export default function BrowsePros() {
               placeholder="Search by business name or location..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className={`${theme.input.base} ${theme.input.focus} pl-10`}
             />
           </div>
 
           {/* Filter Button (Mobile) */}
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="md:hidden flex items-center justify-center gap-2 px-4 py-2.5 border border-slate-300 rounded-lg hover:bg-slate-50 transition"
+            className={`md:hidden ${theme.button.secondary} gap-2`}
           >
             <Filter size={18} />
             Filters
             {(verifiedOnly || selectedLicense !== "all") && (
-              <span className="bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full">
+              <span className="bg-primary-600 text-white text-xs px-2 py-0.5 rounded-full">
                 {(verifiedOnly ? 1 : 0) + (selectedLicense !== "all" ? 1 : 0)}
               </span>
             )}
@@ -196,23 +197,23 @@ export default function BrowsePros() {
 
           {/* Desktop Filters */}
           <div className="hidden md:flex items-center gap-3">
-            <label className="flex items-center gap-2 px-3 py-2 border border-slate-300 rounded-lg cursor-pointer hover:bg-slate-50 transition">
+            <label className="flex items-center gap-2 px-3 py-2 border-2 border-slate-300 rounded-lg cursor-pointer hover:bg-slate-50 transition">
               <input
                 type="checkbox"
                 checked={verifiedOnly}
                 onChange={(e) => setVerifiedOnly(e.target.checked)}
-                className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                className="w-4 h-4 text-primary-600 rounded focus:ring-2 focus:ring-primary-500"
               />
-              <CheckCircle2 size={16} className="text-green-600" />
-              <span className="text-sm font-medium text-slate-700">Verified Only</span>
+              <CheckCircle2 size={16} className="text-success-600" />
+              <span className="text-sm font-medium text-secondary-700">Verified Only</span>
             </label>
             
             <div className="flex items-center gap-2">
-              <Shield size={18} className="text-slate-600" />
+              <Shield size={18} className="text-secondary-600" />
               <select
                 value={selectedLicense}
                 onChange={(e) => setSelectedLicense(e.target.value)}
-                className="border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className={`${theme.input.base} ${theme.input.focus}`}
               >
                 <option value="all">All Licenses</option>
                 <option value="none">Unlicensed</option>
@@ -232,19 +233,19 @@ export default function BrowsePros() {
                 type="checkbox"
                 checked={verifiedOnly}
                 onChange={(e) => setVerifiedOnly(e.target.checked)}
-                className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                className="w-4 h-4 text-primary-600 rounded focus:ring-2 focus:ring-primary-500"
               />
-              <span className="text-sm font-medium text-slate-700">Show Verified Only</span>
+              <span className="text-sm font-medium text-secondary-700">Show Verified Only</span>
             </label>
             
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+              <label className={`${theme.text.label} mb-2`}>
                 License Type
               </label>
               <select
                 value={selectedLicense}
                 onChange={(e) => setSelectedLicense(e.target.value)}
-                className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className={`${theme.input.base} ${theme.input.focus}`}
               >
                 <option value="all">All Licenses</option>
                 <option value="none">Unlicensed</option>
@@ -259,7 +260,7 @@ export default function BrowsePros() {
 
       {/* Categories */}
       <div>
-        <h3 className="text-sm font-semibold text-slate-700 mb-3">
+        <h3 className={`${theme.text.label} mb-3`}>
           Browse by Category
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
@@ -271,20 +272,20 @@ export default function BrowsePros() {
                 onClick={() => setSelectedCategory(category.id)}
                 className={`p-4 rounded-xl border-2 transition text-left ${
                   selectedCategory === category.id
-                    ? "border-blue-600 bg-blue-50"
+                    ? "border-primary-600 bg-primary-50"
                     : "border-slate-200 bg-white hover:border-slate-300"
                 }`}
               >
                 <div className="mb-2">
                   <IconComponent 
                     size={24} 
-                    className={selectedCategory === category.id ? "text-blue-600" : "text-slate-600"} 
+                    className={selectedCategory === category.id ? "text-primary-600" : "text-secondary-600"} 
                   />
                 </div>
-                <div className="font-semibold text-sm text-slate-900 mb-1">
+                <div className={`${theme.text.h5} mb-1`}>
                   {category.name}
                 </div>
-                <div className="text-xs text-slate-600">{category.count} pros</div>
+                <div className={theme.text.caption}>{category.count} pros</div>
               </button>
             );
           })}
@@ -293,18 +294,18 @@ export default function BrowsePros() {
 
       {/* Results Count */}
       <div className="flex items-center justify-between">
-        <p className="text-sm text-slate-600">
-          <span className="font-semibold text-slate-900">
+        <p className={theme.text.caption}>
+          <span className="font-semibold text-secondary-900">
             {filteredProviders.length}
           </span>{" "}
           professionals found
           {verifiedOnly && (
-            <span className="ml-2 text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+            <span className="ml-2 text-xs bg-success-100 text-success-700 px-2 py-1 rounded-full">
               Verified Only
             </span>
           )}
           {selectedCategory !== "all" && (
-            <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+            <span className="ml-2 text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded-full">
               {categories.find(c => c.id === selectedCategory)?.name}
             </span>
           )}
@@ -317,7 +318,7 @@ export default function BrowsePros() {
               setSelectedLicense("all");
               setVerifiedOnly(false);
             }}
-            className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+            className="text-sm text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1"
           >
             <X size={14} />
             Clear Filters
@@ -327,12 +328,12 @@ export default function BrowsePros() {
 
       {/* Providers Grid */}
       {filteredProviders.length === 0 ? (
-        <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
+        <div className={`${theme.card.base} ${theme.card.padding} text-center py-12`}>
           <div className="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Search className="text-slate-400" size={32} />
+            <Search className="text-secondary-400" size={32} />
           </div>
-          <p className="text-slate-900 font-semibold mb-2">No pros found</p>
-          <p className="text-slate-600 text-sm">
+          <p className={`${theme.text.h4} mb-2`}>No pros found</p>
+          <p className={theme.text.body}>
             Try adjusting your search or filters
           </p>
         </div>
@@ -389,7 +390,7 @@ function StatBadge({ icon, value, label }) {
       <div className="bg-white/20 backdrop-blur-sm p-2 rounded-lg">{icon}</div>
       <div>
         <div className="text-2xl font-bold">{value}</div>
-        <div className="text-xs text-blue-100">{label}</div>
+        <div className="text-xs text-primary-100">{label}</div>
       </div>
     </div>
   );
@@ -402,13 +403,13 @@ function ProviderCard({ provider, onViewClick, onBookClick }) {
   const getLicenseBadge = (licenseType) => {
     switch (licenseType) {
       case "c_class":
-        return { text: "C-Class", color: "bg-blue-100 text-blue-700" };
+        return { text: "C-Class", color: "bg-primary-100 text-primary-700" };
       case "general":
         return { text: "General (B)", color: "bg-purple-100 text-purple-700" };
       case "specialty":
-        return { text: "Specialty", color: "bg-orange-100 text-orange-700" };
+        return { text: "Specialty", color: "bg-warning-100 text-warning-700" };
       default:
-        return { text: "Unlicensed", color: "bg-slate-100 text-slate-700" };
+        return { text: "Unlicensed", color: "bg-slate-100 text-secondary-700" };
     }
   };
 
@@ -432,8 +433,8 @@ function ProviderCard({ provider, onViewClick, onBookClick }) {
   };
 
   return (
-    <div className={`bg-white rounded-xl border-2 p-6 hover:shadow-lg transition group ${
-      isVerified ? "border-green-200" : "border-slate-200"
+    <div className={`${theme.card.base} ${theme.card.padding} ${theme.card.hover} ${
+      isVerified ? "border-success-200" : ""
     }`}>
       {/* Header with Profile Picture */}
       <div className="flex items-start gap-3 mb-4">
@@ -446,13 +447,13 @@ function ProviderCard({ provider, onViewClick, onBookClick }) {
               className="w-14 h-14 rounded-full object-cover border-2 border-slate-200"
             />
           ) : (
-            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg border-2 border-slate-200">
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg border-2 border-slate-200">
               {getInitials(provider.business_name)}
             </div>
           )}
           {/* Verification Badge Overlay */}
           {isVerified && (
-            <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-full p-1">
+            <div className="absolute -bottom-1 -right-1 bg-success-500 rounded-full p-1">
               <CheckCircle2 size={14} className="text-white" />
             </div>
           )}
@@ -460,7 +461,7 @@ function ProviderCard({ provider, onViewClick, onBookClick }) {
 
         {/* Name and Badges */}
         <div className="flex-1 min-w-0">
-          <h3 className="font-bold text-slate-900 text-lg mb-1 group-hover:text-blue-600 transition truncate">
+          <h3 className={`${theme.text.h4} mb-1 group-hover:text-primary-600 transition truncate`}>
             {provider.business_name}
           </h3>
           <div className="flex items-center gap-2 flex-wrap">
@@ -468,13 +469,13 @@ function ProviderCard({ provider, onViewClick, onBookClick }) {
               {license.text}
             </span>
             {provider.insurance_status !== "none" && (
-              <span className="text-xs px-2 py-1 rounded-full font-medium bg-green-100 text-green-700 flex items-center gap-1">
+              <span className="text-xs px-2 py-1 rounded-full font-medium bg-success-100 text-success-700 flex items-center gap-1">
                 <Shield size={10} />
                 Insured
               </span>
             )}
             {!isVerified && (
-              <span className="text-xs px-2 py-1 rounded-full font-medium bg-amber-100 text-amber-700 flex items-center gap-1">
+              <span className="text-xs px-2 py-1 rounded-full font-medium bg-warning-100 text-warning-700 flex items-center gap-1">
                 <AlertTriangle size={10} />
                 Unverified
               </span>
@@ -485,7 +486,7 @@ function ProviderCard({ provider, onViewClick, onBookClick }) {
 
       {/* Service Area */}
       {provider.service_area && (
-        <div className="flex items-center gap-2 text-sm text-slate-600 mb-3">
+        <div className={`flex items-center gap-2 ${theme.text.caption} mb-3`}>
           <MapPin size={14} />
           <span>{provider.service_area}</span>
         </div>
@@ -496,33 +497,33 @@ function ProviderCard({ provider, onViewClick, onBookClick }) {
         <div className="text-center">
           <div className="flex items-center justify-center gap-1 text-yellow-500 mb-1">
             <Star size={14} className="fill-yellow-500" />
-            <span className="text-sm font-bold text-slate-900">{mockRating}</span>
+            <span className="text-sm font-bold text-secondary-900">{mockRating}</span>
           </div>
-          <div className="text-xs text-slate-600">Rating</div>
+          <div className={theme.text.caption}>Rating</div>
         </div>
         <div className="text-center">
-          <div className="text-sm font-bold text-slate-900 mb-1">
+          <div className="text-sm font-bold text-secondary-900 mb-1">
             {mockJobsCompleted}
           </div>
-          <div className="text-xs text-slate-600">Jobs</div>
+          <div className={theme.text.caption}>Jobs</div>
         </div>
         <div className="text-center">
-          <div className="text-sm font-bold text-slate-900 mb-1">
+          <div className="text-sm font-bold text-secondary-900 mb-1">
             {mockResponseTime}
           </div>
-          <div className="text-xs text-slate-600">Response</div>
+          <div className={theme.text.caption}>Response</div>
         </div>
       </div>
 
       {/* Rate */}
       <div className="mb-4">
-        <div className="flex items-center gap-2 text-slate-600 mb-1">
+        <div className={`flex items-center gap-2 ${theme.text.caption} mb-1`}>
           <DollarSign size={16} />
-          <span className="text-sm">Base Rate</span>
+          <span>Base Rate</span>
         </div>
-        <div className="text-2xl font-bold text-slate-900">
+        <div className="text-2xl font-bold text-secondary-900">
           ${provider.base_rate ? (provider.base_rate / 100).toFixed(0) : "N/A"}
-          {provider.base_rate && <span className="text-sm font-normal text-slate-600">/hr</span>}
+          {provider.base_rate && <span className={`${theme.text.caption} font-normal`}>/hr</span>}
         </div>
       </div>
 
@@ -530,14 +531,14 @@ function ProviderCard({ provider, onViewClick, onBookClick }) {
       <div className="flex gap-2">
         <button
           onClick={onBookClick}
-          className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white py-2.5 rounded-lg font-semibold hover:from-green-700 hover:to-emerald-700 transition shadow-lg shadow-green-500/20 flex items-center justify-center gap-2"
+          className="flex-1 bg-gradient-to-r from-success-600 to-emerald-600 text-white py-2.5 rounded-lg font-semibold hover:from-success-700 hover:to-emerald-700 transition shadow-lg shadow-success-500/20 flex items-center justify-center gap-2"
         >
           <ExternalLink size={16} />
           Book Now
         </button>
         <button 
           onClick={onViewClick}
-          className="px-4 py-2.5 border-2 border-slate-300 text-slate-700 rounded-lg font-semibold hover:bg-slate-50 transition"
+          className={theme.button.secondaryOutline}
         >
           View
         </button>
@@ -546,12 +547,12 @@ function ProviderCard({ provider, onViewClick, onBookClick }) {
       {/* Verification Status */}
       <div className="mt-4 pt-4 border-t border-slate-200">
         {isVerified ? (
-          <div className="flex items-center gap-2 text-xs text-green-600">
+          <div className={`flex items-center gap-2 ${theme.text.caption} text-success-600`}>
             <CheckCircle2 size={14} />
             <span className="font-medium">Verified Professional</span>
           </div>
         ) : (
-          <div className="flex items-center gap-2 text-xs text-amber-600">
+          <div className={`flex items-center gap-2 ${theme.text.caption} text-warning-600`}>
             <AlertTriangle size={14} />
             <span className="font-medium">Verification Pending</span>
           </div>
