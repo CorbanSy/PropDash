@@ -88,10 +88,10 @@ export default function CustomerDashboardLayout() {
 
   return (
     <div className="flex min-h-screen bg-secondary-50">
-      {/* SIDEBAR */}
-      <aside className="w-64 bg-white border-r border-secondary-200 p-4 hidden sm:flex sm:flex-col shadow-sm">
-        {/* Logo */}
-        <div className="flex items-center gap-3 mb-6 px-2">
+      {/* SIDEBAR - Fixed height with scrollable nav */}
+      <aside className="w-64 bg-white border-r border-secondary-200 hidden sm:flex sm:flex-col shadow-sm fixed h-screen">
+        {/* Logo - Fixed at top */}
+        <div className="flex items-center gap-3 mb-6 px-6 pt-4">
           <div className="bg-primary-600 p-2 rounded-lg">
             <ShoppingBag className="text-white" size={20} />
           </div>
@@ -100,8 +100,8 @@ export default function CustomerDashboardLayout() {
           </h1>
         </div>
 
-        {/* NAV LINKS */}
-        <nav className="space-y-1 flex-1">
+        {/* NAV LINKS - Scrollable section */}
+        <nav className="space-y-1 flex-1 overflow-y-auto px-4">
           <SidebarLink to="/customer/dashboard" icon={Home} label="Home" end />
           <SidebarLink to="/customer/browse" icon={Search} label="Browse Pros" />
           <SidebarLink to="/customer/jobs" icon={Briefcase} label="My Jobs" />
@@ -113,8 +113,8 @@ export default function CustomerDashboardLayout() {
           <SidebarLink to="/customer/settings" icon={User} label="Settings" />
         </nav>
 
-        {/* USER MENU AT BOTTOM */}
-        <div className="relative mt-4 pt-4 border-t border-secondary-200">
+        {/* USER MENU - Fixed at bottom */}
+        <div className="relative mt-4 pt-4 border-t border-secondary-200 px-4 pb-4">
           <button
             onClick={() => setShowUserMenu(!showUserMenu)}
             className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-secondary-100 transition-all duration-200"
@@ -183,8 +183,8 @@ export default function CustomerDashboardLayout() {
         </div>
       </aside>
 
-      {/* MAIN CONTENT */}
-      <main className="flex-1 p-6 pb-20 sm:pb-6">
+      {/* MAIN CONTENT - Add left margin to account for fixed sidebar */}
+      <main className="flex-1 p-6 pb-20 sm:pb-6 sm:ml-64">
         <Outlet />
       </main>
 

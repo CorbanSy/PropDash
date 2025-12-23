@@ -31,6 +31,8 @@ export default function CustomerSettings() {
   const [customerData, setCustomerData] = useState({
     full_name: "",
     phone: "",
+    phone_verified: false,
+    profile_photo: null,
     address: "",
     city: "",
     state: "",
@@ -61,7 +63,6 @@ export default function CustomerSettings() {
       setLoading(true);
       
       try {
-        // ✅ Try to fetch existing customer
         const { data, error: fetchError } = await supabase
           .from("customers")
           .select("*")
@@ -72,7 +73,6 @@ export default function CustomerSettings() {
           console.error("Error fetching customer:", fetchError);
         }
 
-        // ✅ If no customer record exists, try to create one
         if (!data && user) {
           console.log("No customer record found, attempting to create one...");
           
@@ -99,7 +99,6 @@ export default function CustomerSettings() {
           if (insertError) {
             console.error("Error upserting customer:", insertError);
             
-            // ✅ If upsert failed, try one more fetch (record might exist but wasn't visible)
             const { data: retryData, error: retryError } = await supabase
               .from("customers")
               .select("*")
@@ -125,7 +124,6 @@ export default function CustomerSettings() {
         } else if (data) {
           setCustomerData(data);
         } else {
-          // ✅ No data and no errors - use defaults
           setCustomerData({
             full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Customer',
             phone: user.user_metadata?.phone || "",
@@ -145,6 +143,7 @@ export default function CustomerSettings() {
     
     if (user) fetchCustomer();
   }, [user]);
+
   // Update customer data
   const handleSaveProfile = async () => {
     setSaving(true);
@@ -218,14 +217,14 @@ export default function CustomerSettings() {
     const confirmed = window.confirm("Are you sure you want to log out?");
     if (confirmed) {
       await supabase.auth.signOut();
-      navigate("/"); // ✅ Navigate to landing page (or your actual login route)
+      navigate("/");
     }
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-slate-600">Loading settings...</div>
+        <div className="text-secondary-700">Loading settings...</div>
       </div>
     );
   }
@@ -233,7 +232,7 @@ export default function CustomerSettings() {
   if (!user) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-slate-600">Please log in to view settings.</div>
+        <div className="text-secondary-700">Please log in to view settings.</div>
       </div>
     );
   }
@@ -243,8 +242,8 @@ export default function CustomerSettings() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Settings</h1>
-          <p className="text-slate-600 mt-1">
+          <h1 className="text-3xl font-bold text-secondary-900">Settings</h1>
+          <p className="text-secondary-600 mt-1">
             Manage your account and preferences
           </p>
         </div>
@@ -252,39 +251,39 @@ export default function CustomerSettings() {
 
       {/* Success/Error Messages */}
       {success && (
-        <div className="bg-green-50 border border-green-200 text-green-800 p-4 rounded-xl flex items-center gap-3">
+        <div className="bg-success-50 border-2 border-success-200 text-success-800 p-4 rounded-xl flex items-center gap-3 shadow-card">
           <CheckCircle2 size={20} />
-          <span className="font-medium">{success}</span>
+          <span className="font-semibold">{success}</span>
         </div>
       )}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-xl flex items-center gap-3">
+        <div className="bg-error-50 border-2 border-error-200 text-error-800 p-4 rounded-xl flex items-center gap-3 shadow-card">
           <AlertTriangle size={20} />
-          <span className="font-medium">{error}</span>
+          <span className="font-semibold">{error}</span>
         </div>
       )}
 
-      {/* Account Overview Card */}
-      <div className="bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 p-8 rounded-2xl text-white shadow-xl relative overflow-hidden">
+      {/* Account Overview Card - PRIMARY GRADIENT */}
+      <div className="bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 p-8 rounded-2xl text-white shadow-xl relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 right-10 w-40 h-40 bg-white rounded-full blur-3xl"></div>
           <div className="absolute bottom-10 left-10 w-60 h-60 bg-white rounded-full blur-3xl"></div>
         </div>
         <div className="relative z-10 flex items-start justify-between">
           <div>
-            <p className="text-green-100 text-sm font-medium mb-2">Account</p>
+            <p className="text-primary-100 text-sm font-medium mb-2">Account</p>
             <h2 className="text-2xl font-bold mb-1">
               {customerData.full_name || user.email?.split('@')[0] || "Customer"}
             </h2>
-            <p className="text-green-100 text-sm">{user.email}</p>
+            <p className="text-primary-100 text-sm">{user.email}</p>
             <div className="flex items-center gap-4 mt-4">
-              <div className="bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-white/30">
+              <div className="bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-white/30">
                 <p className="text-xs font-medium">Member Since</p>
                 <p className="text-lg font-bold">
                   {new Date(user.created_at).getFullYear()}
                 </p>
               </div>
-              <div className="bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-white/30">
+              <div className="bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-white/30">
                 <p className="text-xs font-medium">Account Type</p>
                 <p className="text-lg font-bold">Customer</p>
               </div>
@@ -296,8 +295,8 @@ export default function CustomerSettings() {
         </div>
       </div>
 
-      {/* Tab Navigation */}
-      <div className="flex gap-2 border-b border-slate-200 overflow-x-auto">
+      {/* Tab Navigation - PRIMARY ACTIVE COLOR */}
+      <div className="flex gap-2 border-b-2 border-secondary-200 overflow-x-auto">
         <TabButton
           active={activeTab === "profile"}
           onClick={() => setActiveTab("profile")}
@@ -371,13 +370,13 @@ export default function CustomerSettings() {
   );
 }
 
-// Tab Button Component
+// Tab Button Component - PRIMARY ACTIVE COLOR
 function TabButton({ active, onClick, icon, label }) {
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-3 font-medium transition relative whitespace-nowrap ${
-        active ? "text-green-600" : "text-slate-600 hover:text-slate-900"
+      className={`px-4 py-3 font-semibold transition-all duration-300 relative whitespace-nowrap ${
+        active ? "text-primary-600" : "text-secondary-600 hover:text-secondary-900"
       }`}
     >
       <span className="flex items-center gap-2">
@@ -385,7 +384,7 @@ function TabButton({ active, onClick, icon, label }) {
         {label}
       </span>
       {active && (
-        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-green-600"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600"></div>
       )}
     </button>
   );

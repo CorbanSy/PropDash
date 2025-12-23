@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { X, AlertCircle } from "lucide-react";
 import { supabase } from "../../../../../lib/supabaseClient";
+import { theme } from "../../../../../styles/theme";
 
 // Hooks
 import { useJobForm } from "./hooks/useJobForm";
@@ -141,16 +142,16 @@ export default function PostJobModal({
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between z-10">
+        <div className="sticky top-0 bg-white border-b border-secondary-200 px-6 py-4 flex items-center justify-between z-10">
           <div>
-            <h2 className="text-2xl font-bold text-slate-900">
+            <h2 className={theme.text.h2}>
               {isEditing
                 ? "Edit Job"
                 : isDirectBooking
                 ? `Book ${providerName || "Provider"}`
                 : "Post a Job"}
             </h2>
-            <p className="text-sm text-slate-600">
+            <p className={theme.text.body}>
               {isEditing
                 ? "Update job details below"
                 : isDirectBooking
@@ -162,7 +163,7 @@ export default function PostJobModal({
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-slate-100 rounded-lg transition"
+            className="p-2 hover:bg-secondary-100 rounded-lg transition"
           >
             <X size={24} />
           </button>
@@ -173,9 +174,9 @@ export default function PostJobModal({
 
         {/* Error Message */}
         {error && (
-          <div className="mx-6 mt-4 bg-red-50 border border-red-200 text-red-800 p-4 rounded-xl flex items-start gap-3">
+          <div className="mx-6 mt-4 bg-error-50 border border-error-200 text-error-800 p-4 rounded-xl flex items-start gap-3">
             <AlertCircle size={20} className="flex-shrink-0 mt-0.5" />
-            <span className="text-sm">{error}</span>
+            <span className={theme.text.caption}>{error}</span>
           </div>
         )}
 

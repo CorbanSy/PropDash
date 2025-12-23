@@ -123,7 +123,7 @@ export default function BrowsePros() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className={theme.text.body}>Loading providers...</div>
+        <div className="text-secondary-700">Loading providers...</div>
       </div>
     );
   }
@@ -132,14 +132,14 @@ export default function BrowsePros() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className={theme.text.h1}>Browse Pros</h1>
-        <p className={`${theme.text.body} mt-1`}>
+        <h1 className="text-3xl font-bold text-secondary-900">Browse Pros</h1>
+        <p className="text-secondary-600 mt-1">
           Find trusted service professionals for your home projects
         </p>
       </div>
 
-      {/* Stats Banner */}
-      <div className="bg-gradient-to-br from-primary-600 via-indigo-600 to-purple-600 p-6 rounded-2xl text-white shadow-xl relative overflow-hidden">
+      {/* Stats Banner - Matching Home.jsx gradient style */}
+      <div className="bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 p-6 rounded-2xl text-white shadow-xl relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 right-10 w-40 h-40 bg-white rounded-full blur-3xl"></div>
         </div>
@@ -163,8 +163,8 @@ export default function BrowsePros() {
         </div>
       </div>
 
-      {/* Search and Filters */}
-      <div className={`${theme.card.base} ${theme.card.padding}`}>
+      {/* Search and Filters - Matching Home.jsx card style */}
+      <div className="bg-white rounded-2xl border-2 border-secondary-200 shadow-card p-6">
         <div className="flex flex-col md:flex-row gap-4">
           {/* Search */}
           <div className="flex-1 relative">
@@ -184,7 +184,7 @@ export default function BrowsePros() {
           {/* Filter Button (Mobile) */}
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`md:hidden ${theme.button.secondary} gap-2`}
+            className={`md:hidden ${theme.button.secondary} gap-2 justify-center`}
           >
             <Filter size={18} />
             Filters
@@ -197,7 +197,7 @@ export default function BrowsePros() {
 
           {/* Desktop Filters */}
           <div className="hidden md:flex items-center gap-3">
-            <label className="flex items-center gap-2 px-3 py-2 border-2 border-slate-300 rounded-lg cursor-pointer hover:bg-slate-50 transition">
+            <label className="flex items-center gap-2 px-3 py-2 border-2 border-secondary-300 rounded-xl cursor-pointer hover:bg-secondary-50 transition-all duration-300">
               <input
                 type="checkbox"
                 checked={verifiedOnly}
@@ -227,7 +227,7 @@ export default function BrowsePros() {
 
         {/* Mobile Filters Dropdown */}
         {showFilters && (
-          <div className="mt-4 pt-4 border-t border-slate-200 space-y-3 md:hidden">
+          <div className="mt-4 pt-4 border-t border-secondary-200 space-y-3 md:hidden">
             <label className="flex items-center gap-2">
               <input
                 type="checkbox"
@@ -239,7 +239,7 @@ export default function BrowsePros() {
             </label>
             
             <div>
-              <label className={`${theme.text.label} mb-2`}>
+              <label className="block text-sm font-semibold text-secondary-700 mb-2">
                 License Type
               </label>
               <select
@@ -260,7 +260,7 @@ export default function BrowsePros() {
 
       {/* Categories */}
       <div>
-        <h3 className={`${theme.text.label} mb-3`}>
+        <h3 className="text-lg font-semibold text-secondary-900 mb-3">
           Browse by Category
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
@@ -270,10 +270,10 @@ export default function BrowsePros() {
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`p-4 rounded-xl border-2 transition text-left ${
+                className={`p-4 rounded-2xl border-2 transition-all duration-300 text-left ${
                   selectedCategory === category.id
-                    ? "border-primary-600 bg-primary-50"
-                    : "border-slate-200 bg-white hover:border-slate-300"
+                    ? "border-primary-600 bg-primary-50 shadow-lg"
+                    : "border-secondary-200 bg-white hover:border-secondary-300 hover:shadow-card"
                 }`}
               >
                 <div className="mb-2">
@@ -282,10 +282,10 @@ export default function BrowsePros() {
                     className={selectedCategory === category.id ? "text-primary-600" : "text-secondary-600"} 
                   />
                 </div>
-                <div className={`${theme.text.h5} mb-1`}>
+                <div className="text-base font-semibold text-secondary-900 mb-1">
                   {category.name}
                 </div>
-                <div className={theme.text.caption}>{category.count} pros</div>
+                <div className="text-xs text-secondary-600">{category.count} pros</div>
               </button>
             );
           })}
@@ -294,18 +294,18 @@ export default function BrowsePros() {
 
       {/* Results Count */}
       <div className="flex items-center justify-between">
-        <p className={theme.text.caption}>
+        <p className="text-sm text-secondary-600">
           <span className="font-semibold text-secondary-900">
             {filteredProviders.length}
           </span>{" "}
           professionals found
           {verifiedOnly && (
-            <span className="ml-2 text-xs bg-success-100 text-success-700 px-2 py-1 rounded-full">
+            <span className="ml-2 text-xs bg-success-100 text-success-700 px-2 py-1 rounded-full font-semibold">
               Verified Only
             </span>
           )}
           {selectedCategory !== "all" && (
-            <span className="ml-2 text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded-full">
+            <span className="ml-2 text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded-full font-semibold">
               {categories.find(c => c.id === selectedCategory)?.name}
             </span>
           )}
@@ -318,7 +318,7 @@ export default function BrowsePros() {
               setSelectedLicense("all");
               setVerifiedOnly(false);
             }}
-            className="text-sm text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1"
+            className="text-sm text-primary-700 hover:text-primary-800 font-semibold flex items-center gap-1 hover:underline transition"
           >
             <X size={14} />
             Clear Filters
@@ -328,12 +328,12 @@ export default function BrowsePros() {
 
       {/* Providers Grid */}
       {filteredProviders.length === 0 ? (
-        <div className={`${theme.card.base} ${theme.card.padding} text-center py-12`}>
-          <div className="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="bg-white rounded-2xl border-2 border-secondary-200 shadow-card p-6 text-center py-12">
+          <div className="bg-secondary-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
             <Search className="text-secondary-400" size={32} />
           </div>
-          <p className={`${theme.text.h4} mb-2`}>No pros found</p>
-          <p className={theme.text.body}>
+          <p className="text-xl font-semibold text-secondary-900 mb-2">No pros found</p>
+          <p className="text-secondary-600">
             Try adjusting your search or filters
           </p>
         </div>
@@ -371,7 +371,6 @@ export default function BrowsePros() {
           onSuccess={() => {
             setBookingProviderId(null);
             setBookingProviderName(null);
-            // Optionally navigate to My Jobs
             navigate('/customer/jobs');
           }}
           userId={user?.id}
@@ -383,33 +382,31 @@ export default function BrowsePros() {
   );
 }
 
-// Stat Badge Component
+// Stat Badge Component - Matching Home.jsx style
 function StatBadge({ icon, value, label }) {
   return (
-    <div className="flex items-center gap-3">
-      <div className="bg-white/20 backdrop-blur-sm p-2 rounded-lg">{icon}</div>
-      <div>
-        <div className="text-2xl font-bold">{value}</div>
-        <div className="text-xs text-primary-100">{label}</div>
+    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-all duration-300">
+      <div className="flex items-center gap-2 mb-2 text-primary-100">
+        {icon}
+        <span className="text-sm font-medium">{label}</span>
       </div>
+      <p className="text-2xl font-bold">{value}</p>
     </div>
   );
 }
 
-// Provider Card Component
+// Provider Card Component - Matching Home.jsx card style
 function ProviderCard({ provider, onViewClick, onBookClick }) {
-  const navigate = useNavigate();
-
   const getLicenseBadge = (licenseType) => {
     switch (licenseType) {
       case "c_class":
-        return { text: "C-Class", color: "bg-primary-100 text-primary-700" };
+        return { text: "C-Class", color: "bg-primary-100 text-primary-700 border-primary-300" };
       case "general":
-        return { text: "General (B)", color: "bg-purple-100 text-purple-700" };
+        return { text: "General (B)", color: "bg-purple-100 text-purple-700 border-purple-300" };
       case "specialty":
-        return { text: "Specialty", color: "bg-warning-100 text-warning-700" };
+        return { text: "Specialty", color: "bg-warning-100 text-warning-700 border-warning-300" };
       default:
-        return { text: "Unlicensed", color: "bg-slate-100 text-secondary-700" };
+        return { text: "Unlicensed", color: "bg-secondary-100 text-secondary-700 border-secondary-300" };
     }
   };
 
@@ -433,8 +430,8 @@ function ProviderCard({ provider, onViewClick, onBookClick }) {
   };
 
   return (
-    <div className={`${theme.card.base} ${theme.card.padding} ${theme.card.hover} ${
-      isVerified ? "border-success-200" : ""
+    <div className={`bg-white rounded-2xl border-2 shadow-card p-6 hover:shadow-card-hover hover:border-secondary-300 transition-all duration-300 ${
+      isVerified ? "border-success-200" : "border-secondary-200"
     }`}>
       {/* Header with Profile Picture */}
       <div className="flex items-start gap-3 mb-4">
@@ -444,16 +441,16 @@ function ProviderCard({ provider, onViewClick, onBookClick }) {
             <img
               src={provider.profile_photo}
               alt={provider.business_name}
-              className="w-14 h-14 rounded-full object-cover border-2 border-slate-200"
+              className="w-14 h-14 rounded-full object-cover border-2 border-secondary-200"
             />
           ) : (
-            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg border-2 border-slate-200">
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg border-2 border-secondary-200">
               {getInitials(provider.business_name)}
             </div>
           )}
           {/* Verification Badge Overlay */}
           {isVerified && (
-            <div className="absolute -bottom-1 -right-1 bg-success-500 rounded-full p-1">
+            <div className="absolute -bottom-1 -right-1 bg-success-500 rounded-full p-1 shadow-lg">
               <CheckCircle2 size={14} className="text-white" />
             </div>
           )}
@@ -461,21 +458,21 @@ function ProviderCard({ provider, onViewClick, onBookClick }) {
 
         {/* Name and Badges */}
         <div className="flex-1 min-w-0">
-          <h3 className={`${theme.text.h4} mb-1 group-hover:text-primary-600 transition truncate`}>
+          <h3 className="text-lg font-semibold text-secondary-900 mb-1 group-hover:text-primary-600 transition truncate">
             {provider.business_name}
           </h3>
           <div className="flex items-center gap-2 flex-wrap">
-            <span className={`text-xs px-2 py-1 rounded-full font-medium ${license.color}`}>
+            <span className={`text-xs px-2 py-1 rounded-full font-semibold border ${license.color}`}>
               {license.text}
             </span>
             {provider.insurance_status !== "none" && (
-              <span className="text-xs px-2 py-1 rounded-full font-medium bg-success-100 text-success-700 flex items-center gap-1">
+              <span className="text-xs px-2 py-1 rounded-full font-semibold bg-success-100 text-success-700 border border-success-300 flex items-center gap-1">
                 <Shield size={10} />
                 Insured
               </span>
             )}
             {!isVerified && (
-              <span className="text-xs px-2 py-1 rounded-full font-medium bg-warning-100 text-warning-700 flex items-center gap-1">
+              <span className="text-xs px-2 py-1 rounded-full font-semibold bg-warning-100 text-warning-700 border border-warning-300 flex items-center gap-1">
                 <AlertTriangle size={10} />
                 Unverified
               </span>
@@ -486,44 +483,44 @@ function ProviderCard({ provider, onViewClick, onBookClick }) {
 
       {/* Service Area */}
       {provider.service_area && (
-        <div className={`flex items-center gap-2 ${theme.text.caption} mb-3`}>
+        <div className="flex items-center gap-2 text-sm text-secondary-600 mb-3">
           <MapPin size={14} />
           <span>{provider.service_area}</span>
         </div>
       )}
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-4 pb-4 border-b border-slate-200">
+      <div className="grid grid-cols-3 gap-4 mb-4 pb-4 border-b-2 border-secondary-200">
         <div className="text-center">
           <div className="flex items-center justify-center gap-1 text-yellow-500 mb-1">
             <Star size={14} className="fill-yellow-500" />
             <span className="text-sm font-bold text-secondary-900">{mockRating}</span>
           </div>
-          <div className={theme.text.caption}>Rating</div>
+          <div className="text-xs text-secondary-600">Rating</div>
         </div>
         <div className="text-center">
           <div className="text-sm font-bold text-secondary-900 mb-1">
             {mockJobsCompleted}
           </div>
-          <div className={theme.text.caption}>Jobs</div>
+          <div className="text-xs text-secondary-600">Jobs</div>
         </div>
         <div className="text-center">
           <div className="text-sm font-bold text-secondary-900 mb-1">
             {mockResponseTime}
           </div>
-          <div className={theme.text.caption}>Response</div>
+          <div className="text-xs text-secondary-600">Response</div>
         </div>
       </div>
 
       {/* Rate */}
       <div className="mb-4">
-        <div className={`flex items-center gap-2 ${theme.text.caption} mb-1`}>
+        <div className="flex items-center gap-2 text-sm text-secondary-600 mb-1">
           <DollarSign size={16} />
           <span>Base Rate</span>
         </div>
         <div className="text-2xl font-bold text-secondary-900">
           ${provider.base_rate ? (provider.base_rate / 100).toFixed(0) : "N/A"}
-          {provider.base_rate && <span className={`${theme.text.caption} font-normal`}>/hr</span>}
+          {provider.base_rate && <span className="text-sm text-secondary-600 font-normal">/hr</span>}
         </div>
       </div>
 
@@ -531,30 +528,30 @@ function ProviderCard({ provider, onViewClick, onBookClick }) {
       <div className="flex gap-2">
         <button
           onClick={onBookClick}
-          className="flex-1 bg-gradient-to-r from-success-600 to-emerald-600 text-white py-2.5 rounded-lg font-semibold hover:from-success-700 hover:to-emerald-700 transition shadow-lg shadow-success-500/20 flex items-center justify-center gap-2"
+          className="flex-1 bg-gradient-to-r from-success-600 to-emerald-600 text-white py-2.5 rounded-xl font-semibold hover:from-success-700 hover:to-emerald-700 transition-all duration-300 shadow-lg shadow-success-500/20 flex items-center justify-center gap-2 hover:scale-105"
         >
           <ExternalLink size={16} />
           Book Now
         </button>
         <button 
           onClick={onViewClick}
-          className={theme.button.secondaryOutline}
+          className="px-4 py-2.5 border-2 border-secondary-300 text-secondary-700 rounded-xl font-semibold hover:bg-secondary-50 transition-all duration-300"
         >
           View
         </button>
       </div>
 
       {/* Verification Status */}
-      <div className="mt-4 pt-4 border-t border-slate-200">
+      <div className="mt-4 pt-4 border-t-2 border-secondary-200">
         {isVerified ? (
-          <div className={`flex items-center gap-2 ${theme.text.caption} text-success-600`}>
+          <div className="flex items-center gap-2 text-sm text-success-600">
             <CheckCircle2 size={14} />
-            <span className="font-medium">Verified Professional</span>
+            <span className="font-semibold">Verified Professional</span>
           </div>
         ) : (
-          <div className={`flex items-center gap-2 ${theme.text.caption} text-warning-600`}>
+          <div className="flex items-center gap-2 text-sm text-warning-600">
             <AlertTriangle size={14} />
-            <span className="font-medium">Verification Pending</span>
+            <span className="font-semibold">Verification Pending</span>
           </div>
         )}
       </div>

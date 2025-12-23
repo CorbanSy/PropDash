@@ -1,6 +1,6 @@
 //levlpro-mvp\src\components\CustomerDashboard\MyJobs\MyJobs.jsx
 import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom"; // ✅ Added useLocation and useNavigate
+import { useLocation, useNavigate } from "react-router-dom";
 import { Search, Filter, Calendar, Plus } from "lucide-react";
 import { supabase } from "../../../lib/supabaseClient";
 import useAuth from "../../../hooks/useAuth";
@@ -10,8 +10,8 @@ import DetailedJobCard from "./components/DetailedJobCard";
 
 export default function MyJobs() {
   const { user } = useAuth();
-  const location = useLocation(); // ✅ Added
-  const navigate = useNavigate(); // ✅ Added
+  const location = useLocation();
+  const navigate = useNavigate();
   const [jobs, setJobs] = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [statusFilter, setStatusFilter] = useState("all");
@@ -20,7 +20,7 @@ export default function MyJobs() {
   const [showPostJobModal, setShowPostJobModal] = useState(false);
   const [editingJob, setEditingJob] = useState(null);
 
-  // ✅ Check for ?post=true query parameter on mount
+  // Check for ?post=true query parameter on mount
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     if (searchParams.get('post') === 'true') {
@@ -137,7 +137,7 @@ export default function MyJobs() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-slate-600">Loading jobs...</div>
+        <div className="text-secondary-700">Loading jobs...</div>
       </div>
     );
   }
@@ -145,7 +145,7 @@ export default function MyJobs() {
   if (!user) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-slate-600">Please log in to view your jobs</div>
+        <div className="text-secondary-700">Please log in to view your jobs</div>
       </div>
     );
   }
@@ -155,15 +155,15 @@ export default function MyJobs() {
       {/* Header with Post Job Button */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">My Jobs</h1>
-          <p className="text-slate-600 mt-1">Track and manage your service requests</p>
+          <h1 className="text-3xl font-bold text-secondary-900">My Jobs</h1>
+          <p className="text-secondary-600 mt-1">Track and manage your service requests</p>
         </div>
         <button
           onClick={() => {
             setEditingJob(null);
             setShowPostJobModal(true);
           }}
-          className="flex items-center gap-2 bg-gradient-to-r from-teal-600 to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-teal-700 hover:to-emerald-700 transition shadow-lg shadow-teal-500/30"
+          className="flex items-center gap-2 bg-gradient-to-r from-primary-600 to-primary-700 text-white px-6 py-3 rounded-xl font-semibold hover:from-primary-700 hover:to-primary-800 transition-all duration-300 shadow-lg shadow-primary-500/20 hover:scale-105"
         >
           <Plus size={20} />
           Post a Job
@@ -172,18 +172,18 @@ export default function MyJobs() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatBox label="All Jobs" value={jobs.length} color="blue" />
-        <StatBox label="Active" value={activeJobs.length} color="orange" />
-        <StatBox label="Completed" value={completedJobs.length} color="green" />
-        <StatBox label="Cancelled" value={cancelledJobs.length} color="red" />
+        <StatBox label="All Jobs" value={jobs.length} color="primary" />
+        <StatBox label="Active" value={activeJobs.length} color="warning" />
+        <StatBox label="Completed" value={completedJobs.length} color="success" />
+        <StatBox label="Cancelled" value={cancelledJobs.length} color="error" />
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-slate-200 p-4">
+      <div className="bg-white rounded-2xl border-2 border-secondary-200 shadow-card p-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
             <Search
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400"
               size={18}
             />
             <input
@@ -191,16 +191,16 @@ export default function MyJobs() {
               placeholder="Search jobs or providers..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
+              className="w-full pl-10 pr-4 py-2 border-2 border-secondary-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:outline-none transition-all duration-300"
             />
           </div>
 
           <div className="flex items-center gap-2">
-            <Filter size={18} className="text-slate-600" />
+            <Filter size={18} className="text-secondary-600" />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
+              className="border-2 border-secondary-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:outline-none transition-all duration-300"
             >
               <option value="all">All Status</option>
               <option value="pending_dispatch">Pending Dispatch</option>
@@ -218,12 +218,12 @@ export default function MyJobs() {
 
       {/* Jobs List */}
       {filteredJobs.length === 0 ? (
-        <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
-          <div className="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Calendar className="text-slate-400" size={32} />
+        <div className="bg-white rounded-2xl border-2 border-secondary-200 shadow-card p-12 text-center">
+          <div className="bg-secondary-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Calendar className="text-secondary-400" size={32} />
           </div>
-          <p className="text-slate-900 font-semibold mb-2">No jobs found</p>
-          <p className="text-slate-600 text-sm mb-4">
+          <p className="text-secondary-900 font-semibold mb-2">No jobs found</p>
+          <p className="text-secondary-600 text-sm mb-4">
             {searchQuery || statusFilter !== "all"
               ? "Try adjusting your filters"
               : "Post your first job to get started"}
@@ -234,7 +234,7 @@ export default function MyJobs() {
                 setEditingJob(null);
                 setShowPostJobModal(true);
               }}
-              className="inline-flex items-center gap-2 bg-teal-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-teal-700 transition"
+              className="inline-flex items-center gap-2 bg-primary-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-primary-700 transition-all duration-300 shadow-lg shadow-primary-500/20"
             >
               <Plus size={18} />
               Post Your First Job

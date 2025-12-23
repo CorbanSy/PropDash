@@ -157,7 +157,7 @@ export default function DashboardLayout() {
     <div className="flex min-h-screen bg-secondary-50">
 
       {/* SIDEBAR */}
-      <aside className="w-64 bg-white border-r border-secondary-200 p-4 hidden sm:flex sm:flex-col shadow-sm">
+      <aside className="w-64 bg-white border-r border-secondary-200 hidden sm:flex sm:flex-col shadow-sm fixed h-screen">
         {/* Logo */}
         <div className="flex items-center gap-3 mb-6 px-2">
           <div className="bg-primary-700 p-2 rounded-lg">
@@ -169,7 +169,7 @@ export default function DashboardLayout() {
         </div>
 
         {/* NAV LINKS */}
-        <nav className="space-y-1 flex-1">
+        <nav className="space-y-1 flex-1 overflow-y-auto px-4">
           <SidebarLink to="/provider" icon={Home} label="Home" end />
           <SidebarLink to="/provider/schedule" icon={Calendar} label="Schedule" />
           <SidebarLink 
@@ -255,7 +255,7 @@ export default function DashboardLayout() {
       </aside>
 
       {/* MAIN CONTENT */}
-      <main className="flex-1 p-6 pb-20 sm:pb-6">
+      <main className="flex-1 p-6 pb-20 sm:pb-6 sm:ml-64">
         <Outlet />
       </main>
 

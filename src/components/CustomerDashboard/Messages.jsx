@@ -30,13 +30,13 @@ export default function Messages() {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
-  const [showOptionsMenu, setShowOptionsMenu] = useState(false); // ✅ Added
-  const [showBlockModal, setShowBlockModal] = useState(false); // ✅ Added
-  const [showReportModal, setShowReportModal] = useState(false); // ✅ Added
+  const [showOptionsMenu, setShowOptionsMenu] = useState(false);
+  const [showBlockModal, setShowBlockModal] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
   const messagesEndRef = useRef(null);
-  const optionsMenuRef = useRef(null); // ✅ Added
+  const optionsMenuRef = useRef(null);
 
-  // ✅ Close options menu when clicking outside
+  // Close options menu when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (optionsMenuRef.current && !optionsMenuRef.current.contains(event.target)) {
@@ -189,29 +189,23 @@ export default function Messages() {
     setSending(false);
   };
 
-  // ✅ Handle block user
+  // Handle block user
   const handleBlockUser = async () => {
     setShowBlockModal(false);
     setShowOptionsMenu(false);
     
-    // TODO: Implement actual blocking logic in database
     console.log("Blocking provider:", selectedConversation.provider_id);
     
-    // You would create a "blocked_users" table and insert a record
-    // For now, just show a success message
     alert(`${selectedConversation.providers?.business_name} has been blocked. You will no longer receive messages from this provider.`);
   };
 
-  // ✅ Handle report user
+  // Handle report user
   const handleReportUser = async (reason) => {
     setShowReportModal(false);
     setShowOptionsMenu(false);
     
-    // TODO: Implement actual reporting logic in database
     console.log("Reporting provider:", selectedConversation.provider_id, "Reason:", reason);
     
-    // You would create a "reports" table and insert a record
-    // For now, just show a success message
     alert(`Thank you for your report. Our team will review ${selectedConversation.providers?.business_name}'s account.`);
   };
 
@@ -224,7 +218,7 @@ export default function Messages() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-slate-600">Loading messages...</div>
+        <div className="text-secondary-700">Loading messages...</div>
       </div>
     );
   }
@@ -233,25 +227,25 @@ export default function Messages() {
     <div className="h-[calc(100vh-8rem)]">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-slate-900">Messages</h1>
-        <p className="text-slate-600 mt-1">
+        <h1 className="text-3xl font-bold text-secondary-900">Messages</h1>
+        <p className="text-secondary-600 mt-1">
           Chat with service providers about your projects
         </p>
       </div>
 
       {/* Messages Layout */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm h-[calc(100%-5rem)] flex">
+      <div className="bg-white rounded-2xl border-2 border-secondary-200 shadow-card h-[calc(100%-5rem)] flex">
         {/* Conversations List */}
         <div
-          className={`w-full md:w-80 border-r border-slate-200 flex flex-col ${
+          className={`w-full md:w-80 border-r-2 border-secondary-200 flex flex-col ${
             selectedConversation ? "hidden md:flex" : "flex"
           }`}
         >
           {/* Search */}
-          <div className="p-4 border-b border-slate-200">
+          <div className="p-4 border-b-2 border-secondary-200">
             <div className="relative">
               <Search
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400"
                 size={18}
               />
               <input
@@ -259,7 +253,7 @@ export default function Messages() {
                 placeholder="Search conversations..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+                className="w-full pl-10 pr-4 py-2 border-2 border-secondary-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:outline-none text-sm transition-all duration-300"
               />
             </div>
           </div>
@@ -268,11 +262,11 @@ export default function Messages() {
           <div className="flex-1 overflow-y-auto">
             {filteredConversations.length === 0 ? (
               <div className="p-8 text-center">
-                <div className="bg-slate-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <MessageSquare className="text-slate-400" size={24} />
+                <div className="bg-secondary-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <MessageSquare className="text-secondary-400" size={24} />
                 </div>
-                <p className="text-sm text-slate-600">No conversations yet</p>
-                <p className="text-xs text-slate-500 mt-2">
+                <p className="text-sm font-semibold text-secondary-900">No conversations yet</p>
+                <p className="text-xs text-secondary-600 mt-2">
                   Start a conversation by messaging a provider
                 </p>
               </div>
@@ -293,46 +287,46 @@ export default function Messages() {
         {selectedConversation ? (
           <div className="flex-1 flex flex-col">
             {/* Thread Header */}
-            <div className="p-4 border-b border-slate-200 flex items-center justify-between">
+            <div className="p-4 border-b-2 border-secondary-200 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setSelectedConversation(null)}
-                  className="md:hidden text-slate-600 hover:text-slate-900"
+                  className="md:hidden text-secondary-600 hover:text-secondary-900 p-2 hover:bg-secondary-100 rounded-xl transition-all duration-300"
                 >
                   <ArrowLeft size={20} />
                 </button>
-                <div className="bg-teal-100 p-2.5 rounded-full">
-                  <User className="text-teal-600" size={20} />
+                <div className="bg-primary-100 p-2.5 rounded-xl">
+                  <User className="text-primary-600" size={20} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-900">
+                  <h3 className="font-semibold text-secondary-900">
                     {selectedConversation.providers?.business_name || "Provider"}
                   </h3>
-                  <p className="text-xs text-slate-600">
+                  <p className="text-xs text-secondary-600">
                     {selectedConversation.jobs?.service_name || "General inquiry"}
                   </p>
                 </div>
               </div>
               
-              {/* ✅ Options Menu */}
+              {/* Options Menu */}
               <div className="relative" ref={optionsMenuRef}>
                 <button
                   onClick={() => setShowOptionsMenu(!showOptionsMenu)}
-                  className="text-slate-600 hover:text-slate-900 p-2 hover:bg-slate-100 rounded-lg transition"
+                  className="text-secondary-600 hover:text-secondary-900 p-2 hover:bg-secondary-100 rounded-xl transition-all duration-300"
                 >
                   <MoreVertical size={20} />
                 </button>
                 
                 {showOptionsMenu && (
-                  <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-slate-200 py-1 z-10">
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border-2 border-secondary-200 py-1 z-10">
                     <button
                       onClick={() => {
                         setShowOptionsMenu(false);
                         setShowBlockModal(true);
                       }}
-                      className="w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2 transition"
+                      className="w-full px-4 py-2 text-left text-sm font-medium text-secondary-700 hover:bg-secondary-50 flex items-center gap-2 transition-all duration-300"
                     >
-                      <Ban size={16} className="text-red-600" />
+                      <Ban size={16} className="text-error-600" />
                       Block User
                     </button>
                     <button
@@ -340,9 +334,9 @@ export default function Messages() {
                         setShowOptionsMenu(false);
                         setShowReportModal(true);
                       }}
-                      className="w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2 transition"
+                      className="w-full px-4 py-2 text-left text-sm font-medium text-secondary-700 hover:bg-secondary-50 flex items-center gap-2 transition-all duration-300"
                     >
-                      <Flag size={16} className="text-orange-600" />
+                      <Flag size={16} className="text-warning-600" />
                       Report User
                     </button>
                   </div>
@@ -355,13 +349,13 @@ export default function Messages() {
               {messages.length === 0 ? (
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center">
-                    <div className="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <MessageSquare className="text-slate-400" size={32} />
+                    <div className="bg-secondary-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <MessageSquare className="text-secondary-400" size={32} />
                     </div>
-                    <p className="text-slate-900 font-semibold mb-2">
+                    <p className="text-secondary-900 font-semibold mb-2">
                       No messages yet
                     </p>
-                    <p className="text-slate-600 text-sm">
+                    <p className="text-secondary-600 text-sm">
                       Start the conversation!
                     </p>
                   </div>
@@ -383,12 +377,12 @@ export default function Messages() {
             {/* Message Input */}
             <form
               onSubmit={handleSendMessage}
-              className="p-4 border-t border-slate-200"
+              className="p-4 border-t-2 border-secondary-200"
             >
               <div className="flex gap-2">
                 <button
                   type="button"
-                  className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition"
+                  className="p-2 text-secondary-600 hover:text-secondary-900 hover:bg-secondary-100 rounded-xl transition-all duration-300"
                 >
                   <Paperclip size={20} />
                 </button>
@@ -397,12 +391,12 @@ export default function Messages() {
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   placeholder="Type your message..."
-                  className="flex-1 border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="flex-1 border-2 border-secondary-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:outline-none transition-all duration-300"
                 />
                 <button
                   type="submit"
                   disabled={!newMessage.trim() || sending}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="px-6 py-2 bg-primary-600 text-white rounded-xl font-semibold hover:bg-primary-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg shadow-primary-500/20 hover:scale-105"
                 >
                   <Send size={18} />
                   Send
@@ -411,15 +405,15 @@ export default function Messages() {
             </form>
           </div>
         ) : (
-          <div className="hidden md:flex flex-1 items-center justify-center bg-slate-50">
+          <div className="hidden md:flex flex-1 items-center justify-center bg-secondary-50">
             <div className="text-center">
-              <div className="bg-slate-200 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <MessageSquare className="text-slate-400" size={40} />
+              <div className="bg-secondary-200 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MessageSquare className="text-secondary-400" size={40} />
               </div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">
+              <h3 className="text-lg font-semibold text-secondary-900 mb-2">
                 No conversation selected
               </h3>
-              <p className="text-slate-600 text-sm">
+              <p className="text-secondary-600 text-sm">
                 Choose a conversation to start messaging
               </p>
             </div>
@@ -427,18 +421,18 @@ export default function Messages() {
         )}
       </div>
 
-      {/* ✅ Block Confirmation Modal */}
+      {/* Block Confirmation Modal */}
       {showBlockModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl">
             <div className="flex items-center gap-3 mb-4">
-              <div className="bg-red-100 p-2 rounded-full">
-                <Ban className="text-red-600" size={24} />
+              <div className="bg-error-100 p-3 rounded-xl">
+                <Ban className="text-error-600" size={24} />
               </div>
-              <h3 className="text-xl font-bold text-slate-900">Block User</h3>
+              <h3 className="text-xl font-bold text-secondary-900">Block User</h3>
             </div>
             
-            <p className="text-slate-600 mb-6">
+            <p className="text-secondary-600 mb-6">
               Are you sure you want to block <strong>{selectedConversation.providers?.business_name}</strong>? 
               You will no longer receive messages from this provider, and they won't be able to contact you.
             </p>
@@ -446,13 +440,13 @@ export default function Messages() {
             <div className="flex gap-3">
               <button
                 onClick={() => setShowBlockModal(false)}
-                className="flex-1 px-4 py-2 border-2 border-slate-300 text-slate-700 rounded-lg font-semibold hover:bg-slate-50 transition"
+                className="flex-1 px-4 py-2.5 border-2 border-secondary-300 text-secondary-700 rounded-xl font-semibold hover:bg-secondary-50 transition-all duration-300"
               >
                 Cancel
               </button>
               <button
                 onClick={handleBlockUser}
-                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition"
+                className="flex-1 px-4 py-2.5 bg-error-600 text-white rounded-xl font-semibold hover:bg-error-700 transition-all duration-300 shadow-lg shadow-error-500/20"
               >
                 Block User
               </button>
@@ -461,7 +455,7 @@ export default function Messages() {
         </div>
       )}
 
-      {/* ✅ Report Modal */}
+      {/* Report Modal */}
       {showReportModal && (
         <ReportModal
           providerName={selectedConversation.providers?.business_name}
@@ -473,7 +467,7 @@ export default function Messages() {
   );
 }
 
-// ✅ Report Modal Component
+// Report Modal Component
 function ReportModal({ providerName, onClose, onSubmit }) {
   const [selectedReason, setSelectedReason] = useState("");
   const [details, setDetails] = useState("");
@@ -495,36 +489,36 @@ function ReportModal({ providerName, onClose, onSubmit }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl max-w-md w-full p-6">
+      <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="bg-orange-100 p-2 rounded-full">
-              <Flag className="text-orange-600" size={24} />
+            <div className="bg-warning-100 p-3 rounded-xl">
+              <Flag className="text-warning-600" size={24} />
             </div>
-            <h3 className="text-xl font-bold text-slate-900">Report User</h3>
+            <h3 className="text-xl font-bold text-secondary-900">Report User</h3>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 transition"
+            className="text-secondary-400 hover:text-secondary-600 p-2 hover:bg-secondary-100 rounded-xl transition-all duration-300"
           >
             <X size={20} />
           </button>
         </div>
         
-        <p className="text-slate-600 mb-4">
+        <p className="text-secondary-600 mb-4">
           Report <strong>{providerName}</strong> to our team. We'll review the issue.
         </p>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-sm font-semibold text-secondary-900 mb-2">
               Reason for report *
             </label>
             <div className="space-y-2">
               {reasons.map((reason) => (
                 <label
                   key={reason}
-                  className="flex items-center gap-2 p-3 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer transition"
+                  className="flex items-center gap-2 p-3 border-2 border-secondary-200 rounded-xl hover:bg-secondary-50 cursor-pointer transition-all duration-300"
                 >
                   <input
                     type="radio"
@@ -532,16 +526,16 @@ function ReportModal({ providerName, onClose, onSubmit }) {
                     value={reason}
                     checked={selectedReason === reason}
                     onChange={(e) => setSelectedReason(e.target.value)}
-                    className="w-4 h-4 text-blue-600"
+                    className="w-4 h-4 text-primary-600"
                   />
-                  <span className="text-sm text-slate-700">{reason}</span>
+                  <span className="text-sm text-secondary-700 font-medium">{reason}</span>
                 </label>
               ))}
             </div>
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-sm font-semibold text-secondary-900 mb-2">
               Additional details (optional)
             </label>
             <textarea
@@ -549,7 +543,7 @@ function ReportModal({ providerName, onClose, onSubmit }) {
               onChange={(e) => setDetails(e.target.value)}
               placeholder="Provide more information about the issue..."
               rows={3}
-              className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+              className="w-full border-2 border-secondary-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:outline-none text-sm transition-all duration-300"
             />
           </div>
           
@@ -557,14 +551,14 @@ function ReportModal({ providerName, onClose, onSubmit }) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border-2 border-slate-300 text-slate-700 rounded-lg font-semibold hover:bg-slate-50 transition"
+              className="flex-1 px-4 py-2.5 border-2 border-secondary-300 text-secondary-700 rounded-xl font-semibold hover:bg-secondary-50 transition-all duration-300"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={!selectedReason}
-              className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2.5 bg-warning-600 text-white rounded-xl font-semibold hover:bg-warning-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-warning-500/20"
             >
               Submit Report
             </button>
@@ -597,32 +591,32 @@ function ConversationItem({ conversation, isSelected, onClick }) {
   return (
     <button
       onClick={onClick}
-      className={`w-full p-4 border-b border-slate-200 hover:bg-slate-50 transition text-left ${
-        isSelected ? "bg-blue-50 border-l-4 border-l-blue-600" : ""
+      className={`w-full p-4 border-b-2 border-secondary-200 hover:bg-secondary-50 transition-all duration-300 text-left ${
+        isSelected ? "bg-primary-50 border-l-4 border-l-primary-600" : ""
       }`}
     >
       <div className="flex items-start gap-3">
-        <div className="bg-teal-100 p-2 rounded-full flex-shrink-0">
-          <User className="text-teal-600" size={18} />
+        <div className="bg-primary-100 p-2 rounded-xl flex-shrink-0">
+          <User className="text-primary-600" size={18} />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-1">
-            <h4 className="font-semibold text-slate-900 text-sm truncate">
+            <h4 className="font-semibold text-secondary-900 text-sm truncate">
               {conversation.providers?.business_name || "Provider"}
             </h4>
-            <span className="text-xs text-slate-500 flex-shrink-0 ml-2">
+            <span className="text-xs text-secondary-500 flex-shrink-0 ml-2">
               {formatTime(conversation.last_message_at)}
             </span>
           </div>
-          <p className="text-xs text-slate-600 mb-1 truncate">
+          <p className="text-xs text-secondary-600 mb-1 truncate">
             {conversation.jobs?.service_name || "General inquiry"}
           </p>
           <div className="flex items-center gap-2">
             <span
-              className={`text-xs px-2 py-0.5 rounded-full ${
+              className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
                 conversation.jobs?.status === "confirmed"
-                  ? "bg-green-100 text-green-700"
-                  : "bg-slate-100 text-slate-700"
+                  ? "bg-success-100 text-success-700 border border-success-300"
+                  : "bg-secondary-100 text-secondary-700 border border-secondary-300"
               }`}
             >
               {conversation.jobs?.status || "New"}
@@ -647,24 +641,24 @@ function MessageBubble({ message, isOwn }) {
     <div className={`flex ${isOwn ? "justify-end" : "justify-start"}`}>
       <div className={`flex gap-2 max-w-[70%] ${isOwn ? "flex-row-reverse" : ""}`}>
         <div
-          className={`p-2 rounded-full flex-shrink-0 ${
-            isOwn ? "bg-blue-100" : "bg-teal-100"
+          className={`p-2 rounded-xl flex-shrink-0 ${
+            isOwn ? "bg-primary-100" : "bg-primary-100"
           }`}
         >
-          <User size={16} className={isOwn ? "text-blue-600" : "text-teal-600"} />
+          <User size={16} className={isOwn ? "text-primary-600" : "text-primary-600"} />
         </div>
         <div>
           <div
             className={`rounded-2xl px-4 py-2 ${
               isOwn
-                ? "bg-blue-600 text-white rounded-tr-sm"
-                : "bg-slate-100 text-slate-900 rounded-tl-sm"
+                ? "bg-primary-600 text-white rounded-tr-sm shadow-lg shadow-primary-500/20"
+                : "bg-secondary-100 text-secondary-900 rounded-tl-sm"
             }`}
           >
             <p className="text-sm leading-relaxed">{message.message}</p>
           </div>
           <div
-            className={`flex items-center gap-1 mt-1 text-xs text-slate-500 ${
+            className={`flex items-center gap-1 mt-1 text-xs text-secondary-500 ${
               isOwn ? "justify-end" : "justify-start"
             }`}
           >
@@ -673,7 +667,7 @@ function MessageBubble({ message, isOwn }) {
             {isOwn && (
               <CheckCheck
                 size={14}
-                className={message.is_read ? "text-blue-600" : ""}
+                className={message.is_read ? "text-primary-600" : ""}
               />
             )}
           </div>

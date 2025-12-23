@@ -1,6 +1,6 @@
 //levlpro-mvp\src\components\CustomerDashboard\MyJobs\components\DetailedJobCard.jsx
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // ✅ Added
+import { useNavigate } from "react-router-dom";
 import {
   Calendar,
   DollarSign,
@@ -20,18 +20,19 @@ import {
   FileText,
   Eye,
 } from "lucide-react";
+import { theme } from "../../../../styles/theme";
 import { supabase } from "../../../../lib/supabaseClient";
-import useAuth from "../../../../hooks/useAuth"; // ✅ Added
+import useAuth from "../../../../hooks/useAuth";
 
 export default function DetailedJobCard({ job, onEdit, onDelete }) {
-  const navigate = useNavigate(); // ✅ Added
-  const { user } = useAuth(); // ✅ Added
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [lightboxImage, setLightboxImage] = useState(null);
   const [quote, setQuote] = useState(null);
   const [loadingQuote, setLoadingQuote] = useState(true);
 
-  // ✅ Fetch quote for this job
+  // Fetch quote for this job
   useEffect(() => {
     if (job?.id) {
       fetchQuote();
@@ -76,7 +77,7 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
     }
   };
 
-  // ✅ Handle messaging with provider
+  // Handle messaging with provider
   const handleMessage = async () => {
     if (!job.provider_id || !user) return;
 
@@ -90,7 +91,6 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
         .maybeSingle();
 
       if (existingConversation) {
-        // Navigate to existing conversation
         navigate(`/customer/messages?conversation=${existingConversation.id}`);
         return;
       }
@@ -101,7 +101,7 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
         .insert({
           customer_id: user.id,
           provider_id: job.provider_id,
-          job_id: job.id, // Link to this job
+          job_id: job.id,
           last_message_at: new Date().toISOString(),
         })
         .select()
@@ -109,11 +109,9 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
 
       if (createError) throw createError;
 
-      // Navigate to new conversation
       navigate(`/customer/messages?conversation=${newConversation.id}`);
     } catch (error) {
       console.error("Error handling message:", error);
-      // Fallback: just navigate to messages page
       navigate("/customer/messages");
     }
   };
@@ -122,7 +120,6 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
     return `$${(cents / 100).toFixed(2)}`;
   };
 
-  // ✅ Guard clause
   if (!job) {
     return null;
   }
@@ -130,11 +127,12 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
   const getStatusColor = (status) => {
     switch (status) {
       case "pending_dispatch":
-        return "bg-yellow-100 text-yellow-700 border-yellow-200";
+        return "bg-warning-100 text-warning-700 border-warning-200";
       case "dispatching":
-        return "bg-blue-100 text-blue-700 border-blue-200";
+        return "bg-primary-100 text-primary-700 border-primary-200";
       case "accepted":
-        return "bg-green-100 text-green-700 border-green-200";
+      case "confirmed":
+        return "bg-success-100 text-success-700 border-success-200";
       case "en_route":
         return "bg-purple-100 text-purple-700 border-purple-200";
       case "in_progress":
@@ -142,39 +140,34 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
       case "completed":
         return "bg-emerald-100 text-emerald-700 border-emerald-200";
       case "cancelled":
-        return "bg-red-100 text-red-700 border-red-200";
+        return "bg-error-100 text-error-700 border-error-200";
       case "unassigned":
-        return "bg-slate-100 text-slate-700 border-slate-200";
-      case "confirmed":
-        return "bg-green-100 text-green-700 border-green-200";
       case "pending":
-        return "bg-yellow-100 text-yellow-700 border-yellow-200";
+        return "bg-secondary-100 text-secondary-700 border-secondary-200";
       default:
-        return "bg-slate-100 text-slate-700 border-slate-200";
+        return "bg-secondary-100 text-secondary-700 border-secondary-200";
     }
   };
 
   const getStatusIcon = (status) => {
     switch (status) {
       case "pending_dispatch":
+      case "pending":
         return <Clock size={14} />;
       case "dispatching":
         return <Loader size={14} className="animate-spin" />;
       case "accepted":
       case "confirmed":
+      case "completed":
         return <CheckCircle2 size={14} />;
       case "en_route":
         return <TrendingUp size={14} />;
       case "in_progress":
         return <Loader size={14} />;
-      case "completed":
-        return <CheckCircle2 size={14} />;
       case "cancelled":
         return <XCircle size={14} />;
       case "unassigned":
         return <AlertCircle size={14} />;
-      case "pending":
-        return <Clock size={14} />;
       default:
         return <AlertCircle size={14} />;
     }
@@ -219,20 +212,20 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
 
   return (
     <>
-      <div className="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-md transition">
+      <div className={`${theme.card.base} ${theme.card.padding} ${theme.card.hover}`}>
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
-            <h3 className="font-semibold text-slate-900 text-lg mb-2">
+            <h3 className={`${theme.text.h4} mb-2`}>
               {job.service_name || "Service Request"}
             </h3>
             {job.providers?.business_name && (
-              <div className="flex items-center gap-2 text-sm text-slate-600 mb-3">
-                <div className="bg-blue-100 text-blue-700 px-2 py-1 rounded font-medium">
+              <div className={`flex items-center gap-2 ${theme.text.caption} mb-3`}>
+                <div className="bg-primary-100 text-primary-700 px-2 py-1 rounded font-medium">
                   {job.providers.business_name}
                 </div>
               </div>
             )}
-            <div className="flex flex-wrap gap-4 text-sm text-slate-600">
+            <div className={`flex flex-wrap gap-4 ${theme.text.caption}`}>
               {job.scheduled_date && (
                 <span className="flex items-center gap-1.5">
                   <Calendar size={14} />
@@ -254,7 +247,7 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
             </div>
           </div>
           <span
-            className={`text-xs px-3 py-1 rounded-full font-semibold border flex items-center gap-1 ${getStatusColor(
+            className={`text-xs px-3 py-1 rounded-full font-semibold border-2 flex items-center gap-1 ${getStatusColor(
               job.status
             )}`}
           >
@@ -264,25 +257,25 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
         </div>
 
         {job.notes && (
-          <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-4">
-            <p className="text-sm text-slate-700">{job.notes}</p>
+          <div className="bg-secondary-50 border-2 border-secondary-200 rounded-xl p-3 mb-4">
+            <p className={theme.text.caption}>{job.notes}</p>
           </div>
         )}
 
         {/* QUOTE SECTION */}
         {!loadingQuote && quote && (
-          <div className="mb-4 border-2 border-blue-200 rounded-lg overflow-hidden">
+          <div className="mb-4 border-2 border-primary-200 rounded-xl overflow-hidden shadow-card">
             {/* Quote Header */}
-            <div className="bg-blue-50 px-4 py-3 flex items-center justify-between">
+            <div className="bg-primary-50 px-4 py-3 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <FileText className="text-blue-600" size={20} />
-                <h4 className="font-semibold text-blue-900">Quote Received</h4>
+                <FileText className="text-primary-600" size={20} />
+                <h4 className="font-semibold text-primary-900">Quote Received</h4>
               </div>
-              <span className={`text-xs px-2 py-1 rounded-full font-semibold ${
-                quote.status === "approved" ? "bg-green-100 text-green-800" :
-                quote.status === "declined" ? "bg-red-100 text-red-800" :
-                quote.status === "viewed" ? "bg-blue-100 text-blue-800" :
-                "bg-yellow-100 text-yellow-800"
+              <span className={`text-xs px-2 py-1 rounded-full font-semibold border ${
+                quote.status === "approved" ? "bg-success-100 text-success-800 border-success-300" :
+                quote.status === "declined" ? "bg-error-100 text-error-800 border-error-300" :
+                quote.status === "viewed" ? "bg-primary-100 text-primary-800 border-primary-300" :
+                "bg-warning-100 text-warning-800 border-warning-300"
               }`}>
                 {quote.status.toUpperCase()}
               </span>
@@ -292,22 +285,22 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
             <div className="p-4 bg-white">
               <div className="space-y-3 mb-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-600">Service:</span>
-                  <span className="font-semibold text-slate-900">{quote.service_name}</span>
+                  <span className={theme.text.caption}>Service:</span>
+                  <span className={`font-semibold ${theme.text.body}`}>{quote.service_name}</span>
                 </div>
                 {quote.description && (
                   <div>
-                    <span className="text-sm text-slate-600 block mb-1">Description:</span>
-                    <p className="text-sm text-slate-700">{quote.description}</p>
+                    <span className={`${theme.text.caption} block mb-1`}>Description:</span>
+                    <p className={theme.text.caption}>{quote.description}</p>
                   </div>
                 )}
-                <div className="flex justify-between items-center pt-2 border-t border-slate-200">
-                  <span className="text-sm text-slate-600">Line Items:</span>
-                  <span className="font-medium text-slate-900">{quote.line_items?.length || 0} items</span>
+                <div className="flex justify-between items-center pt-2 border-t-2 border-secondary-200">
+                  <span className={theme.text.caption}>Line Items:</span>
+                  <span className={`font-medium ${theme.text.body}`}>{quote.line_items?.length || 0} items</span>
                 </div>
-                <div className="flex justify-between items-center text-lg font-bold pt-2 border-t-2 border-slate-200">
-                  <span className="text-slate-900">Total:</span>
-                  <span className="text-blue-700">{formatCurrency(quote.total)}</span>
+                <div className="flex justify-between items-center text-lg font-bold pt-2 border-t-2 border-secondary-200">
+                  <span className="text-secondary-900">Total:</span>
+                  <span className="text-primary-700">{formatCurrency(quote.total)}</span>
                 </div>
               </div>
 
@@ -317,14 +310,14 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
                   <>
                     <button
                       onClick={() => handleQuoteAction("accept")}
-                      className="flex-1 flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition"
+                      className="flex-1 flex items-center justify-center gap-2 bg-success-600 text-white px-4 py-2 rounded-xl font-semibold hover:bg-success-700 transition-all duration-300 shadow-lg shadow-success-500/20"
                     >
                       <CheckCircle2 size={16} />
                       Accept
                     </button>
                     <button
                       onClick={() => handleQuoteAction("decline")}
-                      className="flex-1 flex items-center justify-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 transition"
+                      className="flex-1 flex items-center justify-center gap-2 bg-error-600 text-white px-4 py-2 rounded-xl font-semibold hover:bg-error-700 transition-all duration-300 shadow-lg shadow-error-500/20"
                     >
                       <XCircle size={16} />
                       Decline
@@ -335,7 +328,7 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
                   href={`/quotes/${quote.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
+                  className="flex items-center justify-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-xl font-semibold hover:bg-primary-700 transition-all duration-300 shadow-lg shadow-primary-500/20"
                 >
                   <Eye size={16} />
                   View Full Quote
@@ -343,16 +336,16 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
               </div>
 
               {quote.status === "approved" && (
-                <div className="mt-3 bg-green-50 border border-green-200 rounded-lg p-3 text-center">
-                  <p className="text-sm text-green-800 font-medium">
+                <div className="mt-3 bg-success-50 border-2 border-success-200 rounded-xl p-3 text-center">
+                  <p className="text-sm text-success-800 font-medium">
                     ✓ Quote accepted! The provider will contact you soon.
                   </p>
                 </div>
               )}
 
               {quote.status === "declined" && (
-                <div className="mt-3 bg-red-50 border border-red-200 rounded-lg p-3 text-center">
-                  <p className="text-sm text-red-800 font-medium">
+                <div className="mt-3 bg-error-50 border-2 border-error-200 rounded-xl p-3 text-center">
+                  <p className="text-sm text-error-800 font-medium">
                     Quote declined.
                   </p>
                 </div>
@@ -365,8 +358,8 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
         {job.photos && job.photos.length > 0 && (
           <div className="mb-4">
             <div className="flex items-center gap-2 mb-2">
-              <ImageIcon size={16} className="text-slate-600" />
-              <span className="text-sm font-medium text-slate-700">
+              <ImageIcon size={16} className="text-secondary-600" />
+              <span className={`${theme.text.caption} font-medium text-secondary-700`}>
                 Photos ({job.photos.length})
               </span>
             </div>
@@ -375,15 +368,15 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
                 <button
                   key={index}
                   onClick={() => setLightboxImage(photo)}
-                  className="relative aspect-square rounded-lg overflow-hidden border-2 border-slate-200 hover:border-teal-500 transition group"
+                  className="relative aspect-square rounded-xl overflow-hidden border-2 border-secondary-200 hover:border-primary-500 transition-all duration-300 group"
                 >
                   <img
                     src={photo}
                     alt={`Job photo ${index + 1}`}
-                    className="w-full h-full object-cover group-hover:scale-110 transition"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300"
                   />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition flex items-center justify-center">
-                    <ImageIcon className="text-white opacity-0 group-hover:opacity-100 transition" size={24} />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
+                    <ImageIcon className="text-white opacity-0 group-hover:opacity-100 transition-all duration-300" size={24} />
                   </div>
                 </button>
               ))}
@@ -394,19 +387,19 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
         {/* Category Badge */}
         {job.category && (
           <div className="mb-4">
-            <span className="inline-block bg-teal-100 text-teal-700 px-3 py-1 rounded-full text-xs font-medium capitalize">
+            <span className="inline-block bg-primary-100 text-primary-700 px-3 py-1 rounded-full text-xs font-medium capitalize border border-primary-300">
               {job.category}
             </span>
           </div>
         )}
 
-        <div className="flex flex-wrap gap-2 pt-4 border-t border-slate-200">
+        <div className="flex flex-wrap gap-2 pt-4 border-t-2 border-secondary-200">
           {/* Edit & Delete buttons */}
           {canEdit && (
             <>
               <button
                 onClick={() => onEdit(job)}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-300 text-blue-700 rounded-lg font-medium hover:bg-blue-100 transition"
+                className="flex items-center gap-2 px-4 py-2 bg-primary-50 border-2 border-primary-300 text-primary-700 rounded-xl font-medium hover:bg-primary-100 transition-all duration-300"
               >
                 <Edit2 size={16} />
                 Edit
@@ -415,24 +408,24 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
               {canDelete ? (
                 <button
                   onClick={() => setShowDeleteConfirm(true)}
-                  className="flex items-center gap-2 px-4 py-2 bg-red-50 border border-red-300 text-red-700 rounded-lg font-medium hover:bg-red-100 transition"
+                  className="flex items-center gap-2 px-4 py-2 bg-error-50 border-2 border-error-300 text-error-700 rounded-xl font-medium hover:bg-error-100 transition-all duration-300"
                 >
                   <Trash2 size={16} />
                   Delete
                 </button>
               ) : job.provider_id && (
-                <div className="text-xs text-slate-500 italic">
+                <div className={`${theme.text.caption} italic`}>
                   Can't delete – job assigned to provider
                 </div>
               )}
             </>
           )}
 
-          {/* ✅ FIXED: Message button with onClick handler */}
+          {/* Message button */}
           {job.provider_id && job.providers?.business_name && (
             <button 
               onClick={handleMessage}
-              className="flex-1 py-2 px-4 border border-slate-300 text-slate-700 rounded-lg font-medium hover:bg-slate-50 transition flex items-center justify-center gap-2"
+              className={`flex-1 ${theme.button.secondary} justify-center`}
             >
               <MessageSquare size={16} />
               Message
@@ -441,7 +434,7 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
 
           {/* Review button */}
           {job.status === "completed" && (
-            <button className="flex-1 py-2 px-4 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition flex items-center justify-center gap-2">
+            <button className="flex-1 py-2 px-4 bg-success-600 text-white rounded-xl font-medium hover:bg-success-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-success-500/20">
               <Star size={16} />
               Leave Review
             </button>
@@ -457,14 +450,14 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
         >
           <button
             onClick={() => setLightboxImage(null)}
-            className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition"
+            className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-all duration-300"
           >
             <X size={24} />
           </button>
           <img
             src={lightboxImage}
             alt="Job photo full size"
-            className="max-w-full max-h-full object-contain rounded-lg"
+            className="max-w-full max-h-full object-contain rounded-xl"
             onClick={(e) => e.stopPropagation()}
           />
         </div>
@@ -472,34 +465,34 @@ export default function DetailedJobCard({ job, onEdit, onDelete }) {
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl">
             <div className="flex items-center gap-3 mb-4">
-              <div className="bg-red-100 p-3 rounded-full">
-                <Trash2 className="text-red-600" size={24} />
+              <div className="bg-error-100 p-3 rounded-xl">
+                <Trash2 className="text-error-600" size={24} />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-slate-900">
+                <h3 className={`${theme.text.h3}`}>
                   Delete Job?
                 </h3>
-                <p className="text-sm text-slate-600">This action cannot be undone</p>
+                <p className={theme.text.caption}>This action cannot be undone</p>
               </div>
             </div>
 
-            <p className="text-slate-700 mb-6">
+            <p className={`${theme.text.body} mb-6`}>
               Are you sure you want to delete "{job.service_name}"? This will permanently remove the job posting.
             </p>
 
             <div className="flex gap-3">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="flex-1 px-4 py-2.5 border-2 border-slate-300 text-slate-700 rounded-lg font-semibold hover:bg-slate-50 transition"
+                className={`${theme.button.secondary} flex-1`}
               >
                 Cancel
               </button>
               <button
                 onClick={handleDelete}
-                className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition"
+                className={`${theme.button.danger} flex-1`}
               >
                 Delete Job
               </button>

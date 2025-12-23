@@ -1,75 +1,35 @@
 //levlpro-mvp\src\components\CustomerDashboard\Settings\utils\settingsHelpers.js
+import { supabase } from "../../../lib/supabaseClient";
 
-/**
- * Validate phone number
- */
-export const validatePhone = (phone) => {
-  const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
-  return phoneRegex.test(phone);
-};
+export const uploadFile = async (file, bucket, folder, userId) => {
+  const fileExt = file.name.split(".").pop();
+  const fileName = `avatar.${fileExt}`;
+  const filePath = `${userId}/${fileName}`;
 
-/**
- * Format phone number
- */
-export const formatPhone = (phone) => {
-  const cleaned = phone.replace(/\D/g, "");
-  const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
-  if (match) {
-    return `(${match[1]}) ${match[2]}-${match[3]}`;
-  }
-  return phone;
-};
+  const { error } = await supabase.storage
+    .from(bucket)
+    .upload(filePath, file, {
+      cacheControl: "3600",
+      upsert: true,
+      contentType: file.type,
+    });
 
-/**
- * Validate ZIP code
- */
-export const validateZipCode = (zip) => {
-  return /^\d{5}(-\d{4})?$/.test(zip);
-};
+  if (error) throw error;
 
-/**
- * Validate address data
- */
-export const validateAddress = (address, city, state, zipCode) => {
-  const errors = [];
-
-  if (!address?.trim()) {
-    errors.push("Street address is required");
-  }
-
-  if (!city?.trim()) {
-    errors.push("City is required");
-  }
-
-  if (!state?.trim()) {
-    errors.push("State is required");
-  }
-
-  if (!zipCode?.trim()) {
-    errors.push("ZIP code is required");
-  } else if (!validateZipCode(zipCode)) {
-    errors.push("Invalid ZIP code format");
-  }
+  const { data } = supabase.storage
+    .from(bucket)
+    .getPublicUrl(filePath);
 
   return {
-    isValid: errors.length === 0,
-    errors,
+    path: filePath,
+    url: data.publicUrl,
   };
 };
 
-/**
- * Log audit event (for future use)
- */
-export const logAuditEvent = async (customerId, eventType, description, metadata = null) => {
-  const { supabase } = await import("../../../lib/supabaseClient");
-  
-  const userAgent = navigator.userAgent;
+export const deleteFile = async (bucket, path) => {
+  const { error } = await supabase.storage
+    .from(bucket)
+    .remove([path]);
 
-  await supabase.from("customer_audit_logs").insert({
-    customer_id: customerId,
-    event_type: eventType,
-    description,
-    metadata,
-    user_agent: userAgent,
-  });
+  if (error) throw error;
 };

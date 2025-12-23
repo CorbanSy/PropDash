@@ -9,12 +9,13 @@ export default function NotificationsTab({ notifications, setNotifications }) {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      {/* Email Notifications - PRIMARY ICON */}
+      <div className="bg-white rounded-2xl shadow-card border-2 border-secondary-200 p-6">
         <div className="flex items-center gap-3 mb-6">
-          <div className="bg-blue-100 p-2.5 rounded-lg">
-            <Mail className="text-blue-600" size={20} />
+          <div className="bg-primary-100 p-3 rounded-xl">
+            <Mail className="text-primary-600" size={20} />
           </div>
-          <h3 className="text-lg font-semibold text-slate-900">
+          <h3 className="text-lg font-semibold text-secondary-900">
             Email Notifications
           </h3>
         </div>
@@ -44,12 +45,13 @@ export default function NotificationsTab({ notifications, setNotifications }) {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      {/* SMS Notifications - PRIMARY ICON */}
+      <div className="bg-white rounded-2xl shadow-card border-2 border-secondary-200 p-6">
         <div className="flex items-center gap-3 mb-6">
-          <div className="bg-green-100 p-2.5 rounded-lg">
-            <Smartphone className="text-green-600" size={20} />
+          <div className="bg-primary-100 p-3 rounded-xl">
+            <Smartphone className="text-primary-600" size={20} />
           </div>
-          <h3 className="text-lg font-semibold text-slate-900">
+          <h3 className="text-lg font-semibold text-secondary-900">
             SMS Notifications
           </h3>
         </div>
@@ -74,3 +76,4 @@ export default function NotificationsTab({ notifications, setNotifications }) {
     </div>
   );
 }
+
