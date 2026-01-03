@@ -204,27 +204,6 @@ export default function HeroModern() {
           </div>
         </div>
       </div>
-
-      {/* Trusted Companies Strip */}
-      <div className="bg-secondary-50 border-t-2 border-secondary-200 py-8">
-        <div className="max-w-7xl mx-auto px-6">
-          <p className="text-secondary-600 text-sm font-semibold mb-6 text-center">
-            TRUSTED BY LEADING COMPANIES
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-12">
-            {["Company A", "Company B", "Company C", "Company D", "Company E"].map((company, index) => (
-              <div
-                key={index}
-                className="bg-white px-8 py-4 rounded-xl shadow-md hover:shadow-xl hover:scale-110 transition-all duration-300 cursor-pointer border-2 border-secondary-200"
-              >
-                <span className="font-bold text-secondary-400 text-lg whitespace-nowrap">
-                  {company}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
     </section>
   );
 }

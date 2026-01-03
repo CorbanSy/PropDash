@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import MobileMenu from "./components/MobileMenu";
 import HeroEnhanced from "./components/Hero";
-import TrustBadges from "./components/TrustBadges";
 import ServiceCategories from "./components/ServiceCategories";
 import HowItWorks from "./components/HowItWorks";
 import StatsEnhanced from "./components/Stats";
@@ -65,8 +64,6 @@ export default function Landing() {
       />
 
       <HeroEnhanced />
-      
-      <TrustBadges />
       
       <ServiceCategories />
       
