@@ -2,11 +2,14 @@
 import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import MobileMenu from "./components/MobileMenu";
-import Hero from "./components/Hero";
+import HeroEnhanced from "./components/Hero";
+import TrustBadges from "./components/TrustBadges";
+import ServiceCategories from "./components/ServiceCategories";
 import HowItWorks from "./components/HowItWorks";
-import Stats from "./components/Stats";
+import StatsEnhanced from "./components/Stats";
+import VisualShowcase from "./components/VisualShowcase";
 import Features from "./components/Features";
-import Testimonials from "./components/Testimonials";
+import TestimonialsEnhanced from "./components/Testimonials";
 import CTA from "./components/CTA";
 import Footer from "./components/Footer";
 
@@ -61,15 +64,21 @@ export default function Landing() {
         setShowMobileMenu={setShowMobileMenu}
       />
 
-      <Hero />
+      <HeroEnhanced />
+      
+      <TrustBadges />
+      
+      <ServiceCategories />
       
       <HowItWorks />
       
-      <Stats />
+      <StatsEnhanced />
+      
+      <VisualShowcase />
       
       <Features />
       
-      <Testimonials />
+      <TestimonialsEnhanced />
       
       <CTA />
       
