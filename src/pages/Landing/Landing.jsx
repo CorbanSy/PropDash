@@ -1,15 +1,12 @@
-//levlpro-mvp\src\pages\Landing\Landing.jsx
 import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import MobileMenu from "./components/MobileMenu";
-import HeroEnhanced from "./components/Hero";
-import ServiceCategories from "./components/ServiceCategories";
+import Hero from "./components/Hero";
 import HowItWorks from "./components/HowItWorks";
 import StatsEnhanced from "./components/Stats";
 import VisualShowcase from "./components/VisualShowcase";
 import Features from "./components/Features";
 import TestimonialsEnhanced from "./components/Testimonials";
-import CTA from "./components/CTA";
 import Footer from "./components/Footer";
 
 export default function Landing() {
@@ -49,13 +46,11 @@ export default function Landing() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-secondary-50 flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col">
       <Header
         isScrolled={isScrolled}
-        showLoginMenu={showLoginMenu}
-        setShowLoginMenu={setShowLoginMenu}
-        setShowMobileMenu={setShowMobileMenu}
         showMobileMenu={showMobileMenu}
+        setShowMobileMenu={setShowMobileMenu}
       />
 
       <MobileMenu
@@ -63,12 +58,13 @@ export default function Landing() {
         setShowMobileMenu={setShowMobileMenu}
       />
 
-      <HeroEnhanced />
+      {/* Hero now includes the service categories */}
+      <Hero />
       
-      <ServiceCategories />
-      
+      {/* How It Works section (separate from services) */}
       <HowItWorks />
       
+      {/* Keep your other sections */}
       <StatsEnhanced />
       
       <VisualShowcase />
@@ -76,8 +72,6 @@ export default function Landing() {
       <Features />
       
       <TestimonialsEnhanced />
-      
-      <CTA />
       
       <Footer />
     </div>

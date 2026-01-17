@@ -13,6 +13,7 @@
     "@ai-sdk/google": "^2.0.45",
     "@supabase/supabase-js": "^2.86.0",
     "ai": "^5.0.109",
+    "framer-motion": "^12.26.2",
     "lucide-react": "^0.555.0",
     "qrcode": "^1.5.4",
     "react": "^19.2.0",

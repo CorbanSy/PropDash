@@ -1,207 +1,197 @@
-//levlpro-mvp\src\pages\Landing\components\Hero.jsx
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
-  CheckCircle2,
   Search,
-  TrendingUp,
-  Clock,
-  ShieldCheck,
-  Star,
+  MapPin,
   ArrowRight,
-  Play,
-  Users,
-  Award,
+  Wrench,
+  Trees,
+  Droplets,
   Zap,
+  Drill,
+  Home,
+  PaintBucket,
+  Trash2,
+  Wind,
+  Lightbulb,
+  Fence,
+  Hammer,
 } from "lucide-react";
 
-export default function HeroModern() {
-  const [activeUserType, setActiveUserType] = useState("client"); // 'client' or 'professional'
+const categories = [
+  { icon: Wrench, name: "Handyperson", color: "text-secondary-700" },
+  { icon: Trees, name: "Landscaping", color: "text-secondary-700" },
+  { icon: Droplets, name: "Plumbing", color: "text-secondary-700" },
+  { icon: Zap, name: "Electrical", color: "text-secondary-700" },
+  { icon: Drill, name: "Remodeling", color: "text-secondary-700" },
+  { icon: Home, name: "Roofing", color: "text-secondary-700" },
+  { icon: PaintBucket, name: "Painting", color: "text-secondary-700" },
+  { icon: Trash2, name: "Cleaning", color: "text-secondary-700" },
+  { icon: Wind, name: "HVAC", color: "text-secondary-700" },
+  { icon: Lightbulb, name: "Windows", color: "text-secondary-700" },
+  { icon: Fence, name: "Concrete", color: "text-secondary-700" },
+  { icon: Hammer, name: "Carpentry", color: "text-secondary-700" },
+];
+
+const rotatingServices = [
+  "home project",
+  "plumbing repair",
+  "electrical work",
+  "landscaping job",
+  "renovation",
+  "roofing project",
+  "paint job",
+  "cleaning service",
+  "HVAC repair",
+  "home repair",
+  "yard work",
+  "carpentry project",
+];
+
+export default function Hero() {
+  const [zipCode, setZipCode] = useState("");
+  const [serviceQuery, setServiceQuery] = useState("");
+  const [currentServiceIndex, setCurrentServiceIndex] = useState(0);
+  const [isVisible, setIsVisible] = useState(true);
+
+  // Rotate through services every 3 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsVisible(false);
+      
+      setTimeout(() => {
+        setCurrentServiceIndex((prev) => (prev + 1) % rotatingServices.length);
+        setIsVisible(true);
+      }, 300); // Match this with the CSS transition duration
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    console.log("Searching for:", serviceQuery, "in", zipCode);
+  };
 
   return (
-    <section className="relative overflow-hidden bg-white">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-0 min-h-[90vh]">
-          {/* Left Side - Content */}
-          <div className="flex flex-col justify-center px-6 md:px-12 py-16 md:py-24 relative z-10">
-            {/* Animated Background Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary-50 via-white to-accent-50 -z-10"></div>
+    <section className="relative">
+      {/* Background Image Section - Only covers heading to search */}
+      <div
+        className="relative bg-cover bg-center h-[70vh]"
+        style={{
+          backgroundImage: "url('/src/assets/landing_page2.jpg')",
+          filter: "brightness(1.2)",
+        }}
+      >
+        {/* Lighter Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/30"></div>
 
-            {/* Trust Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-primary-200 text-secondary-700 rounded-full font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 mb-8 self-start animate-slideIn">
-              <div className="flex -space-x-2">
-                {[...Array(3)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="w-6 h-6 rounded-full bg-gradient-to-br from-primary-400 to-accent-400 border-2 border-white"
-                  ></div>
-                ))}
-              </div>
-              <span className="text-sm">Join 10,000+ satisfied users</span>
-            </div>
-
+        {/* Content */}
+        <div className="relative max-w-7xl mx-auto px-4 md:px-0 py-20 md:py-32 w-full">
+          <div className="max-w-4xl text-left flex justify-start">
+            {/* Grey Transparent Box */}
+            <div className="bg-gray-900/40 backdrop-blur-sm rounded-3xl px-8 py-12 md:px-12 md:py-16 max-w-4xl md:-ml-40 md:-mt-16">
             {/* Main Heading */}
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight mb-6 animate-slideUp">
-              <span className="text-secondary-900">
-                Professional
-              </span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight text-left">
+              Find the right professional
               <br />
-              <span className="bg-gradient-to-r from-primary-600 via-accent-600 to-primary-700 bg-clip-text text-transparent animate-gradient">
-                Property Services
+              for any{" "}
+              <span
+                className="inline-block transition-opacity duration-300"
+                style={{ opacity: isVisible ? 1 : 0 }}
+              >
+                {rotatingServices[currentServiceIndex]}
               </span>
-              <br />
-              <span className="text-secondary-900">Made Simple</span>
             </h1>
 
             {/* Subheading */}
-            <p
-              className="text-xl text-secondary-600 mb-10 leading-relaxed max-w-xl animate-slideUp"
-              style={{ animationDelay: "0.1s" }}
-            >
-              Connect with verified professionals for any property need, or grow your service business with our powerful platform.
+            <p className="text-xl text-white/90 mb-3 max-w-2xl text-left">
+              Connect with top-rated local professionals for home services,
+              repairs, and improvements.
             </p>
 
-            {/* User Type Toggle */}
-            <div
-              className="bg-secondary-100 p-1.5 rounded-xl inline-flex gap-1 mb-8 animate-slideUp"
-              style={{ animationDelay: "0.2s" }}
-            >
-              <button
-                onClick={() => setActiveUserType("client")}
-                className={`px-6 py-3 rounded-lg font-semibold transition-all ${
-                  activeUserType === "client"
-                    ? "bg-white shadow-lg text-secondary-900"
-                    : "text-secondary-600 hover:text-secondary-900"
-                }`}
-              >
-                I need a professional
-              </button>
-              <button
-                onClick={() => setActiveUserType("professional")}
-                className={`px-6 py-3 rounded-lg font-semibold transition-all ${
-                  activeUserType === "professional"
-                    ? "bg-white shadow-lg text-secondary-900"
-                    : "text-secondary-600 hover:text-secondary-900"
-                }`}
-              >
-                I am a professional
-              </button>
-            </div>
-
-            {/* CTAs */}
-            <div
-              className="flex flex-col sm:flex-row gap-4 mb-10 animate-slideUp"
-              style={{ animationDelay: "0.3s" }}
-            >
+            {/* Professional Link */}
+            <div className="mb-12">
               <Link
-                to={activeUserType === "client" ? "/register/client" : "/register/professional"}
-                className={`inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 group ${
-                  activeUserType === "client"
-                    ? "bg-accent-600 text-white hover:bg-accent-700"
-                    : "bg-primary-600 text-white hover:bg-primary-700"
-                }`}
+                to="/register/professional"
+                className="text-sm text-white/80 hover:text-white font-medium inline-flex items-center gap-1 hover:underline"
               >
-                <span>{activeUserType === "client" ? "Find Professionals" : "Get Started Free"}</span>
-                {activeUserType === "client" ? (
-                  <Search className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                ) : (
-                  <TrendingUp className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                )}
-              </Link>
-
-              <Link
-                to={activeUserType === "client" ? "/login/client" : "/login/professional"}
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-bold text-lg border-2 border-secondary-300 text-secondary-700 hover:bg-secondary-50 hover:border-secondary-400 transition-all duration-300"
-              >
-                Sign In
-                <ArrowRight className="w-5 h-5" />
+                Are you a professional?
+                <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
 
-            {/* Feature Pills */}
-            <div className="flex flex-wrap gap-3 animate-fadeIn" style={{ animationDelay: "0.4s" }}>
-              {[
-                { icon: Clock, text: "Same-day service" },
-                { icon: ShieldCheck, text: "Licensed & insured" },
-                { icon: Star, text: "4.9/5 average" },
-              ].map((item, index) => (
-                <span
-                  key={index}
-                  className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-secondary-200 rounded-full text-sm font-medium text-secondary-700 hover:border-primary-300 hover:scale-105 transition-all shadow-sm hover:shadow-md"
-                >
-                  <item.icon className="w-4 h-4 text-primary-600" />
-                  {item.text}
-                </span>
-              ))}
-            </div>
-          </div>
+            {/* Search Box */}
+            <form onSubmit={handleSearch}>
+              <div className="bg-white rounded-2xl shadow-2xl border-2 border-secondary-200 overflow-hidden">
+                <div className="grid md:grid-cols-[1fr,auto,auto] gap-0">
+                  {/* Service Input */}
+                  <div className="relative border-b md:border-b-0 md:border-r-2 border-secondary-200">
+                    <input
+                      type="text"
+                      placeholder="What do you need done?"
+                      value={serviceQuery}
+                      onChange={(e) => setServiceQuery(e.target.value)}
+                      className="w-full px-6 py-5 text-lg border-0 focus:ring-0 focus:outline-none"
+                    />
+                  </div>
 
-          {/* Right Side - Visual */}
-          <div className="relative lg:min-h-[90vh] bg-gradient-to-br from-secondary-900 to-secondary-800">
-            {/* Background Pattern */}
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute inset-0" style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-              }}></div>
-            </div>
-
-            {/* Main Image Placeholder */}
-            <div className="relative h-full flex items-center justify-center p-12">
-              {/* Replace this with actual image */}
-              <div className="relative w-full max-w-lg">
-                <div className="aspect-[4/5] bg-gradient-to-br from-primary-500 to-accent-500 rounded-3xl shadow-2xl overflow-hidden">
-                  <div className="w-full h-full flex items-center justify-center p-8 text-white text-center">
-                    <div>
-                      <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm">
-                        <Play className="w-12 h-12 ml-1" />
-                      </div>
-                      <p className="text-2xl font-bold mb-2">Hero Image Here</p>
-                      <p className="text-white/80">Professional working or happy customer</p>
+                  {/* Zip Code Input */}
+                  <div className="relative border-b md:border-b-0 md:border-r-2 border-secondary-200">
+                    <div className="flex items-center px-6 py-5">
+                      <MapPin className="w-5 h-5 text-secondary-400 mr-3" />
+                      <input
+                        type="text"
+                        placeholder="Zip code"
+                        value={zipCode}
+                        onChange={(e) => setZipCode(e.target.value)}
+                        maxLength="5"
+                        className="w-full text-lg border-0 focus:ring-0 focus:outline-none"
+                      />
                     </div>
                   </div>
-                </div>
 
-                {/* Floating Stats */}
-                <div className="absolute -top-8 -left-8 bg-white rounded-2xl p-6 shadow-2xl border-2 border-primary-200 animate-float max-w-[200px]">
-                  <div className="flex items-start gap-3">
-                    <div className="bg-primary-100 p-3 rounded-xl">
-                      <Users className="w-6 h-6 text-primary-700" />
-                    </div>
-                    <div>
-                      <div className="text-3xl font-bold text-secondary-900">500+</div>
-                      <div className="text-sm text-secondary-600">Active Professionals</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="absolute -bottom-8 -right-8 bg-white rounded-2xl p-6 shadow-2xl border-2 border-success-200 animate-float max-w-[200px]" style={{ animationDelay: "1s" }}>
-                  <div className="flex items-start gap-3">
-                    <div className="bg-success-100 p-3 rounded-xl">
-                      <Award className="w-6 h-6 text-success-700" />
-                    </div>
-                    <div>
-                      <div className="text-3xl font-bold text-secondary-900">10k+</div>
-                      <div className="text-sm text-secondary-600">Jobs Completed</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="absolute top-1/2 -right-12 bg-white rounded-2xl p-6 shadow-2xl border-2 border-warning-200 animate-float" style={{ animationDelay: "2s" }}>
-                  <div className="flex items-center gap-3">
-                    <div className="bg-warning-100 p-3 rounded-xl">
-                      <Star className="w-6 h-6 text-warning-600 fill-warning-600" />
-                    </div>
-                    <div>
-                      <div className="text-3xl font-bold text-secondary-900">4.9</div>
-                      <div className="text-sm text-secondary-600">Rating</div>
-                    </div>
-                  </div>
+                  {/* Search Button */}
+                  <button
+                    type="submit"
+                    className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-5 font-semibold text-lg transition-colors flex items-center justify-center gap-2 whitespace-nowrap"
+                  >
+                    <Search className="w-5 h-5" />
+                    <span className="hidden sm:inline">Get Started</span>
+                  </button>
                 </div>
               </div>
+            </form>
             </div>
+          </div>
+        </div>
+      </div>
 
-            {/* Bottom Gradient Overlay */}
-            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-secondary-900 to-transparent"></div>
+      {/* Categories Section - Below background image */}
+      <div className="bg-gradient-to-b from-gray-50 to-white">
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="overflow-x-auto no-scrollbar pb-4">
+              <div className="flex gap-6 md:gap-8 justify-start md:justify-center min-w-max px-4">
+                {categories.map((category) => (
+                  <button
+                    key={category.name}
+                    onClick={() => setServiceQuery(category.name)}
+                    className="group flex flex-col items-center gap-3 min-w-[80px] hover:opacity-80 transition-opacity"
+                  >
+                    <div className="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center">
+                      <category.icon
+                        className="w-10 h-10 md:w-12 md:h-12 text-secondary-700 group-hover:scale-110 transition-transform"
+                        strokeWidth={1.5}
+                      />
+                    </div>
+                    <span className="text-sm md:text-base font-medium text-gray-900 text-center whitespace-nowrap">
+                      {category.name}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>

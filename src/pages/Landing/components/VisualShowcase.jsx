@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { CheckCircle2, Shield, Award, TrendingUp } from "lucide-react";
+import professionalServiceImg from "../../../assets/professional_service.jpg";
+import businessGrowthImg from "../../../assets/business_growth.jpg";
 
 export default function VisualShowcase() {
   const [scrollY, setScrollY] = useState(0);
@@ -69,15 +71,12 @@ export default function VisualShowcase() {
               
               {/* Main Card */}
               <div className="relative bg-gradient-to-br from-accent-100 to-accent-200 rounded-3xl p-6 md:p-8 shadow-2xl transform group-hover:-translate-y-2 transition-all duration-500 h-full">
-                <div className="aspect-[4/3] md:aspect-video bg-white/50 rounded-2xl flex items-center justify-center backdrop-blur-sm border-2 border-white overflow-hidden">
-                  {/* Placeholder - Replace with <img> tag */}
-                  <div className="text-center p-6 md:p-8">
-                    <div className="w-16 h-16 md:w-24 md:h-24 bg-accent-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <CheckCircle2 className="w-8 h-8 md:w-12 md:h-12 text-accent-700" />
-                    </div>
-                    <p className="text-lg md:text-2xl font-bold text-secondary-800">Professional Service</p>
-                    <p className="text-sm md:text-base text-secondary-600 mt-2">Replace with: Happy homeowner + professional</p>
-                  </div>
+                <div className="aspect-[4/3] md:aspect-video bg-white/50 rounded-2xl overflow-hidden backdrop-blur-sm border-2 border-white">
+                  <img 
+                    src={professionalServiceImg} 
+                    alt="Professional providing expert service to happy homeowner"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               </div>
             </div>
@@ -106,15 +105,12 @@ export default function VisualShowcase() {
               
               {/* Main Card */}
               <div className="relative bg-gradient-to-br from-primary-100 to-primary-200 rounded-3xl p-6 md:p-8 shadow-2xl transform group-hover:-translate-y-2 transition-all duration-500 h-full">
-                <div className="aspect-[4/3] md:aspect-video bg-white/50 rounded-2xl flex items-center justify-center backdrop-blur-sm border-2 border-white overflow-hidden">
-                  {/* Placeholder - Replace with <img> tag */}
-                  <div className="text-center p-6 md:p-8">
-                    <div className="w-16 h-16 md:w-24 md:h-24 bg-primary-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <TrendingUp className="w-8 h-8 md:w-12 md:h-12 text-primary-700" />
-                    </div>
-                    <p className="text-lg md:text-2xl font-bold text-secondary-800">Business Growth</p>
-                    <p className="text-sm md:text-base text-secondary-600 mt-2">Replace with: Professional using dashboard</p>
-                  </div>
+                <div className="aspect-[4/3] md:aspect-video bg-white/50 rounded-2xl overflow-hidden backdrop-blur-sm border-2 border-white">
+                  <img 
+                    src={businessGrowthImg} 
+                    alt="Professional using dashboard to grow their business"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               </div>
             </div>
