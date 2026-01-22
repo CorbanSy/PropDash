@@ -14,6 +14,11 @@ import { supabase } from "../../lib/supabaseClient";
 import { theme } from "../../styles/theme";
 import BenefitItem from "./components/BenefitItem";
 import StatCard from "./components/StatCard";
+import { 
+  validateRegistrationForm,
+  parseSupabaseAuthError,
+  formatRegistrationData 
+} from "../../utils/registrationValidation";
 
 export default function ClientRegister() {
   const navigate = useNavigate();
@@ -36,38 +41,25 @@ export default function ClientRegister() {
     e.preventDefault();
     setError("");
 
-    if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters long");
-      return;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
+    // ✅ Use testable validation
+    const validation = validateRegistrationForm(formData, 'customer');
+    
+    if (!validation.isValid) {
+      const firstError = Object.values(validation.errors)[0];
+      setError(firstError);
       return;
     }
 
     setLoading(true);
 
-    // 1️⃣ Create Auth Account with user_type metadata
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email: formData.email,
-      password: formData.password,
-      options: {
-        data: {
-          full_name: formData.name,
-          user_type: "customer",
-        },
-      },
-    });
+    // ✅ Use testable data formatter
+    const authData = formatRegistrationData(formData, 'customer');
+    
+    const { data, error: signUpError } = await supabase.auth.signUp(authData);
 
     if (signUpError) {
-      if (signUpError.code === "user_already_exists") {
-        setError("This email is already registered. Please use a different email or sign in.");
-      } else if (signUpError.code === "email_address_invalid") {
-        setError("Please enter a valid email address.");
-      } else {
-        setError(signUpError.message);
-      }
+      // ✅ Use testable error parser
+      setError(parseSupabaseAuthError(signUpError));
       setLoading(false);
       return;
     }

@@ -1,9 +1,15 @@
-// levlpro-mvp\src\pages\Login\components\LoginForm.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { supabase } from "../../../lib/supabaseClient";
 import { theme } from "../../../styles/theme";
+import {
+  validateLoginForm,
+  parseLoginError,
+  formatLoginData,
+  validateUserType,
+  getRedirectPath,
+} from "../../../utils/loginValidation";
 
 export default function LoginForm({ userType, styling }) {
   const navigate = useNavigate();
@@ -21,52 +27,51 @@ export default function LoginForm({ userType, styling }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    const validation = validateLoginForm(formData);
+    
+    if (!validation.isValid) {
+      const firstError = Object.values(validation.errors)[0];
+      setError(firstError);
+      return;
+    }
+
     setLoading(true);
 
-    const { data, error: signInError } = await supabase.auth.signInWithPassword({
-      email: formData.email,
-      password: formData.password,
-    });
+    try {
+      const loginData = formatLoginData(formData);
+      
+      const { data, error: signInError } = await supabase.auth.signInWithPassword(loginData);
 
-    if (signInError) {
-      if (signInError.message.includes("Invalid login credentials")) {
-        setError("Invalid email or password. Please try again.");
-      } else if (signInError.message.includes("Email not confirmed")) {
-        setError("Please confirm your email address before logging in.");
-      } else {
-        setError(signInError.message);
+      if (signInError) {
+        setError(parseLoginError(signInError));
+        setLoading(false);
+        return;
       }
+
+      const typeValidation = validateUserType(data.user, userType);
+      
+      if (!typeValidation.isValid) {
+        setError(typeValidation.error);
+        setLoading(false);
+        return;
+      }
+
+      console.log("Login successful:", data.user);
       setLoading(false);
-      return;
-    }
 
-    const accountType = data.user.user_metadata?.user_type;
-    
-    // Validate user type matches
-    if (accountType && accountType !== userType) {
-      const expectedLabel = userType === "customer" ? "Client" : "Professional";
-      const actualLabel = accountType === "customer" ? "Client" : "Professional";
-      setError(
-        `This account is registered as a ${actualLabel}. Please use the ${actualLabel} login page.`
-      );
+      const redirectPath = getRedirectPath(data.user);
+      navigate(redirectPath);
+      
+    } catch (error) {
+      console.error("Login error:", error);
+      setError("An unexpected error occurred. Please try again.");
       setLoading(false);
-      return;
-    }
-
-    console.log("Login successful:", data.user);
-    setLoading(false);
-
-    // Route based on account type
-    if (userType === "customer") {
-      navigate("/customer/dashboard");
-    } else {
-      navigate("/provider");
     }
   };
 
   return (
     <>
-      {/* Error Message */}
       {error && (
         <div className={`${theme.alert.error} mb-6 flex items-start gap-3`}>
           <div className="bg-red-200 rounded-full p-1 flex-shrink-0 mt-0.5">
@@ -76,7 +81,6 @@ export default function LoginForm({ userType, styling }) {
         </div>
       )}
 
-      {/* Login Form */}
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
           <label className={theme.text.label}>Email Address</label>

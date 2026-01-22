@@ -14,6 +14,11 @@ import { supabase } from "../../lib/supabaseClient";
 import { theme } from "../../styles/theme";
 import BenefitItem from "./components/BenefitItem";
 import StatCard from "./components/StatCard";
+import { 
+  validateRegistrationForm,
+  parseSupabaseAuthError,
+  formatRegistrationData 
+} from "../../utils/registrationValidation";
 
 export default function ProfessionalRegister() {
   const navigate = useNavigate();
@@ -34,44 +39,28 @@ export default function ProfessionalRegister() {
     e.preventDefault();
     setError("");
 
-    if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters long");
-      return;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
+    // ✅ Use testable validation
+    const validation = validateRegistrationForm(formData, 'provider');
+    
+    if (!validation.isValid) {
+      const firstError = Object.values(validation.errors)[0];
+      setError(firstError);
       return;
     }
 
     setLoading(true);
 
-    // 1️⃣ Create Auth Account with user_type metadata
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email: formData.email,
-      password: formData.password,
-      options: {
-        data: {
-          name: formData.name,
-          user_type: "provider",
-        },
-      },
-    });
+    // ✅ Use testable data formatter
+    const authData = formatRegistrationData(formData, 'provider');
+    
+    const { data, error: signUpError } = await supabase.auth.signUp(authData);
 
     if (signUpError) {
-      if (signUpError.code === "user_already_exists") {
-        setError("This email is already registered. Please use a different email or try logging in.");
-      } else if (signUpError.code === "email_address_invalid") {
-        setError("Please enter a valid email address.");
-      } else if (signUpError.message.toLowerCase().includes("password")) {
-        setError("Password does not meet requirements. It must be at least 6 characters long.");
-      } else {
-        setError(signUpError.message);
-      }
+      // ✅ Use testable error parser
+      setError(parseSupabaseAuthError(signUpError));
       setLoading(false);
       return;
     }
-
     const user = data.user;
 
     // 2️⃣ Insert into providers table
